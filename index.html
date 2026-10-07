@@ -1659,14 +1659,14 @@ function salir(){ME.codigo=ME.id=null;ME.nombre=ME.rol="";try{localStorage.remov
 function renderUser(){const b=document.getElementById("userBox");if(!b)return;
  if(!ONLINE_OK){b.innerHTML="";return;}
  b.innerHTML=ME.id?`<button class="ubtn" onclick="go('entrar')">${esc(ME.nombre.split(" ")[0])}</button>`:ME.codigo?`<button class="ubtn" onclick="go('entrar')">${esc((ME.nombre||"").split(" ")[0]||"Sin señal")}</button>`:`<button class="ubtn in" onclick="go('entrar')">Entrar</button>`;}
-async function doEntrar(){const c=$("#codeIn").value;ME.msg="";ME.busy=true;render();try{await entrar(c);ME.msg="";}catch(e){ME.msg=e.message||"No se pudo entrar. Revisa tu conexión.";}ME.busy=false;renderUser();render();}
+async function doEntrar(){const c=$("#codeIn").value;ME.msg="";ME.busy=true;render();try{await entrar(c);ME.msg="";ME.busy=false;renderUser();go("inicio");return;}catch(e){ME.msg=e.message||"No se pudo entrar. Revisa tu conexión.";}ME.busy=false;renderUser();render();}
 function vEntrar(){
  if(!ONLINE_OK) return `<h1 style="font-size:2rem">Cuenta</h1><div class="warn">La conexión con la base de datos todavía no está configurada.</div>`;
  if(ME.id) return `<div class="eyebrow">Tu cuenta</div><h1 style="font-size:2.2rem;margin:6px 0 8px">Hola, ${esc(ME.nombre)}</h1>
   <p class="lead">Tu avance se guarda en tu cuenta: lo verás igual en tu celular o en cualquier computadora donde entres con tu código.</p>
   <div class="facts"><div class="fact"><b>${doneCount()} de 8</b><span>módulos completados</span></div><div class="fact"><b>${st.exam.best||0} de 15</b><span>mejor examen</span></div><div class="fact"><b>${ME.rol==="coordinador"?"Coordinador":"Ministro"}</b><span>tu rol en la escuela</span></div></div>
   ${ME.err?`<p class="muted">${esc(ME.err)}</p>`:""}
-  <div class="row" style="margin-top:18px"><button class="btn" onclick="go('equipo')">Avance del equipo</button><button class="btn ghost" onclick="go('rol')">Rol de servicio</button>${ME.rol==="coordinador"?`<button class="btn ghost" onclick="go('ministros')">Ministros y códigos</button>`:""}<button class="btn ghost" onclick="salir()">Salir</button></div>`;
+  <div class="row" style="margin-top:18px"><button class="btn red" onclick="go('inicio')">Ir al inicio</button><button class="btn ghost" onclick="go('equipo')">Avance del equipo</button><button class="btn ghost" onclick="go('rol')">Rol de servicio</button>${ME.rol==="coordinador"?`<button class="btn ghost" onclick="go('ministros')">Ministros y códigos</button>`:""}<button class="btn ghost" onclick="salir()">Salir</button></div>`;
  return `<div class="eyebrow">Escuela de Ministros</div><h1 style="font-size:2.2rem;margin:6px 0 8px">Entra con tu código</h1>
   <p class="lead">Con tu código tu avance se guarda en tu cuenta, cuentas en el avance del equipo y puedes anotarte en el rol de servicio. Pídeselo al coordinador.</p>
   <div class="panel" style="max-width:420px;margin-top:16px"><label for="codeIn" class="muted" style="font-size:.9rem">Tu código</label>
@@ -1866,7 +1866,7 @@ function toggleAntes(i,el){const today=new Date().toDateString();if(st.antesDay!
 const VIEWS={antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
 function render(){
   renderUser();
-  const g=groupOf(view)||GROUPS[0]; lastIn[g.id]=view;
+  const g0=groupOf(view); const g=g0||{id:"",v:[view]}; if(g0) lastIn[g.id]=view;
   document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.g===g.id));
   const sub=$("#subtabs");
   const gv=g.v.filter(v=>v!=="ministros"||ME.rol==="coordinador");
