@@ -307,6 +307,7 @@ details.part .partnote{padding:10px 18px;background:var(--rubric-soft);font-size
 .antes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:18px}
 .antes-c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
 .antes-c.must{border-color:var(--rubric);border-width:2px}
+.rv{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:12px 0 4px}.rvsel{display:flex;flex-direction:column;gap:3px;font-size:.82rem;color:var(--muted)}.rvsel select{font:inherit;font-size:.95rem;padding:9px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}.rvhint{width:100%;margin:4px 0 0;padding:10px 14px;border-radius:var(--r);background:var(--rubric-soft);color:var(--rubric);font-weight:700}
 .hdr-r{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
 .ubtn{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 14px;font-size:.85rem;font-weight:700;color:var(--ink)}
 .ubtn.in{background:var(--rubric);border-color:var(--rubric);color:#fff}
@@ -1373,7 +1374,8 @@ function vRosario(){
   <p class="muted" style="font-size:.88rem">En Adviento y Navidad muchos rezan los Gozosos los domingos, y en Cuaresma los Dolorosos (san Juan Pablo II, <i>Rosarium Virginis Mariae</i> 38).</p></div>
 
  <div class="sec" id="rezar"><h2>Reza conmigo, cuenta por cuenta</h2>
-  <p class="muted" style="margin:0 0 6px">Misterios ${MYST[ro.key].n}. Avanza con los botones o con las flechas del teclado. La cuenta en rojo es donde vas.</p>
+  <p class="muted" style="margin:0 0 6px">Misterios ${MYST[ro.key].n}. Toca <b>Rezar con voz</b> para que el celular rece contigo y avance solo, o avanza tú con los botones. La cuenta en rojo es donde vas.</p>
+  <div class="rv" id="rvCtl"></div>
   <div class="ms-grid"><div class="panel"><div id="roText"></div>
     <div class="prog" style="margin:16px 0 10px"><i id="roBar"></i></div>
     <div class="row" style="justify-content:space-between"><button class="btn ghost" id="roPrev">← Anterior</button><span class="muted" id="roCount" style="font-variant-numeric:tabular-nums"></span><button class="btn" id="roNext">Siguiente →</button></div></div>
@@ -1421,10 +1423,60 @@ function roUpdate(){
  Object.keys(RG).forEach(id=>{const e=document.getElementById("rb-"+id);if(!e)return;if(id===s.b)e.classList.add("cur");else if(done.has(id))e.classList.add("done");});
 }
 function roBind(){
- $("#roPrev").onclick=()=>{if(ro.i>0){ro.i--;roUpdate();}};
- $("#roNext").onclick=()=>{const L=roSteps(ro.key).length;ro.i=ro.i<L-1?ro.i+1:0;roUpdate();};
- roUpdate();
+ $("#roPrev").onclick=()=>{if(ro.i>0){ro.i--;roUpdate();rvRestart();}};
+ $("#roNext").onclick=()=>{const L=roSteps(ro.key).length;ro.i=ro.i<L-1?ro.i+1:0;roUpdate();rvRestart();};
+ roUpdate();rvUI();
 }
+/* ---------------- ROSARIO CON VOZ ---------------- */
+const RV={on:false,paused:false,mode:"todo",rate:0.9,timer:null,lock:null,gen:0,ok:("speechSynthesis" in window)&&typeof SpeechSynthesisUtterance!=="undefined"};
+try{const v=JSON.parse(localStorage.getItem("escuela-voz")||"{}");if(v.mode)RV.mode=v.mode;if(v.rate)RV.rate=v.rate;}catch(e){}
+const rvSavePref=()=>{try{localStorage.setItem("escuela-voz",JSON.stringify({mode:RV.mode,rate:RV.rate}));}catch(e){}};
+if(RV.ok){try{speechSynthesis.getVoices();speechSynthesis.addEventListener&&speechSynthesis.addEventListener("voiceschanged",()=>speechSynthesis.getVoices());}catch(e){}}
+function rvVoice(){let vs=[];try{vs=speechSynthesis.getVoices();}catch(e){}
+ return vs.find(v=>/^es[-_]MX/i.test(v.lang))||vs.find(v=>/^es[-_](US|419)/i.test(v.lang))||vs.find(v=>/^es/i.test(v.lang))||null;}
+const rvClean=t=>String(t).replace(/<[^>]+>/g,"").replace(/\([^)]*\)/g,"").replace(/\s+/g," ").trim();
+function rvParts(s){const p=PR[s.p],M=MYST[ro.key],out=[];
+ if(s.ann!==undefined){const m=M.m[s.ann];out.push({t:ORD[s.ann]+" misterio: "+m[0]+"."});}
+ if(s.x) out.push({t:s.x});
+ out.push({t:p.g}); if(p.a&&rvClean(p.a)) out.push({t:p.a,resp:true});
+ if(s.then){const q=PR[s.then];out.push({t:q.g});if(q.a&&rvClean(q.a))out.push({t:q.a,resp:true});}
+ return out;}
+function rvSay(text,cb,g){
+ // frases cortas: algunos celulares cortan textos largos
+ const chunks=[];rvClean(text).split(/(?<=[.;:!?])\s+/).filter(Boolean).forEach(f=>{if(f.length<=160){chunks.push(f);return;}let cur="";f.split(/(?<=,)\s+/).forEach(p=>{if((cur+" "+p).length>160&&cur){chunks.push(cur);cur=p;}else cur=cur?cur+" "+p:p;});if(cur)chunks.push(cur);});let i=0;
+ const one=()=>{if(g!==RV.gen)return;if(i>=chunks.length){cb();return;}
+  const u=new SpeechSynthesisUtterance(chunks[i++]);const v=rvVoice();if(v)u.voice=v;u.lang=v?v.lang:"es-MX";u.rate=RV.rate;
+  u.onend=()=>{if(g===RV.gen)one();};u.onerror=()=>{if(g===RV.gen)one();};speechSynthesis.speak(u);};
+ one();}
+function rvStep(){
+ if(!RV.on||RV.paused)return;const g=++RV.gen;const S=roSteps(ro.key);const parts=rvParts(S[ro.i]);let k=0;
+ const next=()=>{if(g!==RV.gen||!RV.on||RV.paused)return;
+  if(k>=parts.length){if(ro.i<S.length-1){ro.i++;roUpdate();RV.timer=setTimeout(()=>{if(g===RV.gen)rvStep();},600);}else rvStop(true);return;}
+  const part=parts[k++];
+  if(part.resp&&RV.mode==="yo"){rvHint(true);const w=rvClean(part.t).split(" ").length;RV.timer=setTimeout(()=>{rvHint(false);next();},Math.max(2500,w*520/RV.rate));return;}
+  rvSay(part.t,()=>{RV.timer=setTimeout(next,250);},g);};
+ next();}
+function rvHint(on){const h=document.getElementById("rvHint");if(h)h.hidden=!on;}
+async function rvLock(on){try{if(on&&navigator.wakeLock&&!RV.lock)RV.lock=await navigator.wakeLock.request("screen");if(!on&&RV.lock){await RV.lock.release();RV.lock=null;}}catch(e){RV.lock=null;}}
+function rvCancel(){RV.gen++;clearTimeout(RV.timer);try{speechSynthesis.cancel();}catch(e){}rvHint(false);}
+function rvToggle(){
+ if(!RV.ok)return;
+ if(!RV.on){RV.on=true;RV.paused=false;rvLock(true);rvCancel();rvStep();}
+ else if(RV.paused){RV.paused=false;rvLock(true);rvCancel();rvStep();}
+ else{RV.paused=true;rvCancel();rvLock(false);}
+ rvUI();}
+function rvStop(fin){RV.on=false;RV.paused=false;rvCancel();rvLock(false);rvUI();if(fin===true){const c=document.getElementById("rvCtl");if(c)c.insertAdjacentHTML("beforeend",'<p class="muted" style="margin:8px 0 0;width:100%">Terminamos el Rosario. ¡Que la Virgen te acompañe!</p>');}}
+function rvRestart(){if(RV.on&&!RV.paused){rvCancel();rvStep();}}
+function rvUI(){const c=document.getElementById("rvCtl");if(!c)return;
+ if(!RV.ok){c.innerHTML='<p class="muted" style="margin:0">Este navegador no puede leer en voz alta. Prueba en Chrome o Safari.</p>';return;}
+ c.innerHTML=`<button class="btn red" onclick="rvToggle()">${!RV.on?"▶ Rezar con voz":RV.paused?"▶ Continuar":"❚❚ Pausa"}</button>
+  ${RV.on?`<button class="btn ghost" onclick="rvStop()">■ Detener</button>`:""}
+  <label class="rvsel">Modo<select id="rvMode" onchange="RV.mode=this.value;rvSavePref()"><option value="todo" ${RV.mode==="todo"?"selected":""}>La voz reza todo</option><option value="yo" ${RV.mode==="yo"?"selected":""}>La voz guía, yo respondo</option></select></label>
+  <label class="rvsel">Velocidad<select id="rvRate" onchange="RV.rate=+this.value;rvSavePref();rvRestart()"><option value="0.75" ${RV.rate==0.75?"selected":""}>Despacio</option><option value="0.9" ${RV.rate==0.9?"selected":""}>Normal</option><option value="1.05" ${RV.rate==1.05?"selected":""}>Rápido</option></select></label>
+  <p id="rvHint" class="rvhint" hidden>Tu turno: responde en voz alta</p>`;}
+window.addEventListener("pagehide",()=>{if(RV.on)rvStop();});
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&RV.on&&!RV.paused&&typeof isIOS==="function"&&isIOS()){/* iOS detiene la voz en segundo plano */RV.paused=true;rvCancel();rvUI();}});
+
 document.addEventListener("keydown",e=>{if(view!=="rosario"||e.target.tagName==="INPUT")return;const L=roSteps(ro.key).length;if(e.key==="ArrowRight"&&ro.i<L-1){ro.i++;roUpdate();}if(e.key==="ArrowLeft"&&ro.i>0){ro.i--;roUpdate();}});
 
 function patronalText(){const t=new Date(),y=t.getFullYear();let d=easter(y);d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+68);
@@ -1903,6 +1955,7 @@ function render(){
   const ap=sub.querySelector('[aria-pressed="true"]'); if(ap) sub.scrollLeft=ap.offsetLeft-sub.offsetWidth/2+ap.offsetWidth/2;
   app.innerHTML=(VIEWS[view]||VIEWS.inicio)();
   if(view==="misa" && ms.mode==="ruta") msBind();
+  if(view!=="rosario" && typeof RV!=="undefined" && RV.on) rvStop();
   if(view==="rosario") roBind();
   if(view==="enfermos") enBind();
   const pt=document.getElementById("patronal"); if(pt) pt.textContent=patronalText();
