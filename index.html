@@ -417,6 +417,7 @@ body.has-mini main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
 .asig{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.asig select{flex:1 1 160px;font:inherit;padding:9px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}
 .chipx{background:none;border:0;color:var(--muted);padding:0 0 0 4px;font-size:.85rem}
 #meMark,#prMark{transition:transform .7s ease}
+.santo{display:flex;gap:10px;align-items:center;background:var(--card,#fff);border:1px solid var(--line,#e8dccb);border-radius:14px;padding:10px 14px;margin:-4px 0 14px}.santo i{width:12px;height:12px;border-radius:50%;flex:none;box-shadow:0 0 0 2px rgba(0,0,0,.08)}.santo span{line-height:1.3}.santo small{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#8a7a72);font-weight:700}
 @media (prefers-reduced-motion:reduce){#meMark,#prMark{transition:none}}
 
 /* Examen */
@@ -2365,7 +2366,8 @@ function vYo(){
   <div class="week">${days}</div>
   <p class="wsent">${weekSentence(t)}</p>
   <div class="stgrid">${tiles}</div>
-  <p class="muted" style="font-size:.88rem;margin:10px 0 0">${(t._days||0)} de 7 días con oración · la semana pasada: ${(tp._days||0)}</p></section>
+  <p class="muted" style="font-size:.88rem;margin:10px 0 0">${(t._days||0)} de 7 días con oración · la semana pasada: ${(tp._days||0)}</p>
+  <button class="btn ghost" style="margin-top:12px;width:100%" onclick="compartirSemana()">Compartir mi semana como imagen</button></section>
  <section class="ycard"><h2>Hoy</h2><p class="muted" style="margin:0 0 10px">Marca lo que viviste hoy; cuenta para tu semana.</p><div class="cks">${ck}</div></section>
  <section class="ycard"><div class="phase">Reto de la semana</div><h2 style="margin:4px 0 8px">${r.t}</h2><div class="prog" style="margin:0 0 8px"><i style="width:${rv/r.n*100}%"></i></div><div class="row" style="justify-content:space-between"><span class="muted">${rv} de ${r.n}${rv>=r.n?" · ¡Cumplido! Gloria a Dios":""}</span><button class="btn ghost" onclick="go('${r.go}')">Ir</button></div></section>
  <section class="ycard"><h2>Rutina de oración</h2><p class="muted" style="margin:0 0 10px">Elige una hora y te la agregamos al calendario de tu celular, todos los días.</p>
@@ -2396,6 +2398,213 @@ function rutinaCal(){
  window.open("https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(title)+"&dates="+s+"/"+en+"&ctz=America/Mexico_City&recur="+encodeURIComponent("RRULE:FREQ=DAILY")+"&details="+encodeURIComponent("Tu momento de oración."),"_blank","noopener");
 }
 
+/* ---- santo del día (calendario romano general + propio de México) ---- */
+const SANTOS_TXT=`0102b Santos Basilio Magno y Gregorio Nacianceno
+0103b Santísimo Nombre de Jesús
+0107b San Raimundo de Peñafort
+0113b San Hilario de Poitiers
+0117b San Antonio Abad
+0120r San Fabián y San Sebastián, mártires
+0121r Santa Inés, virgen y mártir
+0122r San Vicente, diácono y mártir
+0124b San Francisco de Sales
+0125b Conversión de San Pablo
+0126b Santos Timoteo y Tito
+0127b Santa Ángela Merici
+0128b Santo Tomás de Aquino
+0131b San Juan Bosco
+0203r San Blas, obispo y mártir · bendición de las gargantas
+0205r San Felipe de Jesús, primer santo mexicano y mártir
+0206r San Pablo Miki y compañeros, mártires
+0208b Santa Josefina Bakhita
+0210b Santa Escolástica
+0211b Nuestra Señora de Lourdes · Jornada Mundial del Enfermo
+0214b Santos Cirilo y Metodio
+0217b Siete Santos Fundadores de los Servitas
+0221b San Pedro Damián
+0222b Cátedra de San Pedro
+0223r San Policarpo, obispo y mártir
+0307r Santas Perpetua y Felicidad, mártires
+0308b San Juan de Dios
+0309b Santa Francisca Romana
+0317b San Patricio
+0318b San Cirilo de Jerusalén
+0319b San José, esposo de la Virgen María
+0323b Santo Toribio de Mogrovejo
+0325b Anunciación del Señor
+0402b San Francisco de Paula
+0404b San Isidoro
+0405b San Vicente Ferrer
+0407b San Juan Bautista de La Salle
+0411r San Estanislao, obispo y mártir
+0421b San Anselmo
+0423r San Jorge, mártir
+0425r San Marcos, evangelista
+0428b San Luis María Grignion de Montfort
+0429b Santa Catalina de Siena
+0430b San Pío V
+0501b San José Obrero
+0502b San Atanasio
+0503r Santos Felipe y Santiago, apóstoles
+0510b San Juan de Ávila
+0513b Nuestra Señora de Fátima
+0514r San Matías, apóstol
+0515b San Isidro Labrador, patrono del campo
+0520b San Bernardino de Siena
+0521r San Cristóbal Magallanes y compañeros, mártires mexicanos
+0522b Santa Rita de Casia
+0526b San Felipe Neri
+0527b San Agustín de Canterbury
+0531b Visitación de la Virgen María
+0601r San Justino, mártir
+0603r San Carlos Luanga y compañeros, mártires
+0605r San Bonifacio, obispo y mártir
+0609b San Efrén
+0611r San Bernabé, apóstol
+0613b San Antonio de Padua
+0621b San Luis Gonzaga
+0622r Santos Juan Fisher y Tomás Moro, mártires
+0624b Natividad de San Juan Bautista
+0627b San Cirilo de Alejandría
+0628r San Ireneo, obispo y mártir
+0629r San Pedro y San Pablo, apóstoles
+0630r Primeros mártires de la Iglesia de Roma
+0703r Santo Tomás, apóstol
+0704b Santa Isabel de Portugal
+0706r Santa María Goretti, virgen y mártir
+0711b San Benito, abad
+0714b San Camilo de Lelis, patrono de los enfermos
+0715b San Buenaventura
+0716b Nuestra Señora del Carmen
+0722b Santa María Magdalena
+0723b Santa Brígida
+0724b San Charbel Makhluf
+0725r Santiago, apóstol
+0726b San Joaquín y Santa Ana, abuelos de Jesús
+0729b Santos Marta, María y Lázaro
+0731b San Ignacio de Loyola
+0801b San Alfonso María de Ligorio
+0802b San Pedro Julián Eymard, apóstol de la Eucaristía
+0804b San Juan María Vianney, Cura de Ars
+0806b Transfiguración del Señor
+0807b San Cayetano
+0808b Santo Domingo de Guzmán
+0809r Santa Teresa Benedicta de la Cruz, mártir
+0810r San Lorenzo, diácono y mártir
+0811b Santa Clara de Asís
+0814r San Maximiliano Kolbe, mártir
+0819b San Juan Eudes
+0820b San Bernardo
+0821b San Pío X, papa de la Eucaristía
+0822b Santa María Reina
+0823b Santa Rosa de Lima
+0824r San Bartolomé, apóstol
+0825b San Luis de Francia
+0827b Santa Mónica
+0828b San Agustín
+0829r Martirio de San Juan Bautista
+0903b San Gregorio Magno
+0908b Natividad de la Virgen María
+0909b San Pedro Claver
+0912b Santísimo Nombre de María
+0913b San Juan Crisóstomo
+0914r Exaltación de la Santa Cruz
+0915b Nuestra Señora de los Dolores
+0916r Santos Cornelio y Cipriano, mártires
+0917b San Roberto Belarmino
+0920r Santos Andrés Kim, Pablo Chong y compañeros, mártires
+0921r San Mateo, apóstol y evangelista
+0923b San Pío de Pietrelcina
+0926r Santos Cosme y Damián, mártires
+0927b San Vicente de Paúl
+0929b Santos Arcángeles Miguel, Gabriel y Rafael
+0930b San Jerónimo
+1001b Santa Teresita del Niño Jesús
+1002b Santos Ángeles Custodios
+1004b San Francisco de Asís
+1005b Santa Faustina Kowalska
+1006b San Bruno
+1007b Nuestra Señora del Rosario
+1011b San Juan XXIII
+1015b Santa Teresa de Jesús
+1016b Santa Margarita María Alacoque, mensajera del Sagrado Corazón
+1017r San Ignacio de Antioquía, obispo y mártir
+1018r San Lucas, evangelista
+1022b San Juan Pablo II
+1023b San Juan de Capistrano
+1024b San Antonio María Claret
+1028r Santos Simón y Judas Tadeo, apóstoles
+1103b San Martín de Porres
+1104b San Carlos Borromeo
+1109b Dedicación de la Basílica de Letrán
+1110b San León Magno
+1111b San Martín de Tours
+1112r San Josafat, obispo y mártir
+1115b San Alberto Magno
+1117b Santa Isabel de Hungría
+1121b Presentación de la Virgen María
+1122r Santa Cecilia, virgen y mártir, patrona de los músicos
+1123r Beato Miguel Agustín Pro, mártir mexicano
+1124r San Andrés Dung-Lac y compañeros, mártires
+1125r Santa Catalina de Alejandría, mártir
+1130r San Andrés, apóstol
+1203b San Francisco Javier
+1204b San Juan Damasceno
+1206b San Nicolás de Bari
+1207b San Ambrosio
+1209b San Juan Diego Cuauhtlatoatzin
+1213r Santa Lucía, virgen y mártir
+1214b San Juan de la Cruz
+1221b San Pedro Canisio
+1226r San Esteban, primer mártir
+1227b San Juan, apóstol y evangelista
+1228r Santos Inocentes, mártires
+1229r Santo Tomás Becket, mártir
+1231b San Silvestre I`;
+const SANTOS=Object.fromEntries(SANTOS_TXT.split("\n").map(l=>[l.slice(0,4),{c:l[4]==="r"?"rojo":"blanco",n:l.slice(6)}]));
+function santoHoy(d){
+ d=dOnly(d||new Date());
+ const f=[...yearFeasts(d.getFullYear())].find(x=>+dOnly(x.d)===+d);if(f)return {n:f.n,c:f.c,t:"Hoy celebramos"};
+ const [sn,sc]=season(d);
+ if(d.getDay()===0)return {n:"Domingo, día del Señor · "+sn,c:sc,t:"Hoy"};
+ const s=SANTOS[pad2(d.getMonth()+1)+pad2(d.getDate())];
+ const E=easter(d.getFullYear()),oct=d>=E&&d<=addD(E,7);
+ if(oct)return {n:"Octava de Pascua",c:"blanco",t:"Hoy"};
+ if(s&&sn!=="Triduo Pascual")return {n:s.n,c:s.c,t:"Santo del día"};
+ return {n:"Feria de "+sn,c:sc,t:"Hoy"};
+}
+const santoCard=()=>{const s=santoHoy();return `<div class="santo"><i style="background:var(--lc-${s.c})"></i><span><small>${s.t}</small>${esc(s.n)}</span></div>`;};
+
+/* ---- compartir mi semana como imagen ---- */
+async function compartirSemana(){
+ const nm=(ME&&ME.nombre)||st.exam.name||"";const ws=weekStart(),t=weekTotals(ws),sk=streak();
+ const W=1080,H=1350,c=document.createElement("canvas");c.width=W;c.height=H;const g=c.getContext("2d");
+ try{await document.fonts.load('700 80px "Cormorant Garamond"');await document.fonts.load('italic 600 40px "Cormorant Garamond"');await document.fonts.load('400 28px "Source Sans 3"');await document.fonts.load('700 28px "Source Sans 3"');}catch(e){}
+ const D='"Cormorant Garamond",Georgia,serif',B='"Source Sans 3",Arial,sans-serif',wine="#7d1d24",gold="#b48a3a",ink="#2a1714",mut="#6b564e";
+ g.fillStyle="#fffaf1";g.fillRect(0,0,W,H);
+ const gr=g.createLinearGradient(0,0,W,420);gr.addColorStop(0,"#7d1d24");gr.addColorStop(1,"#3a0f14");g.fillStyle=gr;g.fillRect(0,0,W,420);
+ const logo=document.querySelector(".logo img");if(logo&&logo.complete&&logo.naturalWidth){const lw=110,lh=lw*logo.naturalHeight/logo.naturalWidth;g.drawImage(logo,W/2-lw/2,50,lw,lh);}
+ g.textAlign="center";g.fillStyle="#e8c77a";g.font=`700 24px ${B}`;g.fillText("MI SEMANA CON DIOS",W/2,215);
+ const mes=x=>x.toLocaleDateString("es-MX",{day:"numeric",month:"long"});
+ g.fillStyle="#fff";let fs=74;g.font=`700 ${fs}px ${D}`;const tit=nm?nm.split(" ")[0]:"Mi semana";while(g.measureText(tit).width>W-160&&fs>40){fs-=4;g.font=`700 ${fs}px ${D}`;}g.fillText(tit,W/2,300);
+ g.fillStyle="rgba(255,255,255,.8)";g.font=`400 28px ${B}`;g.fillText(`${mes(ws)} – ${mes(addD(ws,6))}`,W/2,350);
+ // días
+ const dl=["L","M","M","J","V","S","D"],x0=W/2-3*120;
+ dl.forEach((l,i)=>{const d=addD(ws,i),on=hasAct(d),x=x0+i*120,y=500;g.beginPath();g.arc(x,y,42,0,7);g.fillStyle=on?wine:"#efe4d4";g.fill();if(on){g.fillStyle="#fff";g.font=`700 38px ${B}`;g.fillText("✓",x,y+13);}g.fillStyle=mut;g.font=`700 24px ${B}`;g.fillText(l,x,y+80);});
+ // frase
+ g.fillStyle=ink;g.font=`italic 600 44px ${D}`;
+ const words=weekSentence(t).split(" ");let line="",y=680;const lines=[];words.forEach(w=>{const tt=line?line+" "+w:w;if(g.measureText(tt).width>W-160){lines.push(line);line=w;}else line=tt;});lines.push(line);
+ lines.slice(0,5).forEach(l=>{g.fillText(l,W/2,y);y+=56;});
+ // cuadritos
+ const tl=[["ros","Rosarios"],["misa","Misas"],["ora","Oraciones"],["bib","Capítulos"],["exa","Exámenes"],["vis","Visitas"]];
+ const top=y+Math.max(20,(H-170-y-280)/2);tl.forEach(([k,l],i)=>{const col=i%3,row=Math.floor(i/3),bw=280,bh=130,x=W/2-1.5*bw-20+col*(bw+20),yy=top+row*(bh+20);g.fillStyle="#f5ece0";g.beginPath();g.roundRect?g.roundRect(x,yy,bw,bh,20):g.rect(x,yy,bw,bh);g.fill();g.fillStyle=wine;g.font=`700 56px ${D}`;g.fillText(String(t[k]||0),x+bw/2,yy+68);g.fillStyle=mut;g.font=`400 24px ${B}`;g.fillText(l,x+bw/2,yy+108);});
+ g.fillStyle=gold;g.font=`700 30px ${B}`;g.fillText(sk?`🕯 ${sk} ${sk===1?"día":"días"} de oración seguida`:"🕯 Esta semana enciendo mi vela",W/2,H-110);
+ g.fillStyle=mut;g.font=`400 22px ${B}`;g.fillText("Escuela de Ministros · Sagrado Corazón de Jesús, El Cercado",W/2,H-60);
+ const blob=await new Promise(r=>c.toBlob(r,"image/png"));const file=new File([blob],"mi-semana.png",{type:"image/png"});
+ if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:"Mi semana con Dios"});return;}catch(e){if(e&&e.name==="AbortError")return;}}
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="mi-semana.png";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+}
+
 /* ---- INICIO nuevo ---- */
 function vInicio(){
  const tk=todayMyst(),M=MYST[tk],[sn,sc]=season(new Date()),fr=fraseHoy(),nm=nombreCorto();
@@ -2403,6 +2612,7 @@ function vInicio(){
  const r=retoSemana(),t=weekTotals(weekStart()),rv=Math.min(t[r.k]||0,r.n),sk=streak();
  const p=totalPct(),next=MODS.findIndex((_,i)=>!modDone(i));
  return `<div class="hi"><div><span class="muted">${new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"})}</span><h1 class="pgtitle" style="margin:2px 0 0">${saludo()}${nm?", "+esc(nm):""}</h1></div><button class="streakpill" onclick="go('yo')" aria-label="Racha">${tileSVG("vela")}<b>${sk}</b></button></div>
+ ${santoCard()}
  ${misServicios()}
  <button class="herorosary" onclick="heroRosary('${tk}')" style="--g1:${{gozosos:"#0f5c4d",luminosos:"#1f5f7a",dolorosos:"#5b2a1e",gloriosos:"#7d1d24"}[tk]};--g2:#120e14">
   <svg class="hrsvg" viewBox="0 0 400 220" aria-hidden="true"><path d="M-20 60 Q120 200 260 120 T440 150" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="0.1 16" stroke-linecap="round" style="stroke-width:9"/><path d="M300 120v40M290 136h20" stroke="#e8c77a" stroke-width="6" stroke-linecap="round"/></svg>
