@@ -408,6 +408,14 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .mini-b{flex:0 0 46px;height:46px;border-radius:50%;border:0;background:#fff;color:#5a1219;font-size:1.1rem;font-weight:700}.mini-b.x{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);font-size:1rem}
 .mini-p{position:absolute;left:0;bottom:0;height:3px;background:#e8c77a;transition:width .3s}
 body.has-mini main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
+.servicios{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold-line,#b48a3a);border-radius:16px;padding:14px 16px;margin:0 0 16px;display:flex;flex-direction:column;gap:10px}
+.servicios h2{font-family:var(--f-display);font-size:1.4rem;margin:0}.servicios.urg{border-left-color:var(--rubric);background:linear-gradient(0deg,var(--card),var(--rubric-soft))}
+.srv{display:flex;gap:12px;align-items:center}.srv .fd{flex:0 0 52px}
+.calbtn{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:1px solid var(--line);border-radius:12px;padding:6px 8px;color:var(--ink);font-size:.72rem;font-weight:600}
+.calbtn svg{width:30px;height:28px;background:linear-gradient(160deg,#7d1d24,#3b0d12);border-radius:8px;padding:3px}
+.asg{font-size:.85rem;color:var(--rubric);font-weight:600;margin:4px 0 0}
+.asig{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.asig select{flex:1 1 160px;font:inherit;padding:9px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}
+.chipx{background:none;border:0;color:var(--muted);padding:0 0 0 4px;font-size:.85rem}
 #meMark,#prMark{transition:transform .7s ease}
 @media (prefers-reduced-motion:reduce){#meMark,#prMark{transition:none}}
 
@@ -1535,6 +1543,25 @@ function miniUI(){
  m.innerHTML=`<button class="mini-info" onclick="go('rosario')">${tileSVG("rosario")}<span><b>Rosario · ${MYST[ro.key].n}</b><small>${RV.paused?"En pausa · ":""}${esc(s.h)}</small></span></button><button class="mini-b" aria-label="${RV.paused?"Continuar":"Pausa"}" onclick="rvToggle()">${RV.paused?"▶":"❚❚"}</button><button class="mini-b x" aria-label="Detener" onclick="rvStop()">✕</button><i class="mini-p" style="width:${(ro.i+1)/S.length*100}%"></i>`;
 }
 function heroRosary(k){if(!RV.ok){ro.key=k;ro.i=0;go("rosario");return;}if(RV.on&&ro.key===k){rvToggle();return;}if(RV.on)rvStop();ro.key=k;ro.i=0;rvToggle();}
+function chipsTurno(t,w,coord){
+ if(coord&&t.anot)return t.anot.length?t.anot.map(a=>`<span class="who-chip">${esc(a.nombre)} <button class="chipx" aria-label="Quitar a ${esc(a.nombre)}" onclick="rolDesasignar('${t.id}','${a.id}')">✕</button></span>`).join(" "):'<span class="muted">Nadie asignado todavía</span>';
+ return w.length?w.map(n=>`<span class="who-chip">${esc(n)}</span>`).join(" "):'<span class="muted">Nadie anotado todavía</span>';}
+function asigUI(t,full){
+ if(full)return `<p class="muted" style="font-size:.85rem;margin:6px 0 0">Turno completo.</p>`;
+ const ids=(t.anot||[]).map(a=>a.id),op=(MIN.rows||[]).filter(m=>!ids.includes(m.id));
+ return `<div class="asig"><select id="as-${t.id}" aria-label="Asignar ministro"><option value="">Asignar a…</option>${op.map(m=>`<option value="${m.id}">${esc(m.nombre)}${m.rol==="padre"?" (Padre)":""}</option>`).join("")}</select><button class="btn ghost" ${ROL.busy?"disabled":""} onclick="rolAsignar('${t.id}')">Asignar</button></div>`;}
+async function rolAsignar(tid){const sel=document.getElementById("as-"+tid);const mid=sel&&sel.value;if(!mid){ROL.msg="Elige a quién asignar.";render();return;}
+ ROL.busy=true;try{await rpc("turno_asignar",{p_codigo:ME.codigo,p_turno:tid,p_ministro:mid});ROL.msg="";}catch(e){ROL.msg=e.status===404?"Falta activar las asignaciones: corre asignaciones.sql en Supabase.":e.message;}ROL.busy=false;await loadRol(true);}
+async function rolDesasignar(tid,mid){ROL.busy=true;try{await rpc("turno_desasignar",{p_codigo:ME.codigo,p_turno:tid,p_ministro:mid});}catch(e){ROL.msg=e.status===404?"Falta activar las asignaciones: corre asignaciones.sql en Supabase.":e.message;}ROL.busy=false;await loadRol(true);}
+function misServicios(){
+ if(!ME.id)return "";loadRol();
+ const hoy=dayKey(),man=dayKey(addD(new Date(),1));
+ const M=(ROL.turnos||[]).filter(t=>t.yo).slice(0,3);if(!M.length)return "";
+ const urg=M.find(t=>t.fecha===hoy||t.fecha===man);
+ return `<section class="servicios ${urg?"urg":""}"><div class="row" style="justify-content:space-between"><h2>${urg?(urg.fecha===hoy?"¡Hoy te toca servir!":"Mañana te toca servir"):"Tus próximos servicios"}</h2><button class="back" style="margin:0" onclick="go('rol')">Ver rol →</button></div>
+ ${M.map(t=>{const d=new Date(t.fecha+"T12:00:00"),et=t.fecha===hoy?"Hoy":t.fecha===man?"Mañana":d.toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"short"});
+  return `<div class="srv"><div class="fd"><b>${d.getDate()}</b><span>${d.toLocaleDateString("es-MX",{month:"short"}).replace(".","")}</span></div><div style="min-width:0;flex:1"><b class="fn">${esc(t.tipo||"Servicio")}</b><div class="muted" style="font-size:.88rem">${et}${t.hora?" · "+esc(t.hora):""}${t.lugar?" · "+esc(t.lugar):""}</div>${t.asignado?`<div class="asg">Te asignó: ${esc(t.asignado)}</div>`:""}${t.notas?`<div style="font-size:.9rem;margin-top:2px">${esc(t.notas)}</div>`:""}</div><button class="calbtn" aria-label="Agregar a mi calendario" onclick="calTurno('${t.id}')">${tileSVG("iglesia")}<span>Calendario</span></button></div>`;}).join("")}
+ ${urg?`<p class="muted" style="font-size:.88rem;margin:8px 0 0">Recuerda: en gracia de Dios, una hora de ayuno y llegar 15 minutos antes. <a href="#" onclick="event.preventDefault();go('antes')">Antes de servir</a></p>`:""}</section>`;}
 function rvRestart(){if(RV.on&&!RV.paused){rvCancel();rvStep();}}
 function rvUI(){miniUI();const c=document.getElementById("rvCtl");if(!c)return;
  if(!RV.ok){c.innerHTML='<p class="muted" style="margin:0">Este navegador no puede leer en voz alta. Prueba en Chrome o Safari.</p>';return;}
@@ -1900,7 +1927,7 @@ function vEquipo(){
 /* Alta de ministros (solo coordinador) */
 const MIN={rows:[],ready:false,msg:"",nuevo:"",confirm:null};
 const genCode=()=>{const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";const a=new Uint32Array(8);crypto.getRandomValues(a);a.forEach(n=>s+=A[n%A.length]);return s;};
-async function loadMin(){try{MIN.rows=await rpc("ministros_lista",{p_codigo:ME.codigo})||[];MIN.ready=true;}catch(e){MIN.msg=e.message;MIN.ready=true;}if(view==="ministros")render();}
+async function loadMin(){try{MIN.rows=await rpc("ministros_lista",{p_codigo:ME.codigo})||[];MIN.ready=true;}catch(e){MIN.msg=e.message;MIN.ready=true;}if(view==="ministros"||view==="rol")render();}
 async function minAlta(){const n=$("#mnNombre").value.trim(),c=$("#mnCodigo").value.trim().toUpperCase(),r=$("#mnRol").value;
  if(n.length<2){MIN.msg="Escribe el nombre.";render();return;}
  try{await rpc("ministro_alta",{p_codigo:ME.codigo,p_nombre:n,p_nuevo_codigo:c,p_rol:r});MIN.nuevo=`${n}: ${c}`;MIN.msg="";MIN.ready=false;loadMin();}catch(e){MIN.msg=e.message;render();}}
@@ -2007,7 +2034,7 @@ function vBendic(){
 /* ---------------- ROL DE SERVICIO (Supabase) ---------------- */
 const ROL={turnos:[],ready:false,msg:"",busy:false,form:false,loading:false,t:0,confirm:null};
 const TIPOS=["Misa","Comunión a enfermos","Misión en la sierra","Celebración de la Palabra","Exposición del Santísimo","Rosario o velorio","Otro"];
-async function loadRol(force){if(!ME.id||ROL.loading)return;if(!force&&ROL.ready&&Date.now()-ROL.t<15000)return;ROL.loading=true;try{ROL.turnos=await rpc("turnos_lista",{p_codigo:ME.codigo})||[];ROL.err=null;}catch(e){ROL.err=e.message;}ROL.ready=true;ROL.loading=false;ROL.t=Date.now();if(view==="rol"){const y=window.scrollY;render();window.scrollTo(0,y);}}
+async function loadRol(force){if(!ME.id||ROL.loading)return;if(!force&&ROL.ready&&Date.now()-ROL.t<15000)return;ROL.loading=true;try{ROL.turnos=await rpc("turnos_lista",{p_codigo:ME.codigo})||[];ROL.err=null;}catch(e){ROL.err=e.message;}ROL.ready=true;ROL.loading=false;ROL.t=Date.now();if(view==="rol"||view==="inicio"){const y=window.scrollY;render();window.scrollTo(0,y);}}
 async function rolToggle(tid,yo){if(ROL.busy)return;ROL.busy=true;try{await rpc(yo?"turno_quitar":"turno_anotar",{p_codigo:ME.codigo,p_turno:tid});ROL.msg="";}catch(e){ROL.msg=e.message;}ROL.busy=false;await loadRol(true);}
 async function rolAdd(){const v=id=>($("#"+id).value||"").trim();const f=v("rfFecha");if(!f){ROL.msg="Pon la fecha del turno.";render();return;}
  ROL.busy=true;try{await rpc("turno_crear",{p_codigo:ME.codigo,p_fecha:f,p_hora:v("rfHora"),p_tipo:v("rfTipo"),p_lugar:v("rfLugar"),p_cupo:parseInt(v("rfCupo"))||2,p_notas:v("rfNotas")});ROL.msg="Turno agregado.";ROL.form=false;}catch(e){ROL.msg=e.message;}ROL.busy=false;await loadRol(true);}
@@ -2025,14 +2052,14 @@ function vRol(){
    <label class="full">Lugar<input type="text" id="rfLugar" placeholder="Ej. Templo parroquial, Misa de 12"></label><label class="full">Notas<input type="text" id="rfNotas" placeholder="Ej. Llevar teca; salida 8 a. m. del atrio"></label></div>
    <div class="row" style="margin-top:12px"><button class="btn red" ${ROL.busy?"disabled":""} onclick="rolAdd()">Agregar turno</button><button class="btn ghost" onclick="ROL.form=false;render()">Cancelar</button></div></div>`
    :`<div class="row" style="margin:16px 0"><button class="btn red" onclick="ROL.form=true;render()">+ Nuevo turno</button><span class="muted" style="font-size:.88rem">Solo el coordinador y el padre ven este botón.</span></div>`):"";
- const T=ROL.turnos;
+ const T=ROL.turnos;if(coord&&!MIN.ready)loadMin();
  return head+form+(ROL.msg?`<p class="muted">${esc(ROL.msg)}</p>`:"")+(ROL.err?`<div class="warn">${esc(ROL.err)}</div>`:"")+
  (T.length?`<div class="turnos">${T.map(t=>{const w=t.anotados||[],me=t.yo,full=w.length>=(t.cupo||1);const d=new Date(t.fecha+"T12:00:00");
    return `<div class="turno ${me?"mine":""}"><div class="fd"><b>${d.getDate()}</b><span>${d.toLocaleDateString("es-MX",{month:"short"}).replace(".","")}</span></div>
    <div style="min-width:0"><div class="row" style="gap:8px"><b class="fn">${esc(t.tipo||"Turno")}</b><span class="pill ${full?"done":""}">${w.length}/${t.cupo||1}</span></div>
    <div class="muted" style="font-size:.88rem">${d.toLocaleDateString("es-MX",{weekday:"long"})}${t.hora?" · "+esc(t.hora):""}${t.lugar?" · "+esc(t.lugar):""}</div>
    ${t.notas?`<p style="margin:6px 0 0">${esc(t.notas)}</p>`:""}
-   <p style="margin:6px 0 0;font-size:.92rem">${w.length?w.map(n=>`<span class="who-chip">${esc(n)}</span>`).join(" "):'<span class="muted">Nadie anotado todavía</span>'}</p></div>
+   <p style="margin:6px 0 0;font-size:.92rem">${chipsTurno(t,w,coord)}</p>${coord&&t.anot?asigUI(t,full):""}${t.asignado?`<p class="asg">Te asignó: ${esc(t.asignado)}</p>`:""}</div>
    <div class="tactions"><button class="back" style="margin:0;font-size:.85rem" onclick="calTurno('${t.id}')">Agregar a mi calendario</button><button class="btn ${me?"ghost":""}" ${ROL.busy||(!me&&full)?"disabled":""} onclick="rolToggle('${t.id}',${me})">${me?"Quitarme":full?"Completo":"Me anoto"}</button>
    ${coord?`<button class="back" style="margin:0;font-size:.85rem" onclick="rolDel('${t.id}')">${ROL.confirm===t.id?"¿Seguro? Toca otra vez":"Borrar turno"}</button>`:""}</div></div>`;}).join("")}</div>`
  :`<div class="panel"><h3 style="font-size:1.2rem">Todavía no hay turnos</h3><p class="muted" style="margin:6px 0 0">${coord?"Toca “Nuevo turno” para publicar el primero.":"Cuando el coordinador publique los turnos, aparecerán aquí para que te anotes."}</p></div>`)+
@@ -2376,6 +2403,7 @@ function vInicio(){
  const r=retoSemana(),t=weekTotals(weekStart()),rv=Math.min(t[r.k]||0,r.n),sk=streak();
  const p=totalPct(),next=MODS.findIndex((_,i)=>!modDone(i));
  return `<div class="hi"><div><span class="muted">${new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"})}</span><h1 class="pgtitle" style="margin:2px 0 0">${saludo()}${nm?", "+esc(nm):""}</h1></div><button class="streakpill" onclick="go('yo')" aria-label="Racha">${tileSVG("vela")}<b>${sk}</b></button></div>
+ ${misServicios()}
  <button class="herorosary" onclick="heroRosary('${tk}')" style="--g1:${{gozosos:"#0f5c4d",luminosos:"#1f5f7a",dolorosos:"#5b2a1e",gloriosos:"#7d1d24"}[tk]};--g2:#120e14">
   <svg class="hrsvg" viewBox="0 0 400 220" aria-hidden="true"><path d="M-20 60 Q120 200 260 120 T440 150" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="0.1 16" stroke-linecap="round" style="stroke-width:9"/><path d="M300 120v40M290 136h20" stroke="#e8c77a" stroke-width="6" stroke-linecap="round"/></svg>
   <span class="play" aria-hidden="true">${RV.on&&!RV.paused&&ro.key===tk?"❚❚":"▶"}</span>
