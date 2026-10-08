@@ -1,5 +1,5 @@
 // Guarda la página en el celular para que abra sin señal (por ejemplo, en la sierra).
-const CACHE = "ministros-v6";
+const CACHE = "ministros-v7";
 const CORE = ["/", "/index.html", "/config.js", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });

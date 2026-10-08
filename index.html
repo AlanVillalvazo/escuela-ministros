@@ -318,6 +318,24 @@ details.part .partnote{padding:10px 18px;background:var(--rubric-soft);font-size
 .bar .ubtn.in{background:var(--gilt,#e8c77a);border-color:var(--gilt,#e8c77a);color:var(--ink)}
 .bar .ubtn:focus-visible{outline:2px solid var(--gilt,#e8c77a);outline-offset:2px}
 .install{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--rubric);border-radius:var(--r);padding:14px 16px;margin:0 0 20px}.install img{border-radius:50%;display:block}.install-t b{display:block;font-family:var(--f-display);font-size:1.35rem;color:var(--ink)}.install-t span{color:var(--muted);font-size:.95rem}.inst-how{grid-column:1/-1}.inst-steps{margin:4px 0 0;padding-left:1.4em;display:flex;flex-direction:column;gap:8px}.inst-steps li::marker{color:var(--rubric);font-weight:700}@media (max-width:560px){.install{grid-template-columns:48px minmax(0,1fr)}.install img{width:48px;height:48px}.install .btn{grid-column:1/-1;width:100%}}
+.bookgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.bookgrid button{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;display:flex;flex-direction:column;min-height:56px}
+.bookgrid button:hover{border-color:var(--rubric)}.bookgrid b{font-family:var(--f-display);font-size:1.15rem}.bookgrid span{font-size:.8rem;color:var(--muted)}
+.chgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:8px}
+.chgrid button{min-height:52px;border:1px solid var(--line);background:var(--card);border-radius:var(--r);font-weight:700;font-size:1.05rem}
+.chgrid button:hover{border-color:var(--rubric);color:var(--rubric)}
+.bibtext{font-size:1.15rem;line-height:1.85;max-width:66ch;margin-top:14px}
+.bibtext sup{color:var(--rubric);font-weight:700;font-size:.7em;margin-right:3px}
+.bibtext .vhl{background:var(--rubric-soft);border-radius:4px}
+.bibsearch{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.bibsearch input{flex:1 1 220px;font:inherit;padding:12px 14px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:50px}
+.bibres{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.bibres button{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px;line-height:1.5}
+.bibres b{color:var(--rubric);margin-right:4px}.bibres mark{background:var(--gilt,#e8c77a);color:var(--ink);border-radius:3px;padding:0 2px}
+a.btn.lnk{display:inline-flex;align-items:center;text-decoration:none}a.btn.red.lnk{color:#fff}a.btn.ghost.lnk{color:var(--ink)}
+.prep{border-top:3px solid var(--rubric);margin:18px 0}
+.prepgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.prepgrid>div{background:var(--paper);border-radius:var(--r);padding:8px 12px}.prepgrid b{margin-right:4px}
 #meMark,#prMark{transition:transform .7s ease}
 @media (prefers-reduced-motion:reduce){#meMark,#prMark{transition:none}}
 
@@ -682,9 +700,10 @@ const GROUPS=[
  {id:"modulos",n:"Módulos",v:["modulos"]},
  {id:"guias",n:"Guías",v:["antes","misa","enfermos","palabra","expo","difuntos","emergencias"]},
  {id:"oraciones",n:"Oraciones",v:["rosario","devocionario","bendiciones"]},
+ {id:"biblia",n:"Biblia",v:["biblia"]},
  {id:"practica",n:"Practica",v:["tarjetas","situaciones","ordena","examen"]},
  {id:"equipo",n:"Equipo",v:["rol","calendario","equipo","ministros"]}];
-const VNAME={antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
+const VNAME={biblia:"Biblia",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
 const ALLV=GROUPS.flatMap(g=>g.v);
 const groupOf=v=>GROUPS.find(g=>g.v.includes(v));
 const lastIn={};
@@ -723,6 +742,7 @@ function vInicio(){
     <button class="path" onclick="go('expo')"><span class="eyebrow">Adoración</span><h3>Exposición del Santísimo</h3><span class="muted">Cómo exponer y reservar cuando el padre no está.</span><span class="meta">${st.ex?"Quiz: "+st.ex+" de 6":"Guía paso a paso y quiz"}</span></button>
     <button class="path" onclick="go('difuntos')"><span class="eyebrow">Misiones</span><h3>Velorios y novenarios</h3><span class="muted">Cómo guiar el rezo por un difunto.</span><span class="meta">Guía paso a paso y quiz</span></button>
     <button class="path" onclick="go('emergencias')"><span class="eyebrow">Misiones</span><h3>Emergencias</h3><span class="muted">Bautismo en peligro de muerte y acompañar a un moribundo.</span><span class="meta">Guía paso a paso y quiz</span></button>
+    <button class="path" onclick="go('biblia')"><span class="eyebrow">Palabra de Dios</span><h3>La Biblia</h3><span class="muted">Biblia católica completa con buscador y lecturas del día.</span><span class="meta">73 libros · sin señal</span></button>
     <button class="path" onclick="go('rosario')"><span class="eyebrow">Oración</span><h3>Santo Rosario</h3><span class="muted">Los misterios y una guía cuenta por cuenta.</span><span class="meta">Hoy: misterios ${MYST[todayMyst()].n}</span></button>
     <button class="path" onclick="go('devocionario')"><span class="eyebrow">Oración</span><h3>Devocionario</h3><span class="muted">Ángelus, Acto de contrición, Coronilla, Viacrucis y más.</span><span class="meta">${DEV.length+2} oraciones</span></button>
     <button class="path" onclick="go('tarjetas')"><span class="eyebrow">Memoriza</span><h3>Tarjetas</h3><span class="muted">Objetos, lugares y términos.</span><span class="meta">${st.known.length} de ${CARDS.length} dominadas</span></button>
@@ -1172,6 +1192,7 @@ function vPalabra(){
     <h1 style="font-size:clamp(1.9rem,5vw,2.6rem);margin:6px 0 10px">Celebración de la Palabra</h1>
     <p class="lead">En las rancherías y capillas de la sierra, cuando el padre no puede llegar el domingo, la comunidad no se queda sin reunirse: escucha la Palabra de Dios y, si hay mandato, recibe la Comunión. Esta guía te lleva paso a paso.</p></div>
     <div class="pic">${cpScene()}</div></section>
+  ${palabraDomingo()}
   <div class="facts">
     <div class="fact"><b>Con mandato</b><span>Solo se dirige con el encargo de tu párroco y según el ritual de tu diócesis.</span></div>
     <div class="fact"><b>No es una Misa</b><span>No hay consagración. Que la gente entienda la diferencia y siga deseando la Eucaristía.</span></div>
@@ -1852,6 +1873,7 @@ function vCalendario(){
   <div class="fact"><b>Ciclo ${ly.dom} · año ${ly.fer}</b><span>Domingos: ciclo ${ly.dom} (${{A:"Mateo",B:"Marcos",C:"Lucas"}[ly.dom]}). Entre semana: año ${ly.fer}.</span></div>
   <div class="fact"><b>Próximo domingo</b><span>${fmtD(sun)}</span><a class="btn ghost" style="margin-top:10px;display:inline-block;text-decoration:none" href="${lectUrl(sun)}" target="_blank" rel="noopener">Ver lecturas →</a></div>
  </div>
+ <div class="panel" style="margin-top:18px"><div class="phase">Lecturas del día</div><p class="muted" style="margin:4px 0 10px">Las lecturas oficiales de la Misa de hoy y de mañana.</p>${lecturasBtns()}</div>
  <div class="sec"><h2>Lecturas de los próximos domingos</h2>
   <div class="tbl"><table style="min-width:0"><tbody>${[0,7,14,21].map(n=>{const d=addD(sun,n);return `<tr><td>${fmtD(d)}</td><td style="text-align:right"><a href="${lectUrl(d)}" target="_blank" rel="noopener" style="color:var(--rubric);font-weight:700">Lecturas →</a></td></tr>`;}).join("")}</tbody></table></div>
   <p class="muted" style="font-size:.85rem">Las lecturas abren en el sitio en español de los obispos de Estados Unidos. Las citas son las mismas en México; la traducción puede variar un poco del leccionario de tu parroquia.</p></div>
@@ -1945,7 +1967,79 @@ function vAntes(){
 }
 function toggleAntes(i,el){const today=new Date().toDateString();if(st.antesDay!==today){st.antes=[];st.antesDay=today;}st.antes=st.antes||[];if(el.checked){if(!st.antes.includes(i))st.antes.push(i);}else st.antes=st.antes.filter(x=>x!==i);save();const y=window.scrollY;render();window.scrollTo(0,y);}
 
-const VIEWS={antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
+/* ---------------- BIBLIA ---------------- */
+const BIB_IDX=[["gn","Génesis","Gn",50,"AT"],["ex","Éxodo","Ex",40,"AT"],["lv","Levítico","Lv",27,"AT"],["nm","Números","Nm",36,"AT"],["dt","Deuteronomio","Dt",34,"AT"],["jos","Josué","Jos",24,"AT"],["jue","Jueces","Jue",21,"AT"],["rt","Rut","Rt",4,"AT"],["1sm","1 Samuel","1 Sm",31,"AT"],["2sm","2 Samuel","2 Sm",24,"AT"],["1re","1 Reyes","1 Re",22,"AT"],["2re","2 Reyes","2 Re",25,"AT"],["1cr","1 Crónicas","1 Cr",29,"AT"],["2cr","2 Crónicas","2 Cr",36,"AT"],["esd","Esdras","Esd",10,"AT"],["neh","Nehemías","Neh",13,"AT"],["tb","Tobías","Tb",14,"AT"],["jdt","Judit","Jdt",16,"AT"],["est","Ester","Est",16,"AT"],["1mac","1 Macabeos","1 Mac",16,"AT"],["2mac","2 Macabeos","2 Mac",15,"AT"],["job","Job","Job",42,"AT"],["sal","Salmos","Sal",150,"AT"],["prov","Proverbios","Prov",31,"AT"],["ecl","Eclesiastés","Ecl",12,"AT"],["cant","Cantar de los Cantares","Cant",8,"AT"],["sab","Sabiduría","Sab",19,"AT"],["eclo","Eclesiástico","Eclo",51,"AT"],["is","Isaías","Is",66,"AT"],["jer","Jeremías","Jer",52,"AT"],["lam","Lamentaciones","Lam",5,"AT"],["bar","Baruc","Bar",6,"AT"],["ez","Ezequiel","Ez",48,"AT"],["dn","Daniel","Dn",14,"AT"],["os","Oseas","Os",14,"AT"],["jl","Joel","Jl",3,"AT"],["am","Amós","Am",9,"AT"],["abd","Abdías","Abd",1,"AT"],["jon","Jonás","Jon",4,"AT"],["miq","Miqueas","Miq",7,"AT"],["nah","Nahúm","Nah",3,"AT"],["hab","Habacuc","Hab",3,"AT"],["sof","Sofonías","Sof",3,"AT"],["ag","Ageo","Ag",2,"AT"],["zac","Zacarías","Zac",14,"AT"],["mal","Malaquías","Mal",4,"AT"],["mt","Mateo","Mt",28,"NT"],["mc","Marcos","Mc",16,"NT"],["lc","Lucas","Lc",24,"NT"],["jn","Juan","Jn",21,"NT"],["hch","Hechos de los Apóstoles","Hch",28,"NT"],["rom","Romanos","Rom",16,"NT"],["1cor","1 Corintios","1 Cor",16,"NT"],["2cor","2 Corintios","2 Cor",13,"NT"],["gal","Gálatas","Gál",6,"NT"],["ef","Efesios","Ef",6,"NT"],["flp","Filipenses","Flp",4,"NT"],["col","Colosenses","Col",4,"NT"],["1tes","1 Tesalonicenses","1 Tes",5,"NT"],["2tes","2 Tesalonicenses","2 Tes",3,"NT"],["1tim","1 Timoteo","1 Tim",6,"NT"],["2tim","2 Timoteo","2 Tim",4,"NT"],["tit","Tito","Tit",3,"NT"],["flm","Filemón","Flm",1,"NT"],["heb","Hebreos","Heb",13,"NT"],["sant","Santiago","Sant",5,"NT"],["1pe","1 Pedro","1 Pe",5,"NT"],["2pe","2 Pedro","2 Pe",3,"NT"],["1jn","1 Juan","1 Jn",5,"NT"],["2jn","2 Juan","2 Jn",1,"NT"],["3jn","3 Juan","3 Jn",1,"NT"],["jds","Judas","Jds",1,"NT"],["ap","Apocalipsis","Ap",22,"NT"]];
+const BIB_GR=[["AT","Pentateuco",0,5],["AT","Libros históricos",5,21],["AT","Libros sapienciales",21,28],["AT","Libros proféticos",28,46],["NT","Evangelios",46,50],["NT","Hechos de los Apóstoles",50,51],["NT","Cartas",51,72],["NT","Apocalipsis",72,73]];
+const BIB={b:null,c:null,books:{},loading:null,q:"",res:null,busy:false,prog:0,dl:null,err:null};
+try{const p=JSON.parse(localStorage.getItem("escuela-bib")||"{}");BIB.last=p.last||null;BIB.dlDone=!!p.dl;}catch(e){}
+const bibSaveP=()=>{try{localStorage.setItem("escuela-bib",JSON.stringify({last:BIB.last,dl:BIB.dlDone}));}catch(e){}};
+const bibInfo=id=>BIB_IDX.find(b=>b[0]===id);
+const bibNorm=s=>String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+async function bibLoad(id){if(BIB.books[id])return BIB.books[id];const r=await fetch("biblia/"+id+".json");if(!r.ok)throw new Error("No se pudo abrir el libro");const j=await r.json();BIB.books[id]=j;return j;}
+function bibGo(b,c){BIB.b=b;BIB.c=c||null;BIB.res=null;if(b&&c){BIB.last=[b,c];bibSaveP();}render();window.scrollTo(0,0);}
+function bibRef(q){
+ const m=bibNorm(q).trim().match(/^([123]?\s?[a-z]+)\.?\s*(\d+)(?:\s*[,:]\s*(\d+))?$/);if(!m)return null;
+ const t=m[1].replace(/\s/g,"");
+ const bk=BIB_IDX.find(b=>bibNorm(b[2]).replace(/\s/g,"")===t)||BIB_IDX.find(b=>bibNorm(b[1]).replace(/\s/g,"").startsWith(t));
+ if(!bk)return null;const c=+m[2];if(c<1||c>bk[3])return null;return {b:bk[0],c,v:m[3]?+m[3]:null};}
+async function bibSearch(){
+ const q=($("#bibQ").value||"").trim();BIB.q=q;if(q.length<2)return;
+ const r=bibRef(q);if(r){BIB.hl=r.v;bibGo(r.b,r.c);return;}
+ BIB.busy=true;BIB.res=null;BIB.prog=0;render();
+ const nq=bibNorm(q),out=[];
+ try{for(let i=0;i<BIB_IDX.length;i++){const id=BIB_IDX[i][0];const bk=await bibLoad(id);BIB.prog=Math.round((i+1)/BIB_IDX.length*100);const pe=document.getElementById("bibProg");if(pe)pe.textContent=BIB.prog+"%";
+  bk.c.forEach((ch,ci)=>ch.forEach(([v,t])=>{if(out.length<200&&bibNorm(t).includes(nq))out.push([id,ci+1,v,t]);}));if(out.length>=200)break;}
+  BIB.res=out;}catch(e){BIB.err="Sin conexión: descarga la Biblia completa para buscar sin señal.";}
+ BIB.busy=false;render();}
+async function bibDownload(){
+ if(BIB.dl!==null)return;BIB.dl=0;render();
+ try{for(let i=0;i<BIB_IDX.length;i++){await bibLoad(BIB_IDX[i][0]);BIB.dl=Math.round((i+1)/BIB_IDX.length*100);const e=document.getElementById("bibDl");if(e)e.textContent=BIB.dl+"%";}
+  BIB.dlDone=true;bibSaveP();}catch(e){BIB.err="Se cortó la descarga. Inténtalo de nuevo con señal.";}
+ BIB.dl=null;render();}
+const hlTxt=(t,q)=>{const n=bibNorm(t),i=n.indexOf(bibNorm(q));if(i<0)return esc(t);return esc(t.slice(0,i))+"<mark>"+esc(t.slice(i,i+q.length))+"</mark>"+esc(t.slice(i+q.length));};
+function lecturasBtns(){const t=dOnly(new Date()),m=addD(t,1),s=nextSunday();
+ return `<div class="row" style="gap:8px"><a class="btn red lnk" href="${lectUrl(t)}" target="_blank" rel="noopener">Lecturas de hoy</a><a class="btn ghost lnk" href="${lectUrl(m)}" target="_blank" rel="noopener">Mañana</a>${+s!==+t?`<a class="btn ghost lnk" href="${lectUrl(s)}" target="_blank" rel="noopener">Domingo ${s.getDate()}</a>`:""}</div>`;}
+function vBiblia(){
+ const head=`<div class="eyebrow">Sagrada Escritura</div><h1 style="font-size:clamp(1.9rem,5vw,2.6rem);margin:6px 0 8px">La Biblia</h1>`;
+ if(BIB.b){
+  const info=bibInfo(BIB.b);const bk=BIB.books[BIB.b];
+  if(!bk){bibLoad(BIB.b).then(()=>render()).catch(()=>{BIB.err="No se pudo abrir el libro. Revisa tu conexión o descarga la Biblia para usarla sin señal.";BIB.b=null;render();});return head+`<p class="muted">Abriendo ${esc(info[1])}…</p>`;}
+  const back=`<button class="back" onclick="bibGo(null)">← Todos los libros</button>`;
+  if(!BIB.c) return `${back}<div class="eyebrow">${info[4]==="AT"?"Antiguo":"Nuevo"} Testamento</div><h1 style="font-size:2.2rem;margin:6px 0 14px">${esc(bk.n)}</h1><div class="chgrid">${bk.c.map((_,i)=>`<button onclick="bibGo('${BIB.b}',${i+1})">${i+1}</button>`).join("")}</div>`;
+  const ch=bk.c[BIB.c-1]||[],n=bk.c.length;const hv=BIB.hl;BIB.hl=null;
+  setTimeout(()=>{if(hv){const e=document.getElementById("v"+hv);if(e)e.scrollIntoView({block:"center"});}},50);
+  const nav=`<div class="row" style="justify-content:space-between;margin-top:22px"><button class="btn ghost" ${BIB.c<=1?"disabled style='opacity:.4'":""} onclick="bibGo('${BIB.b}',${BIB.c-1})">← Cap. ${BIB.c-1}</button><button class="btn ghost" onclick="bibGo('${BIB.b}')">Capítulos</button><button class="btn" ${BIB.c>=n?"disabled style='opacity:.4'":""} onclick="bibGo('${BIB.b}',${BIB.c+1})">Cap. ${BIB.c+1} →</button></div>`;
+  return `${back}<div class="eyebrow">${esc(info[2])} ${BIB.c}</div><h1 style="font-size:2.2rem;margin:6px 0 4px">${esc(bk.n)} ${BIB.c}</h1>
+   <div class="bibtext">${ch.map(([v,t])=>`<span id="v${v}" class="${v===hv?"vhl":""}"><sup>${v}</sup>${esc(t)} </span>`).join("")}</div>${nav}`;
+ }
+ let body=`<p class="lead">Biblia católica completa: 73 libros. Busca una palabra o escribe una cita, por ejemplo <b>Jn 3,16</b> o <b>Sal 23</b>.</p>
+ <div class="bibsearch"><input type="search" id="bibQ" value="${esc(BIB.q)}" placeholder="Buscar: amor, pastor, Jn 6,51…" onkeydown="if(event.key==='Enter')bibSearch()"><button class="btn red" onclick="bibSearch()">Buscar</button></div>
+ ${BIB.err?`<div class="warn" style="margin-top:12px">${esc(BIB.err)}</div>`:""}`;
+ BIB.err=null;
+ if(BIB.busy) body+=`<p class="muted">Buscando en toda la Biblia… <b id="bibProg">${BIB.prog}%</b></p>`;
+ if(BIB.res) body+=`<div class="sec"><div class="row" style="justify-content:space-between"><h2 style="margin:0">${BIB.res.length>=200?"Más de 200":BIB.res.length} resultados</h2><button class="back" style="margin:0" onclick="BIB.res=null;BIB.q='';render()">Cerrar</button></div>
+  <div class="bibres">${BIB.res.map(([b,c,v,t])=>`<button onclick="BIB.hl=${v};bibGo('${b}',${c})"><b>${esc(bibInfo(b)[2])} ${c},${v}</b> ${hlTxt(t,BIB.q)}</button>`).join("")||'<p class="muted">No se encontró esa palabra.</p>'}</div></div>`;
+ body+=`<div class="panel" style="margin-top:18px"><div class="phase">Lecturas de la Misa</div><p class="muted" style="margin:4px 0 10px">Las lecturas oficiales del día, con su celebración.</p>${lecturasBtns()}</div>`;
+ if(BIB.last){const li=bibInfo(BIB.last[0]);if(li)body+=`<button class="banner" style="margin-top:16px" onclick="bibGo('${BIB.last[0]}',${BIB.last[1]})"><span><b>Seguir leyendo</b>${esc(li[1])} ${BIB.last[1]}</span><span class="arrow">→</span></button>`;}
+ body+=BIB_GR.map(g=>`<div class="sec"><div class="eyebrow">${g[0]==="AT"?"Antiguo Testamento":"Nuevo Testamento"}</div><h2>${g[1]}</h2><div class="bookgrid">${BIB_IDX.slice(g[2],g[3]).map(b=>`<button onclick="bibGo('${b[0]}')"><b>${esc(b[1])}</b><span>${b[3]} cap.</span></button>`).join("")}</div></div>`).join("");
+ body+=`<div class="panel" style="margin-top:22px"><div class="phase">Para usar sin señal</div>${BIB.dlDone?`<p style="margin:6px 0 0">✓ La Biblia completa está guardada en este celular.</p>`:`<p class="muted" style="margin:6px 0 10px">Guarda los 73 libros en tu celular (unos 5 MB) para leer y buscar en la sierra.</p><button class="btn red" onclick="bibDownload()">${BIB.dl!==null?`Descargando… <span id="bibDl">${BIB.dl}%</span>`:"Descargar Biblia completa"}</button>`}</div>
+ <p class="foot">Texto: Biblia Platense, traducción católica de Mons. Juan Straubinger, con aprobación eclesiástica, tomado de la edición digital de dominio público de CrossWire.</p>`;
+ return head+body;
+}
+/* Preparar el domingo (Celebración de la Palabra) */
+function palabraDomingo(){
+ const s=nextSunday(),[sn,sc]=season(s),ly=litYear(s);
+ const fiesta=[...yearFeasts(s.getFullYear()),...yearFeasts(s.getFullYear()+1)].find(f=>+dOnly(f.d)===+s);
+ const color=fiesta?fiesta.c:sc;const gloria=!(sn==="Adviento"||sn==="Cuaresma");
+ return `<div class="panel prep"><div class="phase">Prepara la celebración</div>
+  <h2 style="margin:4px 0 6px">${fmtD(s)}</h2>
+  <p style="margin:0 0 12px">${fiesta?`<b>${esc(fiesta.n)}</b> · `:""}${sn} · ciclo ${ly.dom}</p>
+  <div class="prepgrid"><div><span class="sw" style="background:var(--lc-${color})"></span><b>Color</b> ${color}</div><div><b>Gloria</b> ${gloria?"Sí":"No (tiempo de "+sn+")"}</div><div><b>Credo</b> Sí</div><div><b>Evangelio del año</b> ${{A:"Mateo",B:"Marcos",C:"Lucas"}[ly.dom]}</div></div>
+  <div class="row" style="margin-top:14px;gap:8px"><a class="btn red lnk" href="${lectUrl(s)}" target="_blank" rel="noopener">Ver lecturas del domingo</a><button class="btn ghost" onclick="go('biblia')">Abrir la Biblia</button></div>
+  <p class="muted" style="font-size:.88rem;margin:10px 0 0">Lee las lecturas con tiempo, prepara la reflexión y elige los cantos. Confirma con tu párroco si cambia la celebración.</p></div>`;
+}
+
+const VIEWS={biblia:()=>vBiblia(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
 function render(){
   renderUser();
   const g0=groupOf(view); const g=g0||{id:"",v:[view]}; if(g0) lastIn[g.id]=view;
