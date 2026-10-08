@@ -401,6 +401,13 @@ main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .star{background:none;border:0;color:var(--muted);font-size:1.3rem;padding:0 4px;margin-left:6px}.star.on{color:var(--gilt,#e8c77a)}
 :root:not([data-theme="dark"]) .star.on{color:var(--rubric)}
 @media (min-width:900px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.mini{position:fixed;left:8px;right:8px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:29;max-width:620px;margin:0 auto;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#9b2630,#5a1219);color:#fff;border-radius:14px;padding:8px 8px 10px;box-shadow:0 8px 24px rgba(0,0,0,.3);overflow:hidden}
+.mini[hidden]{display:none}.mini-info{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:none;border:0;color:#fff;text-align:left;padding:0}
+.mini-info svg{flex:0 0 46px;width:46px;height:46px;background:rgba(0,0,0,.25);border-radius:10px;padding:4px}.mini-info span{min-width:0;display:flex;flex-direction:column}
+.mini-info b{font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini-info small{font-size:.8rem;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-b{flex:0 0 46px;height:46px;border-radius:50%;border:0;background:#fff;color:#5a1219;font-size:1.1rem;font-weight:700}.mini-b.x{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);font-size:1rem}
+.mini-p{position:absolute;left:0;bottom:0;height:3px;background:#e8c77a;transition:width .3s}
+body.has-mini main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
 #meMark,#prMark{transition:transform .7s ease}
 @media (prefers-reduced-motion:reduce){#meMark,#prMark{transition:none}}
 
@@ -465,6 +472,7 @@ h1,h2,h3{font-weight:700;letter-spacing:-.005em}
   </div>
 </header>
 <main id="app"></main>
+<div class="mini" id="mini" hidden></div>
 <nav class="bnav" id="bnav" aria-label="Menú principal"></nav>
 
 <script>
@@ -1465,7 +1473,7 @@ function roUpdate(){ if(ro.i===0)ro.logged=false; if(!ro.logged&&ro.i===roSteps(
  if(s.x) t+=`<div class="ms-do" style="margin-bottom:8px">${s.x}</div>`;
  t+=`<p class="prayer"><span class="who">Guía</span>${p.g}</p>${p.a?`<p class="prayer"><span class="resp">${p.a}</span></p>`:""}`;
  if(s.then){const q=PR[s.then];t+=`<div class="ms-title" style="font-size:1.2rem;margin-top:14px">${q.t}</div><p class="prayer">${q.g}</p>`;}
- $("#roText").innerHTML=t;
+ miniUI(); if(!document.getElementById("roText"))return; $("#roText").innerHTML=t;
  $("#roCount").textContent=`${ro.i+1} de ${S.length}`;
  $("#roBar").style.width=((ro.i+1)/S.length*100)+"%";
  $("#roPrev").disabled=ro.i===0;$("#roPrev").style.opacity=ro.i===0?.4:1;
@@ -1519,8 +1527,16 @@ function rvToggle(){
  rvUI();}
 function rvStop(fin){RV.on=false;RV.paused=false;rvCancel();rvLock(false);rvUI();if(fin===true){const c=document.getElementById("rvCtl");if(c)c.insertAdjacentHTML("beforeend",'<p class="muted" style="margin:8px 0 0;width:100%">Terminamos el Rosario. ¡Que la Virgen te acompañe!</p>');}}
 function rezarConVoz(k){if(RV.on)rvStop();ro.key=k;ro.i=0;render();const r=document.getElementById("rezar");if(r)r.scrollIntoView({behavior:"smooth"});rvToggle();}
+function miniUI(){
+ const m=document.getElementById("mini");if(!m||typeof RV==="undefined")return;
+ const hp=document.querySelector(".herorosary .play");if(hp)hp.textContent=(RV.on&&!RV.paused)?"❚❚":"▶";
+ if(!RV.on){m.hidden=true;document.body.classList.remove("has-mini");return;}
+ const S=roSteps(ro.key),s=S[ro.i]||S[0];m.hidden=false;document.body.classList.add("has-mini");
+ m.innerHTML=`<button class="mini-info" onclick="go('rosario')">${tileSVG("rosario")}<span><b>Rosario · ${MYST[ro.key].n}</b><small>${RV.paused?"En pausa · ":""}${esc(s.h)}</small></span></button><button class="mini-b" aria-label="${RV.paused?"Continuar":"Pausa"}" onclick="rvToggle()">${RV.paused?"▶":"❚❚"}</button><button class="mini-b x" aria-label="Detener" onclick="rvStop()">✕</button><i class="mini-p" style="width:${(ro.i+1)/S.length*100}%"></i>`;
+}
+function heroRosary(k){if(!RV.ok){ro.key=k;ro.i=0;go("rosario");return;}if(RV.on&&ro.key===k){rvToggle();return;}if(RV.on)rvStop();ro.key=k;ro.i=0;rvToggle();}
 function rvRestart(){if(RV.on&&!RV.paused){rvCancel();rvStep();}}
-function rvUI(){const c=document.getElementById("rvCtl");if(!c)return;
+function rvUI(){miniUI();const c=document.getElementById("rvCtl");if(!c)return;
  if(!RV.ok){c.innerHTML='<p class="muted" style="margin:0">Este navegador no puede leer en voz alta. Prueba en Chrome o Safari.</p>';return;}
  c.innerHTML=`<button class="btn red" onclick="rvToggle()">${!RV.on?"▶ Rezar con voz":RV.paused?"▶ Continuar":"❚❚ Pausa"}</button>
   ${RV.on?`<button class="btn ghost" onclick="rvStop()">■ Detener</button>`:""}
@@ -2316,7 +2332,7 @@ function vYo(){
  const ints=st.ints||[],refl=st.refl||[],fav=st.fav||[],rec=st.rec||[];
  const r=retoSemana(),rv=Math.min(t[r.k]||0,r.n);
  return `<div class="yohead"><span class="avatar">${esc(ini)}</span><div><h1 class="pgtitle" style="margin:0">${nm?esc(nm.split(" ")[0]):"Yo"}</h1><span class="muted">${ME&&ME.id?(ROLN[ME.rol]||"Ministro"):"Sin cuenta"}</span></div>
-  <div class="yoacts"><button class="ubtn2" onclick="go('entrar')">${ME&&ME.id?"Mi cuenta":"Entrar"}</button><button class="ubtn2" onclick="toggleTheme()" aria-label="Cambiar tema">${(st.theme||"dark")==="dark"?"☀":"☾"}</button></div></div>
+  <div class="yoacts"><button class="ubtn2" onclick="go('entrar')">${ME&&ME.id?"Mi cuenta":"Entrar"}</button><button class="ubtn2" onclick="toggleTheme()" aria-label="Cambiar tema">${(st.theme||"light")==="dark"?"☀":"☾"}</button></div></div>
  <section class="ycard streak"><div class="flame">${tileSVG("vela")}</div><div><b>${sk} ${sk===1?"día":"días"}</b><span>${sk?"de oración seguida. ¡Sigue encendiendo tu vela!":"Reza hoy y enciende tu vela."}</span><small class="muted">Tu mejor racha: ${best} ${best===1?"día":"días"}</small></div></section>
  <section class="ycard"><div class="row" style="justify-content:space-between"><h2>Tu semana</h2><span class="muted" style="font-size:.85rem">${ws.getDate()} ${ws.toLocaleDateString("es-MX",{month:"short"}).replace(".","")} – ${addD(ws,6).getDate()} ${addD(ws,6).toLocaleDateString("es-MX",{month:"short"}).replace(".","")}</span></div>
   <div class="week">${days}</div>
@@ -2343,8 +2359,8 @@ function okInt(i){st.ints[i].ok=new Date().toLocaleDateString("es-MX",{day:"nume
 function delInt(i){st.ints.splice(i,1);saveLocal();render();}
 function addRefl(){const v=($("#rfT").value||"").trim();if(!v)return;st.refl=st.refl||[];st.refl.unshift({t:v,d:Date.now()});st.refl=st.refl.slice(0,200);YO.reflOpen=false;saveLocal();render();}
 function delRefl(i){st.refl.splice(i,1);saveLocal();render();}
-function toggleTheme(){st.theme=(st.theme||"dark")==="dark"?"light":"dark";saveLocal();applyTheme();render();}
-function applyTheme(){document.documentElement.setAttribute("data-theme",st.theme||"dark");const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",(st.theme||"dark")==="dark"?"#151318":"#7D1D24");}
+function toggleTheme(){st.theme=(st.theme||"light")==="dark"?"light":"dark";saveLocal();applyTheme();render();}
+function applyTheme(){document.documentElement.setAttribute("data-theme",st.theme||"light");const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",(st.theme||"light")==="dark"?"#151318":"#7D1D24");}
 function rutinaCal(){
  const q=$("#ruQ").value,h=$("#ruH").value||"21:00";st.rutina={q,h};saveLocal();
  const d=dayKey().replace(/-/g,""),hm=h.replace(":",""),e=new Date(2000,0,1,+hm.slice(0,2),+hm.slice(2)+20);
@@ -2360,9 +2376,9 @@ function vInicio(){
  const r=retoSemana(),t=weekTotals(weekStart()),rv=Math.min(t[r.k]||0,r.n),sk=streak();
  const p=totalPct(),next=MODS.findIndex((_,i)=>!modDone(i));
  return `<div class="hi"><div><span class="muted">${new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"})}</span><h1 class="pgtitle" style="margin:2px 0 0">${saludo()}${nm?", "+esc(nm):""}</h1></div><button class="streakpill" onclick="go('yo')" aria-label="Racha">${tileSVG("vela")}<b>${sk}</b></button></div>
- <button class="herorosary" onclick="${RV.ok?`rezarConVoz('${tk}')`:`go('rosario')`}" style="--g1:${{gozosos:"#0f5c4d",luminosos:"#1f5f7a",dolorosos:"#5b2a1e",gloriosos:"#7d1d24"}[tk]};--g2:#120e14">
+ <button class="herorosary" onclick="heroRosary('${tk}')" style="--g1:${{gozosos:"#0f5c4d",luminosos:"#1f5f7a",dolorosos:"#5b2a1e",gloriosos:"#7d1d24"}[tk]};--g2:#120e14">
   <svg class="hrsvg" viewBox="0 0 400 220" aria-hidden="true"><path d="M-20 60 Q120 200 260 120 T440 150" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="0.1 16" stroke-linecap="round" style="stroke-width:9"/><path d="M300 120v40M290 136h20" stroke="#e8c77a" stroke-width="6" stroke-linecap="round"/></svg>
-  <span class="play" aria-hidden="true">▶</span>
+  <span class="play" aria-hidden="true">${RV.on&&!RV.paused&&ro.key===tk?"❚❚":"▶"}</span>
   <span class="hrt"><small class="tag">El Santo Rosario</small><b>Rosario del ${dn}</b><span>Misterios ${M.n} · con voz</span></span></button>
  <div class="quick">
   <button onclick="window.open(lectUrl(dOnly(new Date())),'_blank','noopener')">${tileSVG("iglesia")}<span>Lecturas de hoy</span></button>
@@ -2395,7 +2411,7 @@ function render(){
   const ap=sub.querySelector('[aria-pressed="true"]'); if(ap) sub.scrollLeft=ap.offsetLeft-sub.offsetWidth/2+ap.offsetWidth/2;
   app.innerHTML=(VIEWS[view]||VIEWS.inicio)();
   if(view==="misa" && ms.mode==="ruta") msBind();
-  if(view!=="rosario" && typeof RV!=="undefined" && RV.on) rvStop();
+  miniUI();
   if(view==="rosario") roBind();
   if(view==="enfermos") enBind();
   const pt=document.getElementById("patronal"); if(pt) pt.textContent=patronalText();
