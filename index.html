@@ -417,6 +417,16 @@ body.has-mini main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
 .asig{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.asig select{flex:1 1 160px;font:inherit;padding:9px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}
 .chipx{background:none;border:0;color:var(--muted);padding:0 0 0 4px;font-size:.85rem}
 #meMark,#prMark{transition:transform .7s ease}
+.jgcats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:14px}.jgcat{border-left:5px solid var(--c);background:var(--card);border-radius:10px;padding:8px 12px}.jgcat b{display:block}.jgcat span{font-size:.85rem;color:var(--muted)}
+.jgmodes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}.jgmode{text-align:left;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:12px;color:var(--ink)}.jgmode.on{border-color:var(--rubric)}.jgmode b{display:block}.jgmode span{font-size:.85rem;color:var(--muted)}
+.jgwho{font-size:1.1rem;margin:10px 0}.jgsel{margin:10px 0}.jgsel .chip.on{background:var(--c,var(--rubric));border-color:var(--c,var(--rubric));color:#fff}
+.jgcard{--c:#7d1d24;background:var(--c);color:#fff;border-radius:22px;min-height:300px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 14px 30px rgba(0,0,0,.18);margin-top:12px;animation:jgin .35s ease}.jgcard p{font-size:1.45rem;line-height:1.35;font-weight:600;margin:auto 0;text-align:center;font-family:"Cormorant Garamond",Georgia,serif}.jgcard small{opacity:.7;text-align:center;font-size:.75rem;letter-spacing:.06em}
+.jgcard.empty{background:var(--card);color:var(--muted);border:2px dashed var(--line);box-shadow:none}.jgcard.rolling{background:var(--card);align-items:center;justify-content:center;box-shadow:none;border:1px solid var(--line)}
+.jgtop{display:flex;justify-content:space-between;align-items:center;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem}
+.jglv{display:inline-flex;gap:3px;vertical-align:middle}.jglv i{width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor;opacity:.9}.jglv i.on{background:currentColor}
+.jgbib{align-self:center;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:8px 14px;font-weight:600}
+.jgdie{width:150px;height:150px;border-radius:26px;display:grid;place-items:center;text-align:center;color:#fff;font-weight:700;padding:10px;background:#7d1d24;font-size:1.05rem;animation:jgroll .3s linear infinite}
+@keyframes jgroll{0%{transform:rotate(-8deg)}50%{transform:rotate(8deg) scale(1.05)}100%{transform:rotate(-8deg)}}@keyframes jgin{from{transform:translateY(10px) scale(.97);opacity:0}to{transform:none;opacity:1}}
 .gsteps{list-style:none;counter-reset:g;padding:0;margin:12px 0 0;display:flex;flex-direction:column;gap:10px}.gsteps li{counter-increment:g;display:grid;grid-template-columns:34px 1fr;gap:4px 12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}.gsteps li::before{content:counter(g);grid-row:span 2;width:30px;height:30px;border-radius:50%;background:var(--rubric,#7d1d24);color:#fff;display:grid;place-items:center;font-weight:700}.gsteps b{font-size:1.02rem}.gsteps span{color:var(--ink)}
 .santo{display:flex;gap:10px;align-items:center;background:var(--card,#fff);border:1px solid var(--line,#e8dccb);border-radius:14px;padding:10px 14px;margin:-4px 0 14px}.santo i{width:12px;height:12px;border-radius:50%;flex:none;box-shadow:0 0 0 2px rgba(0,0,0,.08)}.santo span{line-height:1.3}.santo small{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#8a7a72);font-weight:700}
 @media (prefers-reduced-motion:reduce){#meMark,#prMark{transition:none}}
@@ -782,10 +792,10 @@ function go(v,i){view=v;modIdx=(i===undefined?null:i);render();window.scrollTo(0
 const GROUPS=[
  {id:"inicio",n:"Inicio",v:["inicio"]},
  {id:"biblia",n:"Biblia",v:["biblia","recursos"],sub:1},
- {id:"descubrir",n:"Descubrir",v:["descubrir","modulos","antes","misa","enfermos","palabra","expo","difuntos","emergencias","rosario","devocionario","bendiciones","examenc","lectores","acolitos","coro","tarjetas","situaciones","ordena","examen"]},
+ {id:"descubrir",n:"Descubrir",v:["descubrir","modulos","antes","misa","enfermos","palabra","expo","difuntos","emergencias","rosario","devocionario","bendiciones","examenc","juego","lectores","acolitos","coro","tarjetas","situaciones","ordena","examen"]},
  {id:"parroquia",n:"Parroquia",v:["avisos","rol","calendario","equipo","ministros"],sub:1},
  {id:"yo",n:"Yo",v:["yo","entrar"]}];
-const VNAME={descubrir:"Descubrir",lectores:"Lectores",acolitos:"Acólitos",coro:"Coro",yo:"Yo",examenc:"Examen de conciencia",modulos:"Módulos",avisos:"Avisos",biblia:"Biblia",recursos:"Recursos",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
+const VNAME={descubrir:"Descubrir",juego:"Entre Hermanos",lectores:"Lectores",acolitos:"Acólitos",coro:"Coro",yo:"Yo",examenc:"Examen de conciencia",modulos:"Módulos",avisos:"Avisos",biblia:"Biblia",recursos:"Recursos",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
 const ALLV=GROUPS.flatMap(g=>g.v);
 const groupOf=v=>GROUPS.find(g=>g.v.includes(v));
 const lastIn={};
@@ -2275,6 +2285,7 @@ const saludo=()=>{const h=new Date().getHours();return h<12?"Buenos días":h<19?
 
 /* ---- ilustraciones (originales, trazo blanco) ---- */
 const IC={
+ dado:`<rect x="30" y="22" width="60" height="60" rx="12" transform="rotate(-12 60 52)" fill="rgba(255,255,255,.2)" stroke="#fff" stroke-width="2.5"/><g fill="#fff"><circle cx="46" cy="40" r="5"/><circle cx="60" cy="52" r="5"/><circle cx="74" cy="64" r="5"/></g><path d="M80 92h18M89 83v18" stroke="#e8c77a" stroke-width="4" stroke-linecap="round"/>`,
  ambon:`<path d="M34 40h52l-8 14H42z" fill="rgba(255,255,255,.22)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><path d="M50 54v38M70 54v38M40 94h40" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M60 40V24" stroke="#fff" stroke-width="2"/><circle cx="60" cy="22" r="4" fill="#fff"/>`,
  cirial:`<path d="M60 30v66M50 96h20" stroke="#fff" stroke-width="3" stroke-linecap="round"/><rect x="52" y="34" width="16" height="6" rx="2" fill="#fff"/><path d="M60 14q-6 8 0 16q6-8 0-16z" fill="#e8c77a"/><path d="M60 50l-6 6h12z" fill="rgba(255,255,255,.5)"/>`,
  nota:`<path d="M48 80V30l38-8v50" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><ellipse cx="40" cy="82" rx="10" ry="8" fill="#fff"/><ellipse cx="78" cy="74" rx="10" ry="8" fill="#fff"/><path d="M48 42l38-8" stroke="#fff" stroke-width="3"/>`,
@@ -2308,6 +2319,7 @@ const TILES=[
  {s:"Para servir",t:"Exposición",d:"Adoración al Santísimo",ic:"custodia",g:["#a8781f","#5c3f0b"],v:"expo"},
  {s:"Para servir",t:"Velorios",d:"Rezo por los difuntos",ic:"vela",g:["#4a3f6b","#221c36"],v:"difuntos"},
  {s:"Para servir",t:"Emergencias",d:"Bautismo y Viático",ic:"gota",g:["#1f5f7a","#0c2e3d"],v:"emergencias"},
+ {s:"Para convivir",t:"Entre Hermanos",d:"Juego de preguntas y retos para grupos",ic:"dado",g:["#2a8a9a","#0f3f48"],v:"juego"},
  {s:"Otros ministerios",t:"Lectores",d:"Proclamar la Palabra",ic:"ambon",g:["#5a4a8a","#2a2145"],v:"lectores"},
  {s:"Otros ministerios",t:"Acólitos",d:"Servir en el altar",ic:"cirial",g:["#8c5a1f","#45290a"],v:"acolitos"},
  {s:"Otros ministerios",t:"Coro",d:"Cantos y planeador",ic:"nota",g:["#1f6a7a","#0b333c"],v:"coro"},
@@ -2767,7 +2779,178 @@ async function coroShare(){coroSave();const P=st.coro||{};const txt="🎵 Cantos
  if(navigator.share){try{await navigator.share({text:txt});return;}catch(e){if(e&&e.name==="AbortError")return;}}
  window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank","noopener");}
 
-const VIEWS={lectores:()=>vGuia('lectores'),acolitos:()=>vGuia('acolitos'),coro:()=>vGuia('coro'),descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
+/* ================= JUEGO: ENTRE HERMANOS ================= */
+const JG_CAT={
+ his:{n:"Mi historia",c:"#2b6cb0",d:"Experiencias de fe para conocernos mejor"},
+ ysi:{n:"¿Y si…?",c:"#b83266",d:"Situaciones para imaginar y reflexionar"},
+ pal:{n:"Palabra y santos",c:"#24407a",d:"La Biblia y frases de santos"},
+ cre:{n:"Para crecer",c:"#2f8a4c",d:"Preguntas de la vida para cambiar el ritmo"},
+ com:{n:"Comunidad",c:"#d4622a",d:"Nuestra parroquia y nuestra Iglesia"},
+ ret:{n:"Reto",c:"#6b3e8e",d:"Algo para hacer, no solo para platicar"},
+ nue:{n:"Nuestras preguntas",c:"#b8861b",d:"Las que escribe tu grupo"}};
+const JG_Q=`his|1|¿Quién te enseñó a rezar por primera vez?
+his|1|¿Qué recuerdas del día de tu Primera Comunión?
+his|1|¿Qué fiesta religiosa del año disfrutas más y por qué?
+his|1|¿Cuál es la oración que más rezas?
+his|1|¿Qué canto de Misa se te queda en la cabeza toda la semana?
+his|1|¿Qué imagen religiosa hay en tu casa y qué historia tiene?
+his|2|¿Cuándo sentiste que Dios respondía una oración tuya?
+his|2|¿Qué persona de tu familia te ha mostrado mejor el amor de Dios?
+his|2|¿Hubo un tiempo en que te alejaste de la Iglesia? ¿Qué te hizo regresar?
+his|2|Cuenta una vez que ayudaste a alguien y al final recibiste tú más.
+his|2|¿Qué te llevó a servir en la parroquia?
+his|2|¿En qué lugar sientes a Dios más cerca: el templo, la sierra, tu casa…?
+his|2|¿Qué santo o persona de fe te ha inspirado y por qué?
+his|3|¿Qué momento difícil te enseñó a confiar más en Dios?
+his|3|¿Qué es lo que más te ha costado perdonar y cómo lo has ido sanando?
+his|3|¿Cuál ha sido la Misa o celebración que más te ha marcado?
+his|3|¿En qué momento te has sentido más amado por Dios?
+his|3|¿Qué te gustaría que Dios dijera de tu vida dentro de diez años?
+ysi|1|Si pudieras cenar con un santo, ¿a quién invitarías y qué le preguntarías?
+ysi|1|Si pudieras estar presente en un pasaje del Evangelio, ¿cuál escogerías?
+ysi|1|Si tuvieras que explicarle la Misa a un niño en una sola frase, ¿qué le dirías?
+ysi|1|Si este grupo organizara una peregrinación, ¿a dónde te gustaría ir?
+ysi|1|Si te tocara escoger los cantos del domingo, ¿cuál no podría faltar?
+ysi|2|Si Jesús llegara hoy a El Cercado, ¿a qué casa crees que iría primero? ¿Por qué?
+ysi|2|Si un domingo no llegara el padre, ¿qué harías para que la comunidad siga rezando?
+ysi|2|Si solo pudieras llevar un libro de la Biblia a una isla, ¿cuál sería?
+ysi|2|Si tuvieras un día entero solo para servir a otros, ¿qué harías?
+ysi|2|Si un amigo te dijera que no cree en Dios, ¿qué le contarías de tu propia experiencia?
+ysi|2|Si pudieras cambiar una cosa en la parroquia para acercar a los jóvenes, ¿cuál sería?
+ysi|2|Si tu vida fuera una parábola, ¿cuál sería y por qué?
+ysi|3|Si supieras que este es tu último año, ¿qué cambiarías en tu relación con Dios?
+ysi|3|Si Jesús te preguntara hoy, como a Pedro, «¿Me amas?», ¿qué le contestarías?
+ysi|3|Si tuvieras que soltar algo que te aleja de Dios, ¿qué sería lo primero?
+ysi|3|Si pudieras pedirle a Dios entender una sola cosa, ¿qué le pedirías?
+pal|1|Lee la historia de Marta y María (Lc 10,38-42). ¿Tú eres más Marta o más María?@Lc 10,38
+pal|1|«Mi vocación es el amor.» — Santa Teresita del Niño Jesús. ¿En qué cosa pequeña de hoy puedes vivir esta frase?
+pal|1|«Reza, espera y no te preocupes.» — San Pío de Pietrelcina. ¿Cuál de las tres cosas te cuesta más?
+pal|1|Lee Mt 5,13-16: somos sal y luz. ¿En qué lugar te toca ser luz esta semana?@Mt 5,13
+pal|2|Lee Jn 15,1-8: la vid y los sarmientos. ¿Qué parte de tu vida necesita estar más unida a Jesús?@Jn 15,1
+pal|2|Lee Mt 11,28-30. ¿Qué cansancio le entregarías hoy a Jesús?@Mt 11,28
+pal|2|Lee la parábola del hijo pródigo (Lc 15,11-32). ¿Con quién te identificas: el hijo menor, el mayor o el padre?@Lc 15,11
+pal|2|Lee Jn 6,35. ¿Qué significa para ti recibir la Comunión?@Jn 6,35
+pal|2|Lee 1 Cor 13,4-7. ¿Qué rasgo del amor se te hace más difícil de vivir?@1 Cor 13,4
+pal|2|«¿No estoy yo aquí, que soy tu madre?» — Nuestra Señora de Guadalupe a San Juan Diego. ¿Cuándo has sentido el cuidado de María?
+pal|2|«Todos nacen originales, pero muchos mueren como fotocopias.» — San Carlo Acutis. ¿Qué te hace único ante Dios?
+pal|2|«No tengan miedo. ¡Abran de par en par las puertas a Cristo!» — San Juan Pablo II. ¿Qué puerta de tu vida te cuesta abrirle?
+pal|3|Lee Lc 1,26-38: el «sí» de María. ¿Qué «sí» crees que Dios te está pidiendo?@Lc 1,26
+pal|3|Lee Jn 13,1-15: Jesús lava los pies. ¿A quién te toca servir aunque no sea fácil?@Jn 13,1
+pal|3|Lee Mc 4,35-41: la tempestad calmada. ¿Qué tormenta necesitas que Jesús calme?@Mc 4,35
+pal|3|Lee Lc 24,13-35: los discípulos de Emaús. ¿Cuándo te ha «ardido el corazón» al escuchar la Palabra?@Lc 24,13
+pal|3|Lee Mt 25,31-46. ¿En quién has visto el rostro de Jesús esta semana?@Mt 25,31
+pal|3|«En el atardecer de la vida seremos examinados en el amor.» — San Juan de la Cruz. ¿Cómo te iría en ese examen hoy?
+cre|1|¿Qué es lo que siempre te hace reír?
+cre|1|¿Qué talento tienes que poca gente conoce?
+cre|1|¿Cuál es tu lugar favorito de Santiago o de la sierra?
+cre|1|¿Qué aprendiste este año que antes no sabías?
+cre|1|¿Qué comida te recuerda a tu familia?
+cre|1|¿Qué ha sido lo mejor de tu semana?
+cre|2|¿Qué hábito te gustaría empezar este mes?
+cre|2|¿Qué consejo le darías a tu «yo» de hace cinco años?
+cre|2|¿De quién aprendiste a ser trabajador o responsable?
+cre|2|¿Qué haces cuando tienes un mal día?
+cre|2|¿Cómo te gustaría que te recordara la gente?
+cre|2|¿A quién admiras de tu comunidad y por qué?
+cre|2|¿Qué cosa sencilla te hace sentir agradecido?
+cre|3|¿Qué miedo te gustaría vencer?
+cre|3|¿Qué decisión importante te tocó tomar y qué aprendiste de ella?
+cre|3|¿Qué tipo de amigo, esposo, esposa, papá o mamá quieres ser?
+com|1|¿Qué es lo que más te gusta de nuestra parroquia?
+com|1|¿Qué tradición de El Cercado nunca debería perderse?
+com|1|¿Qué celebración del pueblo esperas más cada año?
+com|1|¿Qué es lo que más te gusta de este grupo?
+com|2|¿Por qué crees que muchos jóvenes se alejan de la Iglesia?
+com|2|¿Cómo podríamos recibir mejor a las personas nuevas en Misa?
+com|2|¿Qué se te hace más difícil: hablar de Dios con tu familia o con tus amigos?
+com|2|¿Qué cuenta, canal o podcast católico le recomendarías al grupo?
+com|2|¿Qué necesita hoy la gente de la sierra que nosotros podemos dar?
+com|2|¿Qué significa para ti «ser Iglesia» fuera del templo?
+com|2|¿Qué ministerio de la parroquia te gustaría conocer o probar?
+com|2|¿Qué podemos hacer juntos como grupo este mes para ayudar a alguien?
+com|3|¿Qué crees que Jesús le diría hoy a nuestra comunidad?
+com|3|¿Qué es lo que más te cuesta: rezar, perdonar o servir? ¿Por qué?
+com|3|¿Qué te gustaría cambiar en ti para servir mejor a la comunidad?
+com|3|¿Cómo le explicarías a alguien por qué vale la pena ir a Misa cada domingo?
+ret|1|Di a alguien del grupo una cualidad suya en la que se nota a Dios.
+ret|1|Nombra cinco libros de la Biblia en 15 segundos.
+ret|1|Agradece en voz alta tres cosas que Dios te dio hoy.
+ret|1|Di quién es tu santo favorito o tu santo patrono y por qué lo escogerías de amigo.
+ret|1|Comparte un canto religioso que te guste. Si te animas, canta el coro.
+ret|1|Di un versículo de la Biblia que te sepas de memoria.
+ret|2|Reza un Ave María en voz alta por la persona que está a tu izquierda.
+ret|2|Haz la señal de la cruz despacio y explica qué significa.
+ret|2|Pregúntale a alguien del grupo por qué intención quiere que recen, y récenla todos juntos.
+ret|2|Di el Gloria o el Credo de memoria. El grupo te puede ayudar.
+ret|2|Guía una oración espontánea de 30 segundos por este grupo.
+ret|2|Todo el grupo guarda 30 segundos de silencio. Después, di una palabra que te vino al corazón.
+ret|3|Esta semana visita al Santísimo y ofrece la visita por alguien de este grupo.
+ret|3|Hoy mándale un mensaje a alguien con quien no hablas hace tiempo y dile que rezas por él o ella.
+ret|3|Esta semana haz una obra de misericordia en secreto. En la próxima reunión cuenta cómo te fue (sin decir a quién).
+ret|3|Ofrece una decena del Rosario de mañana por las misiones de la sierra.
+ret|3|El próximo domingo saluda y da la bienvenida a alguien que no conozcas en Misa.
+ret|3|Elige a alguien del grupo y dile una palabra de ánimo que necesite escuchar.`.split("\n").map((l,i)=>{const [k,n,rest]=[l.slice(0,3),+l[4],l.slice(6)];const [t,ref]=rest.split("@");return {id:i,k,n,t,ref:ref||null};});
+const JG_DADO=["his","ysi","pal","cre","com","ret"];
+const JG={mode:"dado",card:null,used:{},rolling:false,face:null,cat:"his",lvl:1,turn:0,playing:false,add:false};
+const jgPlayers=()=>st.jgP||[];
+const jgOwn=()=>(st.jgQ||[]).map((t,i)=>({id:"n"+i,k:"nue",n:2,t}));
+function jgDraw(f){
+ const pool=[...JG_Q,...jgOwn()].filter(f),fresh=pool.filter(q=>!JG.used[q.id]);
+ const from=fresh.length?fresh:pool;if(!fresh.length)pool.forEach(q=>delete JG.used[q.id]);
+ if(!from.length)return null;const q=from[Math.floor(Math.random()*from.length)];JG.used[q.id]=1;return q;
+}
+function jgNext(){
+ const P=jgPlayers();if(JG.card&&P.length)JG.turn=(JG.turn+1)%P.length;
+ if(JG.mode==="dado"){
+  JG.rolling=true;JG.card=null;render();let n=0;const own=jgOwn().length;
+  const faces=own?[...JG_DADO,"nue"]:JG_DADO;
+  const iv=setInterval(()=>{JG.face=faces[Math.floor(Math.random()*faces.length)];const d=document.getElementById("jgDie");if(d){d.style.background=JG_CAT[JG.face].c;d.textContent=JG_CAT[JG.face].n;}
+   if(++n>=11){clearInterval(iv);JG.rolling=false;JG.card=jgDraw(q=>q.k===JG.face);render();}},85);
+  return;}
+ JG.card=JG.mode==="cat"?jgDraw(q=>q.k===JG.cat):jgDraw(q=>q.n===JG.lvl&&q.k!=="nue");
+ render();
+}
+function jgBib(ref){const r=bibRef(ref);if(!r)return;BIB.hl=r.v;go("biblia");bibGo(r.b,r.c);}
+function jgAddP(){const v=($("#jgPn").value||"").trim().slice(0,20);if(!v)return;st.jgP=[...jgPlayers(),v].slice(0,20);saveLocal();render();setTimeout(()=>{const e=$("#jgPn");if(e)e.focus();},0);}
+function jgDelP(i){st.jgP.splice(i,1);JG.turn=0;saveLocal();render();}
+function jgAddQ(){const v=($("#jgQn").value||"").trim().slice(0,200);if(!v)return;st.jgQ=[...(st.jgQ||[]),v].slice(0,60);saveLocal();render();}
+function jgDelQ(i){st.jgQ.splice(i,1);saveLocal();render();}
+const jgLvl=n=>`<span class="jglv" aria-label="Nivel ${n}">${[1,2,3].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>`;
+function vJuego(){
+ const P=jgPlayers(),own=st.jgQ||[];
+ if(!JG.playing)return `<div class="eyebrow">Para convivir en grupo</div><h1 style="font-size:clamp(1.9rem,5vw,2.6rem);margin:6px 0 8px">Entre Hermanos</h1>
+ <p class="lead">Un juego de preguntas y retos para platicar de la fe, conocerse mejor y romper el hielo en grupos, retiros, juntas de ministros o en familia. Pasen el celular de mano en mano.</p>
+ <div class="jgcats">${Object.entries(JG_CAT).map(([k,c])=>`<div class="jgcat" style="--c:${c.c}"><b>${c.n}</b><span>${c.d}</span></div>`).join("")}</div>
+ <div class="sec"><h2>¿Cómo quieren jugar?</h2><div class="jgmodes">
+  ${[["dado","🎲 Con dado","El dado escoge la categoría"],["cat","Por categoría","Ustedes eligen el tema"],["lvl","Por niveles","De lo ligero a lo profundo"]].map(([m,t,d])=>`<button class="jgmode ${JG.mode===m?"on":""}" onclick="JG.mode='${m}';render()"><b>${t}</b><span>${d}</span></button>`).join("")}</div></div>
+ <div class="sec"><h2>Jugadores <small class="muted" style="font-weight:400">(opcional)</small></h2><p class="muted" style="margin:0 0 8px">Si los anotan, la app dice a quién le toca.</p>
+  <div class="bibsearch"><input type="text" id="jgPn" maxlength="20" placeholder="Nombre" onkeydown="if(event.key==='Enter')jgAddP()"><button class="btn ghost" onclick="jgAddP()">Agregar</button></div>
+  ${P.length?`<div class="chips" style="margin-top:8px">${P.map((p,i)=>`<button class="chip" onclick="jgDelP(${i})" aria-label="Quitar ${esc(p)}">${esc(p)} ✕</button>`).join("")}</div>`:""}</div>
+ <div class="sec"><h2>Nuestras preguntas</h2><p class="muted" style="margin:0 0 8px">Escriban sus propias preguntas; entran al juego con el color dorado. Se guardan en este celular.</p>
+  <div class="bibsearch"><input type="text" id="jgQn" maxlength="200" placeholder="¿Cuál es tu libro favorito de la Biblia?" onkeydown="if(event.key==='Enter')jgAddQ()"><button class="btn ghost" onclick="jgAddQ()">Agregar</button></div>
+  ${own.length?`<div class="ilist">${own.map((q,i)=>`<div class="it"><span>${esc(q)}</span><button class="back" style="margin:0" onclick="jgDelQ(${i})" aria-label="Quitar">✕</button></div>`).join("")}</div>`:""}</div>
+ <button class="btn red" style="width:100%;margin-top:18px;padding:14px" onclick="JG.playing=true;JG.card=null;JG.turn=0;render();window.scrollTo(0,0)">Empezar a jugar</button>
+ <div class="sec"><h2>Reglas sencillas</h2><ol class="gsteps">
+  <li><b>Escuchar es lo más importante</b><span>Mientras alguien habla, nadie interrumpe ni juzga. Lo que se comparte en el grupo se queda en el grupo.</span></li>
+  <li><b>Se vale pasar</b><span>Si una pregunta no te sale, di «paso» y toma otra. Nadie está obligado a contar lo que no quiere.</span></li>
+  <li><b>Cualquiera puede responder</b><span>Después de quien tiene el turno, otros pueden agregar su respuesta.</span></li>
+  <li><b>Terminen rezando</b><span>Al final, recen juntos un Padre Nuestro por las intenciones que salieron en el juego.</span></li></ol></div>
+ <p class="muted" style="font-size:.85rem;margin-top:14px">${JG_Q.length} tarjetas originales de la Escuela de Ministros.</p>`;
+ const c=JG.card,C=c?JG_CAT[c.k]:null,who=P.length?P[JG.turn%P.length]:"";
+ const ctrl=JG.mode==="dado"?"":JG.mode==="cat"?`<div class="chips jgsel">${Object.entries(JG_CAT).filter(([k])=>k!=="nue"||own.length).map(([k,v])=>`<button class="chip ${JG.cat===k?"on":""}" style="--c:${v.c}" onclick="JG.cat='${k}';render()">${v.n}</button>`).join("")}</div>`
+  :`<div class="chips jgsel">${[[1,"Ligero"],[2,"Medio"],[3,"Profundo"]].map(([n,l])=>`<button class="chip ${JG.lvl===n?"on":""}" onclick="JG.lvl=${n};render()">${jgLvl(n)} ${l}</button>`).join("")}</div>`;
+ return `<div class="row" style="justify-content:space-between;align-items:center"><h1 class="pgtitle" style="margin:0">Entre Hermanos</h1><button class="back" style="margin:0" onclick="JG.playing=false;render()">Ajustes</button></div>
+ ${who?`<p class="jgwho">Le toca a: <b>${esc(who)}</b></p>`:""}
+ ${ctrl}
+ ${JG.rolling?`<div class="jgcard rolling"><div id="jgDie" class="jgdie">🎲</div></div>`
+ :c?`<div class="jgcard" style="--c:${C.c}"><div class="jgtop"><span>${C.n}</span>${c.k!=="nue"?jgLvl(c.n):""}</div><p>${esc(c.t)}</p>${c.ref?`<button class="jgbib" onclick="jgBib('${c.ref}')">Abrir ${esc(c.ref)} en la Biblia</button>`:""}<small>Entre Hermanos · Escuela de Ministros</small></div>`
+ :`<div class="jgcard empty"><p>${JG.mode==="dado"?"Toca «Tirar el dado» para empezar.":"Elige y toca «Sacar tarjeta»."}</p></div>`}
+ <button class="btn red" style="width:100%;padding:14px;margin-top:14px" ${JG.rolling?"disabled":""} onclick="jgNext()">${JG.mode==="dado"?"🎲 Tirar el dado":c?"Siguiente tarjeta":"Sacar tarjeta"}</button>
+ ${c?`<button class="btn ghost" style="width:100%;margin-top:8px" onclick="JG.card=jgDraw(q=>q.k===JG.card.k&&q.id!==JG.card.id)||JG.card;render()">Paso · otra de la misma categoría</button>`:""}
+ <p class="muted" style="font-size:.85rem;text-align:center;margin-top:14px">Al terminar, recen juntos un Padre Nuestro por las intenciones del grupo.</p>`;
+}
+
+const VIEWS={juego:()=>vJuego(),lectores:()=>vGuia('lectores'),acolitos:()=>vGuia('acolitos'),coro:()=>vGuia('coro'),descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
 function render(){
   renderUser();
   const g0=groupOf(view); const g=g0||{id:"",v:[view]}; if(g0) lastIn[g.id]=view;
