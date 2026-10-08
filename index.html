@@ -1831,9 +1831,9 @@ function vEntrar(){
  if(!ONLINE_OK) return `<h1 style="font-size:2rem">Cuenta</h1><div class="warn">La conexión con la base de datos todavía no está configurada.</div>`;
  if(ME.id) return `<div class="eyebrow">Tu cuenta</div><h1 style="font-size:2.2rem;margin:6px 0 8px">Hola, ${esc(ME.nombre)}</h1>
   <p class="lead">Tu avance se guarda en tu cuenta: lo verás igual en tu celular o en cualquier computadora donde entres con tu código.</p>
-  <div class="facts"><div class="fact"><b>${doneCount()} de 8</b><span>módulos completados</span></div><div class="fact"><b>${st.exam.best||0} de 15</b><span>mejor examen</span></div><div class="fact"><b>${ME.rol==="coordinador"?"Coordinador":"Ministro"}</b><span>tu rol en la escuela</span></div></div>
+  <div class="facts"><div class="fact"><b>${doneCount()} de 8</b><span>módulos completados</span></div><div class="fact"><b>${st.exam.best||0} de 15</b><span>mejor examen</span></div><div class="fact"><b>${(ROLN[ME.rol]||"Ministro")}</b><span>tu rol en la escuela</span></div></div>
   ${(st.exam.best||0)>=12?certBtn(st.exam.best):""}${ME.err?`<p class="muted">${esc(ME.err)}</p>`:""}
-  <div class="row" style="margin-top:18px"><button class="btn red" onclick="go('inicio')">Ir al inicio</button><button class="btn ghost" onclick="go('equipo')">Avance del equipo</button><button class="btn ghost" onclick="go('rol')">Rol de servicio</button>${ME.rol==="coordinador"?`<button class="btn ghost" onclick="go('ministros')">Ministros y códigos</button>`:""}<button class="btn ghost" onclick="salir()">Salir</button></div>`;
+  <div class="row" style="margin-top:18px"><button class="btn red" onclick="go('inicio')">Ir al inicio</button><button class="btn ghost" onclick="go('equipo')">Avance del equipo</button><button class="btn ghost" onclick="go('rol')">Rol de servicio</button>${esCoord()?`<button class="btn ghost" onclick="go('ministros')">Ministros y códigos</button>`:""}<button class="btn ghost" onclick="salir()">Salir</button></div>`;
  return `<div class="eyebrow">Escuela de Ministros</div><h1 style="font-size:2.2rem;margin:6px 0 8px">Entra con tu código</h1>
   <p class="lead">Con tu código tu avance se guarda en tu cuenta, cuentas en el avance del equipo y puedes anotarte en el rol de servicio. Pídeselo al coordinador.</p>
   <div class="panel" style="max-width:420px;margin-top:16px"><label for="codeIn" class="muted" style="font-size:.9rem">Tu código</label>
@@ -1872,20 +1872,20 @@ async function minAlta(){const n=$("#mnNombre").value.trim(),c=$("#mnCodigo").va
 async function minBaja(id){if(MIN.confirm!==id){MIN.confirm=id;render();return;}MIN.confirm=null;try{await rpc("ministro_baja",{p_codigo:ME.codigo,p_id:id});MIN.ready=false;loadMin();}catch(e){MIN.msg=e.message;render();}}
 function copyTxt(t,btn){const ok=()=>{btn.textContent="Copiado";setTimeout(()=>btn.textContent="Copiar",1500);};try{navigator.clipboard.writeText(t).then(ok,()=>{});}catch(e){}}
 function vMinistros(){
- const head=`<div class="eyebrow">Solo para el coordinador</div><h1 style="font-size:2.2rem;margin:6px 0 8px">Ministros y códigos</h1>
+ const head=`<div class="eyebrow">Solo para el coordinador y el padre</div><h1 style="font-size:2.2rem;margin:6px 0 8px">Ministros y códigos</h1>
   <p class="lead">Da de alta a cada ministro con su nombre y un código. Entrégale su código en persona o por mensaje privado.</p>`;
  if(!ME.id) return needLogin(head);
- if(ME.rol!=="coordinador") return head+`<div class="warn">Esta sección es solo para el coordinador.</div>`;
+ if(!esCoord()) return head+`<div class="warn">Esta sección es solo para el coordinador y el padre.</div>`;
  if(!MIN.ready){loadMin();return head+`<p class="muted">Cargando…</p>`;}
  return head+`<div class="panel" style="margin-top:12px"><h3 style="font-size:1.2rem">Nuevo ministro</h3><div class="fgrid">
   <label>Nombre<input type="text" id="mnNombre" placeholder="Ej. María López"></label>
   <label>Código<input type="text" id="mnCodigo" value="${genCode()}" style="letter-spacing:.1em"></label>
-  <label>Rol<select id="mnRol"><option value="ministro">Ministro</option><option value="coordinador">Coordinador</option></select></label></div>
+  <label>Rol<select id="mnRol"><option value="ministro">Ministro</option><option value="coordinador">Coordinador</option><option value="padre">Padre</option></select></label></div>
   <div class="row" style="margin-top:12px"><button class="btn red" onclick="minAlta()">Dar de alta</button></div>
   ${MIN.nuevo?`<div class="keybox" style="border-left-color:var(--ok)"><b style="color:var(--ok)">Listo. Entrega este código</b><span style="font-size:1.2rem;letter-spacing:.08em">${esc(MIN.nuevo)}</span> <button class="btn ghost" style="margin-left:8px;padding:4px 12px" onclick="copyTxt('${esc(MIN.nuevo)}',this)">Copiar</button><br><span class="muted" style="font-size:.88rem">Por seguridad no se vuelve a mostrar. Si se pierde, da de baja y vuelve a dar de alta con otro código.</span></div>`:""}
   ${MIN.msg?`<p style="color:var(--bad);margin:10px 0 0">${esc(MIN.msg)}</p>`:""}</div>
  <div class="sec"><h2>Ministros activos (${MIN.rows.length})</h2><div class="tbl"><table style="min-width:0"><thead><tr><th>Nombre</th><th>Rol</th><th>Avance</th><th></th></tr></thead><tbody>
- ${MIN.rows.map(r=>`<tr><td><b>${esc(r.nombre)}</b></td><td>${r.rol==="coordinador"?"Coordinador":"Ministro"}</td><td class="muted">${r.modulos}/8 · examen ${r.examen}/15</td><td style="text-align:right">${r.id===ME.id?"":`<button class="back" style="margin:0" onclick="minBaja('${r.id}')">${MIN.confirm===r.id?"¿Seguro? Toca otra vez":"Dar de baja"}</button>`}</td></tr>`).join("")}</tbody></table></div></div>`;
+ ${MIN.rows.map(r=>`<tr><td><b>${esc(r.nombre)}</b></td><td>${(ROLN[r.rol]||"Ministro")}</td><td class="muted">${r.modulos}/8 · examen ${r.examen}/15</td><td style="text-align:right">${r.id===ME.id?"":`<button class="back" style="margin:0" onclick="minBaja('${r.id}')">${MIN.confirm===r.id?"¿Seguro? Toca otra vez":"Dar de baja"}</button>`}</td></tr>`).join("")}</tbody></table></div></div>`;
 }
 if(ONLINE_OK&&ME.codigo){setTimeout(autoEntrar,0);}
 
@@ -1983,13 +1983,13 @@ function vRol(){
  if(!ME.id) return needLogin(head);
  loadRol();
  if(!ROL.ready) return head+`<p class="muted">Cargando…</p>`;
- const coord=ME.rol==="coordinador",today=new Date().toISOString().slice(0,10);
+ const coord=esCoord(),today=new Date().toISOString().slice(0,10);
  const form=coord?(ROL.form?`<div class="panel" style="margin:16px 0"><h3 style="font-size:1.2rem">Nuevo turno</h3><div class="fgrid">
    <label>Fecha<input type="date" id="rfFecha" min="${today}"></label><label>Hora<input type="time" id="rfHora"></label>
    <label>Tipo<select id="rfTipo">${TIPOS.map(t=>`<option>${t}</option>`).join("")}</select></label><label>Ministros necesarios<input type="number" id="rfCupo" min="1" max="30" value="2"></label>
    <label class="full">Lugar<input type="text" id="rfLugar" placeholder="Ej. Templo parroquial, Misa de 12"></label><label class="full">Notas<input type="text" id="rfNotas" placeholder="Ej. Llevar teca; salida 8 a. m. del atrio"></label></div>
    <div class="row" style="margin-top:12px"><button class="btn red" ${ROL.busy?"disabled":""} onclick="rolAdd()">Agregar turno</button><button class="btn ghost" onclick="ROL.form=false;render()">Cancelar</button></div></div>`
-   :`<div class="row" style="margin:16px 0"><button class="btn red" onclick="ROL.form=true;render()">+ Nuevo turno</button><span class="muted" style="font-size:.88rem">Solo el coordinador ve este botón.</span></div>`):"";
+   :`<div class="row" style="margin:16px 0"><button class="btn red" onclick="ROL.form=true;render()">+ Nuevo turno</button><span class="muted" style="font-size:.88rem">Solo el coordinador y el padre ven este botón.</span></div>`):"";
  const T=ROL.turnos;
  return head+form+(ROL.msg?`<p class="muted">${esc(ROL.msg)}</p>`:"")+(ROL.err?`<div class="warn">${esc(ROL.err)}</div>`:"")+
  (T.length?`<div class="turnos">${T.map(t=>{const w=t.anotados||[],me=t.yo,full=w.length>=(t.cupo||1);const d=new Date(t.fecha+"T12:00:00");
@@ -2131,7 +2131,7 @@ function vAvisos(){
  const head=`<div class="eyebrow">Para todo el equipo</div><h1 style="font-size:2.2rem;margin:6px 0 8px">Avisos</h1><p class="lead">Lo que el coordinador necesita que sepan: reuniones, cambios de horario, misiones y fiestas.</p>`;
  if(!ME.id)return needLogin(head);
  loadAvisos();if(!AV.ready)return head+`<p class="muted">Cargando…</p>`;
- const coord=ME.rol==="coordinador";
+ const coord=esCoord();
  if(AV.missing)return head+`<div class="warn">${coord?"Para activar los avisos, corre una sola vez el archivo <b>avisos.sql</b> en Supabase → SQL Editor → Run.":"Todavía no hay avisos."}</div>`;
  setTimeout(()=>{try{if(AV.rows[0])localStorage.setItem("escuela-avisos-visto",AV.rows[0].creado);}catch(e){}},1500);
  const form=coord?`<div class="panel" style="margin:16px 0"><h3 style="font-size:1.2rem">Nuevo aviso</h3><div class="fgrid"><label class="full">Título<input type="text" id="avT" maxlength="80" placeholder="Ej. Reunión de ministros el sábado"></label><label class="full">Detalle<textarea id="avX" maxlength="600" rows="3" placeholder="Ej. 10 a. m. en el salón parroquial. Traigan su libreta."></textarea></label></div><div class="row" style="margin-top:12px"><button class="btn red" ${AV.busy?"disabled":""} onclick="avCrear()">Publicar aviso</button></div>${AV.msg?`<p class="muted" style="margin:8px 0 0">${esc(AV.msg)}</p>`:""}</div>`:"";
@@ -2176,13 +2176,15 @@ async function certificado(score){
 }
 const certBtn=s=>`<div class="panel" style="margin-top:16px;border-top:3px solid var(--gold-line,#b48a3a)"><div class="phase">Tu reconocimiento</div><p style="margin:6px 0 12px">Descarga tu certificado con el logo de la parroquia. Se puede imprimir o compartir por WhatsApp.</p><button class="btn red" onclick="certificado(${s})">Descargar certificado</button></div>`;
 
+const esCoord=()=>ME.rol==="coordinador"||ME.rol==="padre";
+const ROLN={ministro:"Ministro",coordinador:"Coordinador",padre:"Padre"};
 const VIEWS={avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
 function render(){
   renderUser();
   const g0=groupOf(view); const g=g0||{id:"",v:[view]}; if(g0) lastIn[g.id]=view;
   document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.g===g.id));
   const sub=$("#subtabs");
-  const gv=g.v.filter(v=>v!=="ministros"||ME.rol==="coordinador");
+  const gv=g.v.filter(v=>v!=="ministros"||esCoord());
   if(gv.length>1){sub.hidden=false;sub.innerHTML=gv.map(v=>`<button class="subtab" aria-pressed="${v===view}" onclick="go('${v}')">${VNAME[v]}</button>`).join("");}
   else {sub.hidden=true;sub.innerHTML="";}
   const ap=sub.querySelector('[aria-pressed="true"]'); if(ap) sub.scrollLeft=ap.offsetLeft-sub.offsetWidth/2+ap.offsetWidth/2;
