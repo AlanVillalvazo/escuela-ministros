@@ -1,0 +1,7 @@
+{
+  "name": "escuela-ministros",
+  "private": true,
+  "description": "Escuela de Ministros · función de notificaciones",
+  "engines": { "node": ">=18" },
+  "dependencies": { "web-push": "^3.6.7" }
+}

@@ -1553,7 +1553,7 @@ function asigUI(t,full){
  const ids=(t.anot||[]).map(a=>a.id),op=(MIN.rows||[]).filter(m=>!ids.includes(m.id));
  return `<div class="asig"><select id="as-${t.id}" aria-label="Asignar ministro"><option value="">Asignar a…</option>${op.map(m=>`<option value="${m.id}">${esc(m.nombre)}${m.rol==="padre"?" (Padre)":""}</option>`).join("")}</select><button class="btn ghost" ${ROL.busy?"disabled":""} onclick="rolAsignar('${t.id}')">Asignar</button></div>`;}
 async function rolAsignar(tid){const sel=document.getElementById("as-"+tid);const mid=sel&&sel.value;if(!mid){ROL.msg="Elige a quién asignar.";render();return;}
- ROL.busy=true;try{await rpc("turno_asignar",{p_codigo:ME.codigo,p_turno:tid,p_ministro:mid});ROL.msg="";}catch(e){ROL.msg=e.status===404?"Falta activar las asignaciones: corre asignaciones.sql en Supabase.":e.message;}ROL.busy=false;await loadRol(true);}
+ ROL.busy=true;try{await rpc("turno_asignar",{p_codigo:ME.codigo,p_turno:tid,p_ministro:mid});ROL.msg=("Asignado."+await pushEnviar({tipo:"turno",turno:tid,ministro:mid})).trim();}catch(e){ROL.msg=e.status===404?"Falta activar las asignaciones: corre asignaciones.sql en Supabase.":e.message;}ROL.busy=false;await loadRol(true);}
 async function rolDesasignar(tid,mid){ROL.busy=true;try{await rpc("turno_desasignar",{p_codigo:ME.codigo,p_turno:tid,p_ministro:mid});}catch(e){ROL.msg=e.status===404?"Falta activar las asignaciones: corre asignaciones.sql en Supabase.":e.message;}ROL.busy=false;await loadRol(true);}
 function misServicios(){
  if(!ME.id)return "";loadRol();
@@ -2187,7 +2187,7 @@ function avisosHome(){
 }
 async function avCrear(){
  const t=($("#avT").value||"").trim(),x=($("#avX").value||"").trim();if(!t){AV.msg="Escribe el título del aviso.";render();return;}
- AV.busy=true;try{await rpc("aviso_crear",{p_codigo:ME.codigo,p_titulo:t,p_texto:x});AV.msg="Aviso publicado.";}catch(e){AV.msg=e.status===404?"Falta activar los avisos en Supabase.":e.message;}
+ AV.busy=true;try{await rpc("aviso_crear",{p_codigo:ME.codigo,p_titulo:t,p_texto:x});AV.msg="Aviso publicado."+await pushEnviar({tipo:"aviso"});}catch(e){AV.msg=e.status===404?"Falta activar los avisos en Supabase.":e.message;}
  AV.busy=false;await loadAvisos(true);render();
 }
 async function avBorrar(id){if(AV.confirm!==id){AV.confirm=id;render();return;}AV.confirm=null;try{await rpc("aviso_borrar",{p_codigo:ME.codigo,p_id:id});}catch(e){AV.msg=e.message;}await loadAvisos(true);render();}
@@ -2368,6 +2368,7 @@ function vYo(){
  const r=retoSemana(),rv=Math.min(t[r.k]||0,r.n);
  return `<div class="yohead"><span class="avatar">${esc(ini)}</span><div><h1 class="pgtitle" style="margin:0">${nm?esc(nm.split(" ")[0]):"Yo"}</h1><span class="muted">${ME&&ME.id?(ROLN[ME.rol]||"Ministro"):"Sin cuenta"}</span></div>
   <div class="yoacts"><button class="ubtn2" onclick="go('entrar')">${ME&&ME.id?"Mi cuenta":"Entrar"}</button><button class="ubtn2" onclick="toggleTheme()" aria-label="Cambiar tema">${(st.theme||"light")==="dark"?"☀":"☾"}</button></div></div>
+ ${pushCard()}
  <section class="ycard streak"><div class="flame">${tileSVG("vela")}</div><div><b>${sk} ${sk===1?"día":"días"}</b><span>${sk?"de oración seguida. ¡Sigue encendiendo tu vela!":"Reza hoy y enciende tu vela."}</span><small class="muted">Tu mejor racha: ${best} ${best===1?"día":"días"}</small></div></section>
  <section class="ycard"><div class="row" style="justify-content:space-between"><h2>Tu semana</h2><span class="muted" style="font-size:.85rem">${ws.getDate()} ${ws.toLocaleDateString("es-MX",{month:"short"}).replace(".","")} – ${addD(ws,6).getDate()} ${addD(ws,6).toLocaleDateString("es-MX",{month:"short"}).replace(".","")}</span></div>
   <div class="week">${days}</div>
@@ -2612,6 +2613,52 @@ async function compartirSemana(){
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="mi-semana.png";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
 }
 
+/* ---- notificaciones en el celular ---- */
+const VAPID_PUB="BJCKrk6uexkcYnkvhsSKf6rWwf_rZuGHuFwij6m4NbKj5etrXoF0gWjYrmQBJ8dr2c2KdnR9ZpyajAyTj9T7GsA";
+const PU={st:null,busy:false,msg:""};
+const pushOK=()=>"serviceWorker" in navigator&&"PushManager" in window&&"Notification" in window;
+function b64u(s){const p="=".repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from(b,c=>c.charCodeAt(0));}
+async function pushCheck(){
+ if(!pushOK()){PU.st=isIOS()&&!isStandalone()?"instalar":"no";return;}
+ if(Notification.permission==="denied"){PU.st="bloqueado";return;}
+ try{const r=await navigator.serviceWorker.getRegistration();const s=r&&await r.pushManager.getSubscription();PU.st=s?"on":"off";}catch(e){PU.st="off";}
+}
+async function pushActivar(){
+ if(!ME||!ME.id){go("entrar");return;}
+ PU.busy=true;PU.msg="";render();
+ try{
+  const p=await Notification.requestPermission();if(p!=="granted"){PU.st=p==="denied"?"bloqueado":"off";throw new Error(p==="denied"?"":"No diste permiso. Inténtalo otra vez.");}
+  const r=await navigator.serviceWorker.ready;let s=await r.pushManager.getSubscription();
+  if(!s)s=await r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID_PUB)});
+  const j=s.toJSON();await rpc("push_guardar",{p_codigo:ME.codigo,p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth});
+  PU.st="on";PU.msg="¡Listo! Te avisaremos aquí cuando te asignen un servicio o haya un aviso.";
+ }catch(e){if(e&&e.status===404)PU.msg="Falta activar las notificaciones en Supabase (notificaciones.sql).";else if(e&&e.message)PU.msg=e.message;}
+ PU.busy=false;render();
+}
+async function pushDesactivar(){
+ PU.busy=true;render();
+ try{const r=await navigator.serviceWorker.ready;const s=await r.pushManager.getSubscription();if(s){try{await rpc("push_quitar",{p_codigo:ME.codigo,p_endpoint:s.endpoint});}catch(e){}await s.unsubscribe();}PU.st="off";PU.msg="Notificaciones apagadas en este celular.";}catch(e){PU.msg=e.message||"";}
+ PU.busy=false;render();
+}
+function pushCard(){
+ if(!ME||!ME.id)return "";
+ if(PU.st===null){pushCheck().then(()=>{if(PU.st!==null&&(view==="yo"||view==="inicio"))render();});return "";}
+ const S=PU.st;let body="";
+ if(S==="on")body=`<p class="muted" style="margin:0 0 10px">Están encendidas en este celular. Te sonará cuando te asignen un servicio o el padre publique un aviso.</p><button class="btn ghost" ${PU.busy?"disabled":""} onclick="pushDesactivar()">Apagar</button>`;
+ else if(S==="off")body=`<p class="muted" style="margin:0 0 10px">Para que tu celular suene cuando te asignen un servicio o haya un aviso nuevo.</p><button class="btn red" ${PU.busy?"disabled":""} onclick="pushActivar()">${PU.busy?"Activando…":"Activar notificaciones"}</button>`;
+ else if(S==="instalar")body=`<p style="margin:0">En iPhone primero instala la app: toca <b>Compartir</b> <span aria-hidden="true">⎋</span> y luego <b>Agregar a pantalla de inicio</b>. Ábrela desde ese ícono y aquí aparecerá el botón.</p>`;
+ else if(S==="bloqueado")body=`<p style="margin:0">Las bloqueaste antes. Ve a la configuración del navegador → <b>Notificaciones</b> → permite este sitio, y vuelve aquí.</p>`;
+ else body=`<p class="muted" style="margin:0">Este navegador no permite notificaciones. Prueba con Chrome (Android) o con la app instalada (iPhone).</p>`;
+ return `<section class="ycard"><h2>🔔 Notificaciones</h2>${body}${PU.msg?`<p style="margin:10px 0 0">${esc(PU.msg)}</p>`:""}</section>`;
+}
+const inicioPush=()=>{if(!ME||!ME.id)return "";if(PU.st===null){pushCard();return "";}return PU.st==="off"||PU.st==="instalar"||PU.msg?pushCard():"";};
+async function pushEnviar(d){
+ try{const r=await fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({codigo:ME.codigo,...d})});const j=await r.json().catch(()=>({}));
+  if(r.ok)return j.total?` Se avisó a ${j.enviadas} ${j.enviadas===1?"celular":"celulares"}.`:" (Nadie tiene las notificaciones activadas todavía.)";
+  if(r.status===503)return " (Las notificaciones aún no están configuradas en Vercel.)";
+  return "";}catch(e){return "";}
+}
+
 /* ---- INICIO nuevo ---- */
 function vInicio(){
  const tk=todayMyst(),M=MYST[tk],[sn,sc]=season(new Date()),fr=fraseHoy(),nm=nombreCorto();
@@ -2621,6 +2668,7 @@ function vInicio(){
  return `<div class="hi"><div><span class="muted">${new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"})}</span><h1 class="pgtitle" style="margin:2px 0 0">${saludo()}${nm?", "+esc(nm):""}</h1></div><button class="streakpill" onclick="go('yo')" aria-label="Racha">${tileSVG("vela")}<b>${sk}</b></button></div>
  ${santoCard()}
  ${misServicios()}
+ ${inicioPush()}
  <button class="herorosary" onclick="heroRosary('${tk}')" style="--g1:${{gozosos:"#0f5c4d",luminosos:"#1f5f7a",dolorosos:"#5b2a1e",gloriosos:"#7d1d24"}[tk]};--g2:#120e14">
   <svg class="hrsvg" viewBox="0 0 400 220" aria-hidden="true"><path d="M-20 60 Q120 200 260 120 T440 150" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="0.1 16" stroke-linecap="round" style="stroke-width:9"/><path d="M300 120v40M290 136h20" stroke="#e8c77a" stroke-width="6" stroke-linecap="round"/></svg>
   <span class="play" aria-hidden="true">${RV.on&&!RV.paused&&ro.key===tk?"❚❚":"▶"}</span>
