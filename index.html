@@ -307,6 +307,7 @@ details.part .partnote{padding:10px 18px;background:var(--rubric-soft);font-size
 .antes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:18px}
 .antes-c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
 .antes-c.must{border-color:var(--rubric);border-width:2px}
+#rezar{scroll-margin-top:190px}.today .row .btn{margin-left:0}
 .rv{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:12px 0 4px}.rvsel{display:flex;flex-direction:column;gap:3px;font-size:.82rem;color:var(--muted)}.rvsel select{font:inherit;font-size:.95rem;padding:9px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}.rvhint{width:100%;margin:4px 0 0;padding:10px 14px;border-radius:var(--r);background:var(--rubric-soft);color:var(--rubric);font-weight:700}
 .hdr-r{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
 .ubtn{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 14px;font-size:.85rem;font-weight:700;color:var(--ink)}
@@ -1361,7 +1362,7 @@ function vRosario(){
  return `<section class="cp-hero"><div><div class="eyebrow">Oración con María</div>
    <h1 style="font-size:clamp(1.9rem,5vw,2.6rem);margin:6px 0 10px">El Santo Rosario</h1>
    <p class="lead">El Rosario es contemplar la vida de Jesús con los ojos de María. Mientras rezamos las Avemarías, meditamos un misterio de su vida. Se reza con cinco misterios cada día.</p>
-   <div class="today"><span class="sw" style="background:var(--lc-${T.c});width:14px;height:14px"></span><div><b>Hoy se rezan los misterios ${T.n}</b><br><span class="muted">${T.days}</span></div><button class="btn red" onclick="ro.key='${tk}';ro.i=0;render();document.getElementById('rezar').scrollIntoView({behavior:'smooth'})">Rezar ahora</button></div></div>
+   <div class="today"><span class="sw" style="background:var(--lc-${T.c});width:14px;height:14px"></span><div><b>Hoy se rezan los misterios ${T.n}</b><br><span class="muted">${T.days}</span></div><div class="row" style="margin-left:auto;gap:8px">${RV.ok?`<button class="btn red" onclick="rezarConVoz('${tk}')">▶ Rezar con voz</button>`:""}<button class="btn ${RV.ok?"ghost":"red"}" onclick="ro.key='${tk}';ro.i=0;render();document.getElementById('rezar').scrollIntoView({behavior:'smooth'})">Rezar leyendo</button></div></div></div>
    <div class="pic" aria-hidden="true">${svgw(ground+`<circle cx="120" cy="66" r="44" fill="none" stroke="var(--gold)" stroke-width="2" stroke-dasharray="2 7"/><line class="l" x1="120" y1="110" x2="120" y2="128"/><rect class="gd" x="117" y="126" width="6" height="22" rx="1"/><rect class="gd" x="111" y="132" width="18" height="5" rx="1"/>`+P(186,150,"me","kneel","pray"))}</div></section>
 
  <div class="sec"><h2>Los cuatro tipos de misterios</h2>
@@ -1466,6 +1467,7 @@ function rvToggle(){
  else{RV.paused=true;rvCancel();rvLock(false);}
  rvUI();}
 function rvStop(fin){RV.on=false;RV.paused=false;rvCancel();rvLock(false);rvUI();if(fin===true){const c=document.getElementById("rvCtl");if(c)c.insertAdjacentHTML("beforeend",'<p class="muted" style="margin:8px 0 0;width:100%">Terminamos el Rosario. ¡Que la Virgen te acompañe!</p>');}}
+function rezarConVoz(k){if(RV.on)rvStop();ro.key=k;ro.i=0;render();const r=document.getElementById("rezar");if(r)r.scrollIntoView({behavior:"smooth"});rvToggle();}
 function rvRestart(){if(RV.on&&!RV.paused){rvCancel();rvStep();}}
 function rvUI(){const c=document.getElementById("rvCtl");if(!c)return;
  if(!RV.ok){c.innerHTML='<p class="muted" style="margin:0">Este navegador no puede leer en voz alta. Prueba en Chrome o Safari.</p>';return;}
