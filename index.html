@@ -417,6 +417,7 @@ body.has-mini main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
 .asig{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.asig select{flex:1 1 160px;font:inherit;padding:9px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}
 .chipx{background:none;border:0;color:var(--muted);padding:0 0 0 4px;font-size:.85rem}
 #meMark,#prMark{transition:transform .7s ease}
+.gsteps{list-style:none;counter-reset:g;padding:0;margin:12px 0 0;display:flex;flex-direction:column;gap:10px}.gsteps li{counter-increment:g;display:grid;grid-template-columns:34px 1fr;gap:4px 12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}.gsteps li::before{content:counter(g);grid-row:span 2;width:30px;height:30px;border-radius:50%;background:var(--rubric,#7d1d24);color:#fff;display:grid;place-items:center;font-weight:700}.gsteps b{font-size:1.02rem}.gsteps span{color:var(--ink)}
 .santo{display:flex;gap:10px;align-items:center;background:var(--card,#fff);border:1px solid var(--line,#e8dccb);border-radius:14px;padding:10px 14px;margin:-4px 0 14px}.santo i{width:12px;height:12px;border-radius:50%;flex:none;box-shadow:0 0 0 2px rgba(0,0,0,.08)}.santo span{line-height:1.3}.santo small{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#8a7a72);font-weight:700}
 @media (prefers-reduced-motion:reduce){#meMark,#prMark{transition:none}}
 
@@ -781,10 +782,10 @@ function go(v,i){view=v;modIdx=(i===undefined?null:i);render();window.scrollTo(0
 const GROUPS=[
  {id:"inicio",n:"Inicio",v:["inicio"]},
  {id:"biblia",n:"Biblia",v:["biblia","recursos"],sub:1},
- {id:"descubrir",n:"Descubrir",v:["descubrir","modulos","antes","misa","enfermos","palabra","expo","difuntos","emergencias","rosario","devocionario","bendiciones","examenc","tarjetas","situaciones","ordena","examen"]},
+ {id:"descubrir",n:"Descubrir",v:["descubrir","modulos","antes","misa","enfermos","palabra","expo","difuntos","emergencias","rosario","devocionario","bendiciones","examenc","lectores","acolitos","coro","tarjetas","situaciones","ordena","examen"]},
  {id:"parroquia",n:"Parroquia",v:["avisos","rol","calendario","equipo","ministros"],sub:1},
  {id:"yo",n:"Yo",v:["yo","entrar"]}];
-const VNAME={descubrir:"Descubrir",yo:"Yo",examenc:"Examen de conciencia",modulos:"Módulos",avisos:"Avisos",biblia:"Biblia",recursos:"Recursos",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
+const VNAME={descubrir:"Descubrir",lectores:"Lectores",acolitos:"Acólitos",coro:"Coro",yo:"Yo",examenc:"Examen de conciencia",modulos:"Módulos",avisos:"Avisos",biblia:"Biblia",recursos:"Recursos",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
 const ALLV=GROUPS.flatMap(g=>g.v);
 const groupOf=v=>GROUPS.find(g=>g.v.includes(v));
 const lastIn={};
@@ -2274,6 +2275,9 @@ const saludo=()=>{const h=new Date().getHours();return h<12?"Buenos días":h<19?
 
 /* ---- ilustraciones (originales, trazo blanco) ---- */
 const IC={
+ ambon:`<path d="M34 40h52l-8 14H42z" fill="rgba(255,255,255,.22)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><path d="M50 54v38M70 54v38M40 94h40" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M60 40V24" stroke="#fff" stroke-width="2"/><circle cx="60" cy="22" r="4" fill="#fff"/>`,
+ cirial:`<path d="M60 30v66M50 96h20" stroke="#fff" stroke-width="3" stroke-linecap="round"/><rect x="52" y="34" width="16" height="6" rx="2" fill="#fff"/><path d="M60 14q-6 8 0 16q6-8 0-16z" fill="#e8c77a"/><path d="M60 50l-6 6h12z" fill="rgba(255,255,255,.5)"/>`,
+ nota:`<path d="M48 80V30l38-8v50" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><ellipse cx="40" cy="82" rx="10" ry="8" fill="#fff"/><ellipse cx="78" cy="74" rx="10" ry="8" fill="#fff"/><path d="M48 42l38-8" stroke="#fff" stroke-width="3"/>`,
  rosario:`<circle cx="60" cy="40" r="26" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round"/><path d="M60 66v12" stroke="#fff" stroke-width="2"/><path d="M60 78v22M52 86h16" stroke="#fff" stroke-width="4" stroke-linecap="round"/>`,
  libro:`<path d="M20 30q20-8 40 2v52q-20-10-40-2z M100 30q-20-8-40 2v52q20-10 40-2z" fill="rgba(255,255,255,.18)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><path d="M78 30v26l6-5 6 5V28" fill="#fff" opacity=".8"/>`,
  caliz:`<circle cx="60" cy="24" r="12" fill="#fff" opacity=".9"/><path d="M38 44h44q-2 22-22 24q-20-2-22-24z" fill="rgba(255,255,255,.2)" stroke="#fff" stroke-width="2.5"/><path d="M60 68v16M46 92q14-8 28 0" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
@@ -2304,6 +2308,9 @@ const TILES=[
  {s:"Para servir",t:"Exposición",d:"Adoración al Santísimo",ic:"custodia",g:["#a8781f","#5c3f0b"],v:"expo"},
  {s:"Para servir",t:"Velorios",d:"Rezo por los difuntos",ic:"vela",g:["#4a3f6b","#221c36"],v:"difuntos"},
  {s:"Para servir",t:"Emergencias",d:"Bautismo y Viático",ic:"gota",g:["#1f5f7a","#0c2e3d"],v:"emergencias"},
+ {s:"Otros ministerios",t:"Lectores",d:"Proclamar la Palabra",ic:"ambon",g:["#5a4a8a","#2a2145"],v:"lectores"},
+ {s:"Otros ministerios",t:"Acólitos",d:"Servir en el altar",ic:"cirial",g:["#8c5a1f","#45290a"],v:"acolitos"},
+ {s:"Otros ministerios",t:"Coro",d:"Cantos y planeador",ic:"nota",g:["#1f6a7a","#0b333c"],v:"coro"},
  {s:"Para orar",t:"Rosario",d:"Guiado y con voz",ic:"rosario",g:["#0f5c4d","#08302a"],v:"rosario"},
  {s:"Para orar",t:"Devocionario",d:"Oraciones de siempre",ic:"mano",g:["#8a3b5c","#4a1a30"],v:"devocionario"},
  {s:"Para orar",t:"Sagrado Corazón",d:"Nuestro patrono",ic:"corazon",g:["#b0303a","#5e0f17"],fn:()=>{DV.cat="Sagrado Corazón";DV.q="";go("devocionario");}},
@@ -2635,7 +2642,84 @@ function vInicio(){
 }
 const BNAV=[["inicio","Inicio",`<path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/>`],["biblia","Biblia",`<path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M11 8v6M8.5 10.5h5" />`],["descubrir","Descubrir",`<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>`],["parroquia","Parroquia",`<path d="M12 3v4M10 5h4"/><path d="M5 21V12l7-5 7 5v9z"/><path d="M10 21v-4a2 2 0 0 1 4 0v4"/>`],["yo","Yo",`<circle cx="12" cy="12" r="9"/><path d="M8.5 14.5q3.5 3 7 0"/>`]];
 
-const VIEWS={descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
+/* ================= OTROS MINISTERIOS: LECTORES, ACÓLITOS, CORO ================= */
+const GUIAS={
+lectores:{eb:"Ministerio de la Palabra",t:"Guía del lector",
+ lead:"El lector presta su voz a Dios: cuando se proclaman las lecturas, es Dios mismo quien habla a su pueblo (OGMR 29). No se trata de leer bonito, sino de que todos entiendan.",
+ antes:["Leí las lecturas en casa al menos dos veces","Busqué cómo se pronuncian los nombres difíciles","Sé qué lectura me toca (1ª, salmo o 2ª)","Llegué 15 minutos antes y revisé el leccionario en el ambón","Probé el micrófono a la altura de mi boca"],
+ pasos:[
+  ["Al llegar","Revisa que el leccionario esté abierto en la página correcta y con el listón marcado. En nuestra parroquia el ambón está del lado izquierdo, junto al cirio."],
+  ["Al terminar la oración colecta","Espera a que el padre se siente. Sal de tu lugar con calma, haz una inclinación profunda al altar y sube al ambón."],
+  ["Primera lectura","Di el título tal como viene: «Lectura del libro de…». No digas «primera lectura» ni leas el resumen en letra roja o cursiva. Haz una pausa y comienza."],
+  ["Al terminar","Haz una pausa, levanta la vista hacia la gente y di: «Palabra de Dios». El pueblo responde: «Te alabamos, Señor». No digas «Esta es la Palabra de Dios»."],
+  ["Salmo responsorial","Si no lo canta el coro, léelo tú: di la respuesta, la gente la repite, y después de cada estrofa vuelve a decirla con ellos. No digas «Salmo responsorial» en voz alta."],
+  ["Segunda lectura","Igual que la primera. Si la lee otra persona, hagan el cambio sin prisa, sin cruzarse frente al altar."],
+  ["Al bajar","Deja el leccionario abierto (el Evangelio lo lee el padre o el diácono en otro libro o en el mismo). Inclinación al altar y regresa a tu lugar."],
+  ["Oración universal","Si te toca leer las peticiones, sube cuando el padre haga la invitación. Lee cada petición y espera la respuesta del pueblo antes de seguir."]],
+ tips:["Lee <b>más despacio</b> de lo que crees. La iglesia hace eco.","Respeta los puntos y las comas: ahí respira la gente.","El micrófono a un palmo de la boca; no lo muevas mientras lees.","Viste con sencillez y dignidad: tú no eres el centro, la Palabra sí.","Si te equivocas, repite la frase con calma y sigue. No pidas perdón al micrófono.","Prepárate rezando: pídele al Espíritu Santo que la Palabra llegue al corazón de alguien."],
+ quiz:[{q:"¿Qué dice el lector al terminar la lectura?",o:["«Palabra de Dios»","«Esta es la Palabra de Dios»","«Fin de la lectura»"],why:"El misal en México indica «Palabra de Dios», y el pueblo responde «Te alabamos, Señor»."},
+  {q:"¿Se lee en voz alta el resumen en letra roja que está arriba de la lectura?",o:["No, solo el título «Lectura del…»","Sí, para que la gente entienda","Solo los domingos"],why:"El resumen sirve para quien prepara; se proclama desde el título."},
+  {q:"¿Quién proclama el Evangelio?",o:["El sacerdote o el diácono","El lector más preparado","Cualquier ministro"],why:"El Evangelio lo proclama el diácono o, si no hay, el sacerdote (OGMR 59)."}]},
+acolitos:{eb:"Servicio del altar",t:"Guía de acólitos y monaguillos",
+ lead:"El acólito ayuda al sacerdote en el altar para que la celebración sea ordenada y digna. Se mueve poco, sin prisa y siempre atento a las manos del padre.",
+ antes:["Me puse el alba o la túnica y está limpia","Revisé la credencia: cáliz, purificador, corporal, vinajeras, lavabo y toalla","El misal está marcado en la Misa del día","Encendí las velas del altar con tiempo","Sé quién lleva la cruz, los ciriales y el incensario"],
+ pasos:[
+  ["Procesión de entrada","Orden: incensario (si lo hay), cruz alta entre dos ciriales, lectores, ministros y al final el sacerdote. Al llegar, la cruz y los ciriales se colocan en su lugar; todos hacen inclinación profunda al altar."],
+  ["Oración colecta","Si el padre lo pide, sostén el misal abierto frente a él, a la altura de su pecho."],
+  ["Evangelio","Los ciriales acompañan al sacerdote al ambón y se quedan a los lados mientras proclama. Si hay incienso, presenta el incensario y la naveta."],
+  ["Preparación del altar","Lleva al altar el corporal, el purificador, el cáliz y el misal. Luego acerca las vinajeras: primero el vino, después el agua. Toma el vino con la mano derecha y el agua con la izquierda para que el padre las reciba fácilmente."],
+  ["Lavabo","Con la jarrita en la derecha y la bandeja en la izquierda, vierte agua sobre los dedos del padre. Ofrécele la toalla colgada en tu brazo."],
+  ["Consagración","Arrodíllate. Si se usa campanilla, tócala brevemente cuando el sacerdote extiende las manos sobre las ofrendas y en cada elevación (la Hostia y el cáliz)."],
+  ["Comunión","Si el padre lo indica, acompaña con la patena o la bandeja. Después lleva las vinajeras con agua para la purificación y retira los vasos sagrados a la credencia."],
+  ["Final","Sostén el misal en la oración después de la comunión. En la procesión de salida se va en el mismo orden que al entrar. Al terminar, apaga las velas y deja todo limpio."]],
+ tips:["Manos juntas frente al pecho cuando no cargas nada.","Durante la Misa se hace <b>inclinación al altar</b>; la genuflexión al sagrario se hace al llegar y al salir.","Nunca le des la espalda al Santísimo expuesto o al altar al pasar por el centro: inclínate.","Mira al padre: con una seña te pide lo que necesita.","Si algo se cae, recógelo con calma. Si es una Hostia, avisa al padre o al ministro.","Ser monaguillo es un servicio, no un juego: tu reverencia enseña a los demás."],
+ quiz:[{q:"¿En qué orden se presentan las vinajeras?",o:["Primero el vino, luego el agua","Primero el agua, luego el vino","Las dos al mismo tiempo sin orden"],why:"El sacerdote vierte vino en el cáliz y luego unas gotas de agua."},
+  {q:"Durante la Misa, al pasar frente al altar se hace…",o:["Una inclinación profunda","Genuflexión doble","Nada"],why:"Al altar se le venera con inclinación; la genuflexión es para el Santísimo en el sagrario o expuesto."},
+  {q:"¿Quién va adelante en la procesión de entrada si no hay incienso?",o:["La cruz alta entre los ciriales","El sacerdote","Los lectores"],why:"La cruz guía la procesión; el sacerdote va al final."}]},
+coro:{eb:"Ministerio de la música",t:"Guía del coro",
+ lead:"«Quien canta bien, ora dos veces». El coro no da un concierto: ayuda a que toda la asamblea cante y ore. Cada canto debe ir de acuerdo con el momento de la Misa y el tiempo litúrgico.",
+ antes:["Revisé las lecturas del domingo para escoger cantos que vayan con ellas","Tengo el salmo del día (se canta con el texto del leccionario)","El Gloria y el Santo tienen la letra oficial de la Misa","Ensayamos y afinamos los instrumentos antes de la Misa","Sabemos qué tiempo litúrgico es (Adviento, Cuaresma, Pascua…)"],
+ pasos:[
+  ["Canto de entrada","Abre la celebración y une a la gente. Dura lo que tarda la procesión hasta que el padre besa el altar."],
+  ["Señor, ten piedad y Gloria","El Gloria solo se canta los domingos (fuera de Adviento y Cuaresma) y en solemnidades y fiestas. Su letra no se cambia por otro canto parecido."],
+  ["Salmo responsorial","Es Palabra de Dios: se canta con el texto del leccionario, de preferencia desde el ambón. No se sustituye por otro canto."],
+  ["Aclamación antes del Evangelio","Aleluya todo el año, excepto en Cuaresma, cuando se canta otra aclamación (por ejemplo, «Honor y gloria a ti, Señor Jesús»)."],
+  ["Ofertorio","Mientras se preparan el altar y las ofrendas. No debe tapar las oraciones del padre; se puede terminar con música instrumental."],
+  ["Santo, aclamación y Amén","El Santo se canta con la letra de la Misa. Después de la consagración, la aclamación «Anunciamos tu muerte…» y el gran Amén final de la Plegaria."],
+  ["Cordero de Dios y Comunión","El Cordero acompaña la fracción del pan. El canto de comunión empieza cuando comulga el sacerdote; los cantores pueden comulgar al final o en un momento acordado."],
+  ["Salida","Es opcional. Puede ser un canto a la Virgen o música instrumental. En Cuaresma conviene el silencio o algo muy sobrio."]],
+ tips:["El canto es para que la gente cante: escojan melodías conocidas.","En Adviento, sobriedad; en Cuaresma, menos instrumentos y sin Aleluya.","El volumen nunca debe tapar la voz del sacerdote ni las lecturas.","El Padre Nuestro, si se canta, conserva la letra oficial.","Respeten los momentos de silencio: después de la homilía y de la comunión.","22 de noviembre: Santa Cecilia, patrona de los músicos."],
+ quiz:[{q:"¿Cuándo no se canta el Aleluya?",o:["En Cuaresma","En Adviento","En el Tiempo Ordinario"],why:"En Cuaresma se sustituye por otra aclamación antes del Evangelio."},
+  {q:"¿Se puede cambiar el salmo por otro canto?",o:["No, es Palabra de Dios y se toma del leccionario","Sí, cualquier canto alegre","Sí, si el coro no lo ensayó"],why:"El salmo responsorial forma parte de la Liturgia de la Palabra (OGMR 61)."},
+  {q:"¿El Gloria se canta en los domingos de Adviento?",o:["No","Sí","Solo si hay coro"],why:"En Adviento y Cuaresma se omite el Gloria, salvo solemnidades y fiestas."}]}
+};
+var gqlectores=mqNew(GUIAS.lectores.quiz),gqacolitos=mqNew(GUIAS.acolitos.quiz),gqcoro=mqNew(GUIAS.coro.quiz);
+function vGuia(k){
+ const G=GUIAS[k],key="g_"+k,today=new Date().toDateString();st.gck=st.gck||{};if(!st.gck[key]||st.gck[key].d!==today)st.gck[key]={d:today,v:[]};const done=st.gck[key].v;
+ return `<div class="eyebrow">${G.eb}</div><h1 style="font-size:clamp(1.9rem,5vw,2.6rem);margin:6px 0 8px">${G.t}</h1><p class="lead">${G.lead}</p>
+ <div class="sec"><h2>Antes de la Misa</h2><p class="muted" style="margin:0">Palomea al llegar. Se borra sola cada día.</p>
+  <div class="check">${G.antes.map((t,i)=>`<label class="${done.includes(i)?"on":""}"><input type="checkbox" ${done.includes(i)?"checked":""} onchange="gToggle('${k}',${i},this)"><span>${t}</span></label>`).join("")}</div></div>
+ <div class="sec"><h2>Paso a paso en la Misa</h2><ol class="gsteps">${G.pasos.map(([h,d])=>`<li><b>${h}</b><span>${d}</span></li>`).join("")}</ol></div>
+ ${k==="coro"?coroPlan():""}
+ ${k==="lectores"?`<div class="sec"><h2>Prepara tu lectura</h2><p class="muted" style="margin:0 0 10px">Ábrela hoy y léela en voz alta en casa.</p>${lecturasBtns()}</div>`:""}
+ <div class="sec"><h2>Consejos</h2><div class="antes">${G.tips.map(t=>`<div class="antes-c"><p style="margin:0">${t}</p></div>`).join("")}</div></div>
+ ${miniQuiz(G.quiz,"gq"+k,"Quiz: "+G.t.replace("Guía del ","").replace("Guía de ",""))}`;
+}
+function gToggle(k,i,el){const key="g_"+k,v=st.gck[key].v;if(el.checked){if(!v.includes(i))v.push(i);}else st.gck[key].v=v.filter(x=>x!==i);saveLocal();const y=window.scrollY;render();window.scrollTo(0,y);}
+const CORO_M=[["ent","Entrada"],["kyr","Señor, ten piedad"],["glo","Gloria"],["sal","Salmo"],["ale","Aclamación (Aleluya)"],["ofe","Ofertorio"],["san","Santo"],["cor","Cordero de Dios"],["com","Comunión"],["sal2","Salida"]];
+function coroPlan(){
+ const P=st.coro||{},[sn]=season(new Date()),sobrio=sn==="Adviento"||sn==="Cuaresma";
+ return `<div class="sec"><h2>Planeador de cantos</h2><p class="muted" style="margin:0 0 10px">Escribe los cantos de la próxima Misa y compártelos con tu coro por WhatsApp. Se guardan en este celular.${sobrio?` <b>Estamos en ${sn}:</b> sin Gloria entre semana ni en domingo${sn==="Cuaresma"?", y sin Aleluya":""}.`:""}</p>
+  <div class="fgrid"><label>Misa<input type="text" id="cpMisa" maxlength="60" value="${esc(P.misa||"")}" placeholder="Domingo 12:00" oninput="coroSave()"></label>
+  ${CORO_M.map(([id,l])=>{const off=(id==="glo"&&sobrio)||(id==="ale"&&sn==="Cuaresma");return `<label>${l}${off?' <small class="muted">(no se canta)</small>':""}<input type="text" data-cp="${id}" maxlength="80" value="${esc(P[id]||"")}" ${off?"disabled":""} oninput="coroSave()"></label>`;}).join("")}</div>
+  <div class="row" style="margin-top:10px;gap:8px"><button class="btn red" onclick="coroShare()">Compartir lista</button><button class="btn ghost" onclick="st.coro={};saveLocal();render()">Borrar</button></div></div>`;
+}
+function coroSave(){const P={misa:($("#cpMisa")||{}).value||""};document.querySelectorAll("[data-cp]").forEach(e=>{if(e.value.trim())P[e.dataset.cp]=e.value.trim();});st.coro=P;saveLocal();}
+async function coroShare(){coroSave();const P=st.coro||{};const txt="🎵 Cantos"+(P.misa?" · "+P.misa:"")+"\n"+CORO_M.filter(([id])=>P[id]).map(([id,l])=>"• "+l+": "+P[id]).join("\n")+"\n\nParroquia Sagrado Corazón de Jesús, El Cercado";
+ if(navigator.share){try{await navigator.share({text:txt});return;}catch(e){if(e&&e.name==="AbortError")return;}}
+ window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank","noopener");}
+
+const VIEWS={lectores:()=>vGuia('lectores'),acolitos:()=>vGuia('acolitos'),coro:()=>vGuia('coro'),descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
 function render(){
   renderUser();
   const g0=groupOf(view); const g=g0||{id:"",v:[view]}; if(g0) lastIn[g.id]=view;
