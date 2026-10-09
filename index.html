@@ -417,6 +417,7 @@ body.has-mini main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
 .asig{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.asig select{flex:1 1 160px;font:inherit;padding:9px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}
 .chipx{background:none;border:0;color:var(--muted);padding:0 0 0 4px;font-size:.85rem}
 #meMark,#prMark{transition:transform .7s ease}
+.kimg{width:60px;height:50px;flex:none;color:var(--rubric);background:var(--paper);border-radius:8px;padding:2px}.check label .kimg{align-self:center}
 .ill{width:120px;height:100px;color:var(--rubric);flex:none}.face.back{gap:4px;padding:14px 18px}.face.back .ill{width:110px;height:92px}.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}.galc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}.galc .ill{width:100px;height:84px}.galc small{color:var(--muted);font-size:.8rem;line-height:1.3}
 .kitsel{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kitsel button{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 6px;color:var(--ink);font-weight:600;font-size:.82rem;line-height:1.2;text-align:center}.kitsel button.on{border-color:var(--rubric);background:var(--rubric-soft)}.kitsel svg{width:40px;height:36px}.kitsel svg *{stroke:var(--rubric)!important}.kitsel svg [fill='#fff'],.kitsel svg [fill='rgba(255,255,255,.2)'],.kitsel svg [fill='rgba(255,255,255,.18)']{fill:var(--rubric-soft)!important}.kith{font-size:1rem;margin:16px 0 0;color:var(--rubric)}.kitmust{font-style:normal;font-size:.72rem;font-weight:700;color:var(--rubric);border:1px solid var(--rubric);border-radius:999px;padding:0 6px;margin-left:4px;white-space:nowrap}
 #mupill{position:fixed;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));display:flex;background:#3b2a6e;color:#fff;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:60;overflow:hidden;max-width:70vw}#mupill[hidden]{display:none}#mupill button{background:none;border:0;color:#fff;padding:9px 12px;font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#mupill button+button{border-left:1px solid rgba(255,255,255,.25)}body.has-mini #mupill{bottom:calc(150px + env(safe-area-inset-bottom))}
@@ -3284,6 +3285,43 @@ function kitAdd(k){const v=($("#kitN").value||"").trim().slice(0,100);if(!v)retu
 function kitDel(k,i){st.kitx[k].splice(i,1);saveLocal();render();}
 async function kitShare(k){const K=KITS[k];const txt="🎒 Kit: "+K.n+"\n\n"+kitItems(k).map(([h,L])=>h+":\n"+L.map(x=>"☐ "+x.replace(/^!/,"")+(x[0]==="!"?" (indispensable)":"")).join("\n")).join("\n\n")+"\n\nEscuela de Ministros · Sagrado Corazón de Jesús";
  if(navigator.share){try{await navigator.share({text:txt});return;}catch(e){if(e&&e.name==="AbortError")return;}}window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank","noopener");}
+/* ---- dibujos de ejemplo para los kits ---- */
+const KILL=(()=>{const G="var(--gold)",W="var(--card)",S='stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
+const vela=(x,y,h=34)=>`<rect x="${x-5}" y="${y}" width="10" height="${h}" fill="${W}" ${S}/><path d="M${x} ${y-2}q-5-8 0-14q5 6 0 14" fill="#e8a33a" stroke="none"/>`;
+return {
+ bursa:`<path d="M34 40h52v40H34z" fill="${G}" fill-opacity=".35" ${S}/><path d="M40 40q20-34 40 0" fill="none" ${S}/><path d="M60 50v20M52 60h16" ${S}/>`,
+ manos:`<path d="M58 84V44q0-8-6-8t-6 8v22l-10-8q-6-4-9 1t3 9l18 16h10zM62 84V44q0-8 6-8t6 8v22l10-8q6-4 9 1t-3 9L72 84H62z" fill="${W}" ${S}/>`,
+ reloj:`<circle cx="60" cy="52" r="30" fill="${W}" ${S}/><path d="M60 52V32M60 52l14 8" ${S}/>`,
+ gel:`<path d="M44 40h32v46H44z" fill="#7fb6d6" fill-opacity=".35" ${S}/><path d="M52 40v-10h16v10M60 30v-8h14" ${S}/><path d="M50 62q10-10 20 0" fill="none" stroke="currentColor" stroke-width="2" opacity=".5"/>`,
+ ropa:`<path d="M44 20q16 10 32 0l22 12-8 16-10-4v44H40V44l-10 4-8-16z" fill="${W}" ${S}/>`,
+ gafete:`<path d="M60 10v20" ${S}/><rect x="36" y="30" width="48" height="56" rx="6" fill="${W}" ${S}/><circle cx="60" cy="50" r="9" fill="${G}" fill-opacity=".5" ${S}/><path d="M46 70h28M50 78h20" ${S}/>`,
+ plano:`<path d="M20 20h80v66H20z" fill="${W}" ${S}/><path d="M50 30v46M70 30v46" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/><circle cx="60" cy="40" r="6" fill="${G}" ${S}/><path d="M60 46v12" ${S}/>`,
+ llave:`<circle cx="40" cy="50" r="16" fill="${G}" fill-opacity=".4" ${S}/><circle cx="40" cy="50" r="6" fill="${W}" ${S}/><path d="M56 50h44M88 50v12M98 50v10" ${S}/>`,
+ lista:`<rect x="32" y="20" width="56" height="68" rx="6" fill="${W}" ${S}/><path d="M48 16h24v10H48z" fill="${G}" fill-opacity=".5" ${S}/><path d="M42 44l4 4 8-8M60 44h18M42 62l4 4 8-8M60 62h18" ${S}/>`,
+ aguabendita:`<path d="M46 38h28l4 46H42z" fill="#7fb6d6" fill-opacity=".35" ${S}/><path d="M52 38v-12h16v12" ${S}/><path d="M60 52v18M52 60h16" ${S}/>`,
+ mesa:`<path d="M18 62h84v8H18z" fill="${W}" ${S}/><path d="M26 70v20M94 70v20" ${S}/><path d="M60 22v34M50 32h20" ${S}/>${vela(36,30,30)}${vela(84,30,30)}`,
+ crucifijo:`<path d="M60 14v74M40 34h40" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><path d="M60 34v20" stroke="${G}" stroke-width="3"/>`,
+ velas:`${vela(42,40,46)}${vela(60,30,56)}${vela(78,40,46)}`,
+ agua:`<path d="M48 30h24v56H48z" fill="#7fb6d6" fill-opacity=".35" ${S}/><path d="M52 30v-10h16v10" ${S}/><path d="M48 50h24" stroke="currentColor" stroke-width="2" opacity=".5"/>`,
+ libro:`<path d="M20 30q20-8 40 2v52q-20-10-40-2zM100 30q-20-8-40 2v52q20-10 40-2z" fill="${W}" ${S}/><path d="M78 30v26l6-5 6 5V28" fill="${G}" stroke="none"/>`,
+ nota:`<path d="M48 76V28l38-8v48" fill="none" ${S}/><ellipse cx="40" cy="78" rx="10" ry="8" fill="currentColor"/><ellipse cx="78" cy="70" rx="10" ry="8" fill="currentColor"/>`,
+ incensario:`<path d="M60 10v20M48 30h24" ${S}/><path d="M42 44q18-20 36 0z" fill="${G}" fill-opacity=".4" ${S}/><path d="M40 46h40q-2 22-20 24q-18-2-20-24z" fill="${G}" fill-opacity=".4" ${S}/><path d="M50 26q-6-8 0-14M70 26q6-8 0-14" fill="none" stroke="currentColor" stroke-width="2" opacity=".45"/>`,
+ rosario:`<circle cx="60" cy="42" r="24" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray=".1 9" stroke-linecap="round"/><path d="M60 66v10M60 76v14M54 82h12" ${S}/>`,
+ linterna:`<path d="M30 42h40v20H30z" fill="${W}" ${S}/><path d="M70 38l14-8v44l-14-8z" fill="${G}" fill-opacity=".4" ${S}/><path d="M90 40l12-6M92 52h12M90 64l12 6" stroke="${G}" stroke-width="3" stroke-linecap="round"/>`,
+ celular:`<rect x="40" y="14" width="40" height="74" rx="8" fill="${W}" ${S}/><path d="M54 22h12" ${S}/><rect x="50" y="40" width="20" height="30" rx="2" fill="#2f7a4c" fill-opacity=".45" stroke="none"/>`,
+ botiquin:`<rect x="24" y="34" width="72" height="50" rx="8" fill="${W}" ${S}/><path d="M48 34v-8h24v8" ${S}/><path d="M60 46v26M47 59h26" stroke="#c0392b" stroke-width="6" stroke-linecap="round"/>`,
+ personas:`<circle cx="42" cy="38" r="10" fill="${W}" ${S}/><circle cx="78" cy="38" r="10" fill="${W}" ${S}/><path d="M24 80q0-24 18-24t18 24M60 80q0-24 18-24t18 24" fill="${G}" fill-opacity=".3" ${S}/>`,
+ casa:`<path d="M22 50l38-30 38 30" fill="none" ${S}/><path d="M32 46v40h56V46" fill="${W}" ${S}/><path d="M60 54v18M52 62h16" ${S}/>`
+};})();
+function kitImg(t){t=bibNorm(t);const m=[
+ [/teca|portaviatico|llevar al senor/,"I:Teca"],[/bursa|bolsita/,"bursa"],[/corporal/,"I:Corporal"],[/purificador|particula/,"I:Purificador"],[/custodia/,"I:Custodia"],[/copon|formas/,"I:Copón"],[/incens/,"incensario"],
+ [/llave/,"llave"],[/sagrario/,"I:Sagrario"],[/ayuno/,"I:Ayuno eucarístico"],[/gracia de dios|confes/,"manos"],[/gel|manos limpias/,"gel"],[/gafete|distintivo|credencial/,"gafete"],
+ [/estacion|pasillo/,"plano"],[/agua bendita/,"aguabendita"],[/mantel|mesa/,"mesa"],[/crucifijo/,"crucifijo"],[/vela/,"velas"],[/rosario|estampas/,"rosario"],[/cant/,"nota"],
+ [/leccionario|lecturas|lectura|biblia|guion|guia/,"libro"],[/lista|direcciones|rol de|nombre del difunto/,"lista"],[/linterna/,"linterna"],[/celular|bateria/,"celular"],[/botiquin/,"botiquin"],
+ [/agua|comer/,"agua"],[/ropa|vestidura|chamarra|zapatos|gorra|bloqueador/,"ropa"],[/minutos|a que hora/,"reloj"],[/directo|camino/,"I:Viático"],[/familia|casa/,"casa"],
+ [/lector|quien|acompan|personas|padre|sacristan|parroco|coordinador|pesame|escuchar|adoradores/,"personas"],[/sede/,"I:Sede"],[/peticiones/,"personas"],[/avisos/,"lista"],[/hora de reserva/,"reloj"],[/contacto|telefono/,"celular"]].find(([r])=>r.test(t));
+ if(!m)return "";const k=m[1],body=k.startsWith("I:")?ILL[k.slice(2)]:KILL[k];return body?`<svg class="kimg" viewBox="0 0 120 100" aria-hidden="true">${body}</svg>`:"";}
+
 function vKits(){
  const k=KT.k,K=KITS[k],ck=new Set(((st.kitck||{})[k])||[]),groups=kitItems(k);
  const all=groups.flatMap(([h,L],gi)=>L.map((x,i)=>gi+"-"+i)),done=all.filter(id=>ck.has(id)).length,must=groups.flatMap(([h,L],gi)=>L.map((x,i)=>x[0]==="!"?gi+"-"+i:null)).filter(Boolean),mustOk=must.every(id=>ck.has(id));
@@ -3293,7 +3331,7 @@ function vKits(){
  <section class="ycard" style="margin-top:14px"><div class="row" style="justify-content:space-between;align-items:flex-start;gap:10px"><div><h2 style="margin:0">${K.n}</h2><p class="muted" style="margin:4px 0 0">${K.d}</p></div><button class="back" style="margin:0" onclick="go('${K.guia}')">Ver guía →</button></div>
   <div class="prog" style="margin:12px 0 4px"><i style="width:${all.length?done/all.length*100:0}%"></i></div>
   <p class="muted" style="margin:0;font-size:.88rem">${done} de ${all.length} listos${mustOk?" · <b style=\"color:var(--ok)\">Lo indispensable está listo</b>":` · faltan ${must.filter(id=>!ck.has(id)).length} indispensables`}</p>
-  ${groups.map(([h,L],gi)=>`<h3 class="kith">${h}</h3><div class="check">${L.map((x,i)=>{const id=gi+"-"+i,m=x[0]==="!",own=h==="Lo que yo agrego";return `<label class="${ck.has(id)?"on":""}"><input type="checkbox" ${ck.has(id)?"checked":""} onchange="kitTog('${k}','${id}')"><span>${esc(x.replace(/^!/,""))}${m?' <em class="kitmust">indispensable</em>':""}</span>${own?`<button class="back" style="margin:0 0 0 auto" onclick="event.preventDefault();kitDel('${k}',${i})" aria-label="Quitar">✕</button>`:""}</label>`;}).join("")}</div>`).join("")}
+  ${groups.map(([h,L],gi)=>`<h3 class="kith">${h}</h3><div class="check">${L.map((x,i)=>{const id=gi+"-"+i,m=x[0]==="!",own=h==="Lo que yo agrego";return `<label class="${ck.has(id)?"on":""}"><input type="checkbox" ${ck.has(id)?"checked":""} onchange="kitTog('${k}','${id}')">${kitImg(x)}<span>${esc(x.replace(/^!/,""))}${m?' <em class="kitmust">indispensable</em>':""}</span>${own?`<button class="back" style="margin:0 0 0 auto" onclick="event.preventDefault();kitDel('${k}',${i})" aria-label="Quitar">✕</button>`:""}</label>`;}).join("")}</div>`).join("")}
   <div class="bibsearch" style="margin-top:14px"><input type="text" id="kitN" maxlength="100" placeholder="Agregar algo a este kit…" onkeydown="if(event.key==='Enter')kitAdd('${k}')"><button class="btn ghost" onclick="kitAdd('${k}')">Agregar</button></div>
   <div class="row" style="margin-top:12px;gap:8px;flex-wrap:wrap"><button class="btn red" onclick="kitShare('${k}')">Compartir lista</button><button class="btn ghost" onclick="kitReset('${k}')">Desmarcar todo</button></div></section>`;
 }
