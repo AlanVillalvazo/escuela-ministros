@@ -417,6 +417,7 @@ body.has-mini main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
 .asig{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.asig select{flex:1 1 160px;font:inherit;padding:9px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}
 .chipx{background:none;border:0;color:var(--muted);padding:0 0 0 4px;font-size:.85rem}
 #meMark,#prMark{transition:transform .7s ease}
+.kitsel{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kitsel button{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 6px;color:var(--ink);font-weight:600;font-size:.82rem;line-height:1.2;text-align:center}.kitsel button.on{border-color:var(--rubric);background:var(--rubric-soft)}.kitsel svg{width:40px;height:36px}.kitsel svg *{stroke:var(--rubric)!important}.kitsel svg [fill='#fff'],.kitsel svg [fill='rgba(255,255,255,.2)'],.kitsel svg [fill='rgba(255,255,255,.18)']{fill:var(--rubric-soft)!important}.kith{font-size:1rem;margin:16px 0 0;color:var(--rubric)}.kitmust{font-style:normal;font-size:.72rem;font-weight:700;color:var(--rubric);border:1px solid var(--rubric);border-radius:999px;padding:0 6px;margin-left:4px;white-space:nowrap}
 #mupill{position:fixed;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));display:flex;background:#3b2a6e;color:#fff;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:60;overflow:hidden;max-width:70vw}#mupill[hidden]{display:none}#mupill button{background:none;border:0;color:#fff;padding:9px 12px;font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#mupill button+button{border-left:1px solid rgba(255,255,255,.25)}body.has-mini #mupill{bottom:calc(150px + env(safe-area-inset-bottom))}
 .canto{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.canto .btn{padding:6px 10px;font-size:.82rem;text-decoration:none}
 #toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#2a1714;color:#fff;padding:10px 18px;border-radius:999px;font-size:.92rem;opacity:0;pointer-events:none;transition:.25s;z-index:200;white-space:nowrap}#toast.on{opacity:.95;transform:translate(-50%,0)}
@@ -815,10 +816,10 @@ window.addEventListener("popstate",e=>{const s=e.state;if(!s)return;NAV_POP=true
 const GROUPS=[
  {id:"inicio",n:"Inicio",v:["inicio"]},
  {id:"biblia",n:"Biblia",v:["biblia","recursos"],sub:1},
- {id:"descubrir",n:"Descubrir",v:["descubrir","modulos","antes","misa","enfermos","palabra","expo","difuntos","emergencias","rosario","devocionario","bendiciones","examenc","musica","juego","lectores","acolitos","coro","tarjetas","situaciones","ordena","examen"]},
+ {id:"descubrir",n:"Descubrir",v:["descubrir","modulos","antes","kits","misa","enfermos","palabra","expo","difuntos","emergencias","rosario","devocionario","bendiciones","examenc","musica","juego","lectores","acolitos","coro","tarjetas","situaciones","ordena","examen"]},
  {id:"parroquia",n:"Parroquia",v:["avisos","rol","calendario","equipo","ministros"],sub:1},
  {id:"yo",n:"Yo",v:["yo","entrar"]}];
-const VNAME={descubrir:"Descubrir",musica:"Música",juego:"Entre Hermanos",lectores:"Lectores",acolitos:"Acólitos",coro:"Coro",yo:"Yo",examenc:"Examen de conciencia",modulos:"Módulos",avisos:"Avisos",biblia:"Biblia",recursos:"Recursos",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
+const VNAME={descubrir:"Descubrir",kits:"Kits de servicio",musica:"Música",juego:"Entre Hermanos",lectores:"Lectores",acolitos:"Acólitos",coro:"Coro",yo:"Yo",examenc:"Examen de conciencia",modulos:"Módulos",avisos:"Avisos",biblia:"Biblia",recursos:"Recursos",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
 const ALLV=GROUPS.flatMap(g=>g.v);
 const groupOf=v=>GROUPS.find(g=>g.v.includes(v));
 const lastIn={};
@@ -1616,7 +1617,7 @@ function misServicios(){
  const urg=M.find(t=>t.fecha===hoy||t.fecha===man);
  return `<section class="servicios ${urg?"urg":""}"><div class="row" style="justify-content:space-between"><h2>${urg?(urg.fecha===hoy?"¡Hoy te toca servir!":"Mañana te toca servir"):"Tus próximos servicios"}</h2><button class="back" style="margin:0" onclick="go('rol')">Ver rol →</button></div>
  ${M.map(t=>{const d=new Date(t.fecha+"T12:00:00"),et=t.fecha===hoy?"Hoy":t.fecha===man?"Mañana":d.toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"short"});
-  return `<div class="srv"><div class="fd"><b>${d.getDate()}</b><span>${d.toLocaleDateString("es-MX",{month:"short"}).replace(".","")}</span></div><div style="min-width:0;flex:1"><b class="fn">${esc(t.tipo||"Servicio")}</b><div class="muted" style="font-size:.88rem">${et}${t.hora?" · "+esc(t.hora):""}${t.lugar?" · "+esc(t.lugar):""}</div>${t.asignado?`<div class="asg">Te asignó: ${esc(t.asignado)}</div>`:""}${t.notas?`<div style="font-size:.9rem;margin-top:2px">${esc(t.notas)}</div>`:""}${confUI(t)}</div><button class="calbtn" aria-label="Agregar a mi calendario" onclick="calTurno('${t.id}')">${tileSVG("iglesia")}<span>Calendario</span></button></div>`;}).join("")}
+  return `<div class="srv"><div class="fd"><b>${d.getDate()}</b><span>${d.toLocaleDateString("es-MX",{month:"short"}).replace(".","")}</span></div><div style="min-width:0;flex:1"><b class="fn">${esc(t.tipo||"Servicio")}</b><div class="muted" style="font-size:.88rem">${et}${t.hora?" · "+esc(t.hora):""}${t.lugar?" · "+esc(t.lugar):""}</div>${t.asignado?`<div class="asg">Te asignó: ${esc(t.asignado)}</div>`:""}${t.notas?`<div style="font-size:.9rem;margin-top:2px">${esc(t.notas)}</div>`:""}${confUI(t)}</div><button class="calbtn" aria-label="Ver qué llevar" onclick="KT.k=KIT_MAP(this.dataset.t);go('kits')" data-t="${esc(t.tipo||"")}">${tileSVG("lista")}<span>Mi kit</span></button><button class="calbtn" aria-label="Agregar a mi calendario" onclick="calTurno('${t.id}')">${tileSVG("iglesia")}<span>Calendario</span></button></div>`;}).join("")}
  ${urg?`<p class="muted" style="font-size:.88rem;margin:8px 0 0">Recuerda: en gracia de Dios, una hora de ayuno y llegar 15 minutos antes. <a href="#" onclick="event.preventDefault();go('antes')">Antes de servir</a></p>`:""}</section>`;}
 function rvRestart(){if(RV.on&&!RV.paused){rvCancel();rvStep();}}
 function rvUI(){miniUI();const c=document.getElementById("rvCtl");if(!c)return;
@@ -2389,6 +2390,7 @@ const IC={
 const tileSVG=k=>`<svg viewBox="0 0 120 110" aria-hidden="true">${IC[k]||IC.cruz}</svg>`;
 const TILES=[
  {s:"Para servir",t:"Antes de servir",d:"Gracia, ayuno y preparación",ic:"sol",g:["#9b2630","#5a1219"],v:"antes"},
+ {s:"Para servir",t:"Kits de servicio",d:"Qué llevar según la ocasión",ic:"lista",g:["#2f5d50","#132b25"],v:"kits"},
  {s:"Para servir",t:"En la Misa",d:"Tu recorrido paso a paso",ic:"caliz",g:["#7d1d24","#3b0d12"],v:"misa"},
  {s:"Para servir",t:"Comunión a enfermos",d:"El rito en casa",ic:"casa",g:["#1f6f5c","#0d3a30"],v:"enfermos"},
  {s:"Para servir",t:"Celebración de la Palabra",d:"Cuando no hay sacerdote",ic:"libro",g:["#2b4c8c","#14254a"],v:"palabra"},
@@ -3199,7 +3201,60 @@ function vMusica(){
  ${MU.msg?`<p class="muted">${esc(MU.msg)}</p>`:""}<div class="${T==="cantos"?"mucantos":""}">${body}</div>`;
 }
 
-const VIEWS={musica:()=>vMusica(),juego:()=>vJuego(),lectores:()=>vGuia('lectores'),acolitos:()=>vGuia('acolitos'),coro:()=>vGuia('coro'),descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
+/* ================= KITS DE SERVICIO ================= */
+// "!" al inicio = indispensable
+const KITS={
+ misa:{n:"Misa",ic:"caliz",guia:"misa",d:"Cuando te toca dar la Comunión en la Misa.",sec:[
+  ["Tú",["!Estar en gracia de Dios (confesado si hace falta)","!Una hora de ayuno antes de comulgar (agua y medicinas sí se permiten)","Llegar 15 minutos antes","Manos limpias y uñas cortas","Ropa sobria o la vestidura que pida la parroquia","Gafete o distintivo de ministro, si se usa"]],
+  ["Antes de empezar",["!Presentarte con el sacristán o coordinador","!Saber tu estación de Comunión (pasillo central, izquierdo o derecho)","Saber si te toca ir al sagrario por el copón","Gel antibacterial (se usa antes, nunca durante la Comunión)","Ubicar el purificador por si cae una partícula"]],
+  ["Al terminar",["Regresar el copón al altar o al sagrario según indique el padre","Avisar si quedó alguna partícula en el purificador"]]]},
+ enfermos:{n:"Comunión a enfermos",ic:"casa",guia:"enfermos",d:"Para llevar la Eucaristía a casas y hospitales.",sec:[
+  ["Para llevar al Señor",["!Teca (portaviático) limpia","!Bolsita o bursa para llevarla junto al pecho","!Corporal pequeño","Purificador","La guía del rito (en esta app, sin señal)"]],
+  ["Antes de salir",["!Lista de enfermos con direcciones y teléfonos","!Pedir al padre o sacristán las formas exactas que necesitas","Avisar a las familias para que preparen la mesa","Agua bendita (opcional)"]],
+  ["En la casa (lo prepara la familia)",["Mesa con mantel blanco","Crucifijo y una o dos velas","Un vaso con agua por si el enfermo lo necesita"]],
+  ["En el camino",["!Ir directo, sin hacer otras paradas ni pendientes","!Llevar al Señor con respeto: sin plática ni música","Regresar al sagrario las formas que sobren"]]]},
+ palabra:{n:"Celebración de la Palabra",ic:"libro",guia:"palabra",d:"Cuando no hay sacerdote, en la comunidad o en la sierra.",sec:[
+  ["Indispensable",["!Encargo del párroco para dirigir la celebración","!Leccionario o las lecturas del día","!Guion de la celebración (en esta app)","!Saber si habrá Comunión: llave del sagrario o el copón que entregó el padre"]],
+  ["Para el altar",["Mantel limpio","Dos velas y cerillos o encendedor","Corporal y purificador, si habrá Comunión","Crucifijo"]],
+  ["Personas",["Lectores para 1.ª lectura, salmo y 2.ª lectura","Quien dirija los cantos","Alguien que lea las peticiones"]],
+  ["Recuerda",["No usar la sede del sacerdote ni decir las oraciones propias de la Misa","Cantos escogidos con el coro","Avisos de la parroquia para leer al final"]]]},
+ expo:{n:"Exposición del Santísimo",ic:"custodia",guia:"expo",d:"Para la hora santa o la adoración.",sec:[
+  ["Indispensable",["!Permiso o encargo del párroco","!Llave del sagrario","!Corporal extendido en el altar","!Custodia limpia o el copón"]],
+  ["Para la adoración",["Velas: cuatro o seis con custodia; al menos dos con copón","Incensario, carbón e incienso (si se usa)","Lecturas, oraciones o el Rosario para guiar","Cantos: «Cantemos al amor de los amores», «Tantum ergo»"]],
+  ["Organización",["Rol de adoradores para que nunca se quede solo el Santísimo","Hora de reserva acordada","Recuerda: el ministro no da la bendición con la custodia; hace la reserva"]]]},
+ difuntos:{n:"Velorio y rezo",ic:"vela",guia:"difuntos",d:"Para acompañar a una familia en duelo.",sec:[
+  ["Para llevar",["!Guion del rezo por difuntos (en esta app)","!Rosario","Agua bendita","Biblia o una lectura escogida","Lista de cantos sencillos"]],
+  ["Antes de empezar",["!Saber el nombre del difunto y de los familiares cercanos","Dar el pésame a la familia","Preguntar si quieren el Rosario completo o un rezo breve"]],
+  ["Recuerda",["Hablar poco, escuchar mucho","Dejar el contacto de la parroquia para la Misa de exequias"]]]},
+ sierra:{n:"Misión en la sierra",ic:"sol",guia:"palabra",d:"Para las salidas a las comunidades de la Sierra de Santiago.",sec:[
+  ["Lo de la misión",["!Encargo del párroco y lo que te entregó (teca, copón, lecturas)","!Lista de familias y enfermos que visitar","Guiones impresos o la app descargada (Biblia descargada para usar sin señal)","Rosarios o estampas para regalar"]],
+  ["Lo tuyo",["!Agua y algo de comer","Ropa cómoda y zapatos para caminar","Gorra y bloqueador","Chamarra (en la sierra refresca)","Linterna","Celular cargado y batería extra","Botiquín básico"]],
+  ["Seguridad",["!Avisar al párroco a qué hora salen y regresan","Ir acompañado, nunca solo","Teléfono de contacto de la parroquia"]]]}
+};
+const KIT_MAP=t=>{t=bibNorm(t||"");return /enferm/.test(t)?"enfermos":/palabra/.test(t)?"palabra":/exposi|santisimo|adora/.test(t)?"expo":/velorio|difunt|rosario/.test(t)?"difuntos":/sierra|mision/.test(t)?"sierra":"misa";};
+const KT={k:"misa",add:false};
+function kitItems(k){const K=KITS[k];const ex=((st.kitx||{})[k])||[];return [...K.sec.map(([h,L])=>[h,L]),...(ex.length?[["Lo que yo agrego",ex]]:[])];}
+function kitTog(k,id){st.kitck=st.kitck||{};const S=new Set(st.kitck[k]||[]);S.has(id)?S.delete(id):S.add(id);st.kitck[k]=[...S];saveLocal();const y=window.scrollY;render();window.scrollTo(0,y);}
+function kitReset(k){st.kitck=st.kitck||{};st.kitck[k]=[];saveLocal();render();}
+function kitAdd(k){const v=($("#kitN").value||"").trim().slice(0,100);if(!v)return;st.kitx=st.kitx||{};st.kitx[k]=[...(st.kitx[k]||[]),v];saveLocal();render();}
+function kitDel(k,i){st.kitx[k].splice(i,1);saveLocal();render();}
+async function kitShare(k){const K=KITS[k];const txt="🎒 Kit: "+K.n+"\n\n"+kitItems(k).map(([h,L])=>h+":\n"+L.map(x=>"☐ "+x.replace(/^!/,"")+(x[0]==="!"?" (indispensable)":"")).join("\n")).join("\n\n")+"\n\nEscuela de Ministros · Sagrado Corazón de Jesús";
+ if(navigator.share){try{await navigator.share({text:txt});return;}catch(e){if(e&&e.name==="AbortError")return;}}window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank","noopener");}
+function vKits(){
+ const k=KT.k,K=KITS[k],ck=new Set(((st.kitck||{})[k])||[]),groups=kitItems(k);
+ const all=groups.flatMap(([h,L],gi)=>L.map((x,i)=>gi+"-"+i)),done=all.filter(id=>ck.has(id)).length,must=groups.flatMap(([h,L],gi)=>L.map((x,i)=>x[0]==="!"?gi+"-"+i:null)).filter(Boolean),mustOk=must.every(id=>ck.has(id));
+ return `<div class="eyebrow">Para servir</div><h1 style="font-size:clamp(1.9rem,5vw,2.6rem);margin:6px 0 8px">Kits de servicio</h1>
+ <p class="lead">Lo que necesitas llevar y revisar según la ocasión. Palomea antes de salir de casa para que no se te olvide nada.</p>
+ <div class="kitsel">${Object.entries(KITS).map(([id,x])=>`<button class="${id===k?"on":""}" onclick="KT.k='${id}';render()">${tileSVG(x.ic)}<span>${x.n}</span></button>`).join("")}</div>
+ <section class="ycard" style="margin-top:14px"><div class="row" style="justify-content:space-between;align-items:flex-start;gap:10px"><div><h2 style="margin:0">${K.n}</h2><p class="muted" style="margin:4px 0 0">${K.d}</p></div><button class="back" style="margin:0" onclick="go('${K.guia}')">Ver guía →</button></div>
+  <div class="prog" style="margin:12px 0 4px"><i style="width:${all.length?done/all.length*100:0}%"></i></div>
+  <p class="muted" style="margin:0;font-size:.88rem">${done} de ${all.length} listos${mustOk?" · <b style=\"color:var(--ok)\">Lo indispensable está listo</b>":` · faltan ${must.filter(id=>!ck.has(id)).length} indispensables`}</p>
+  ${groups.map(([h,L],gi)=>`<h3 class="kith">${h}</h3><div class="check">${L.map((x,i)=>{const id=gi+"-"+i,m=x[0]==="!",own=h==="Lo que yo agrego";return `<label class="${ck.has(id)?"on":""}"><input type="checkbox" ${ck.has(id)?"checked":""} onchange="kitTog('${k}','${id}')"><span>${esc(x.replace(/^!/,""))}${m?' <em class="kitmust">indispensable</em>':""}</span>${own?`<button class="back" style="margin:0 0 0 auto" onclick="event.preventDefault();kitDel('${k}',${i})" aria-label="Quitar">✕</button>`:""}</label>`;}).join("")}</div>`).join("")}
+  <div class="bibsearch" style="margin-top:14px"><input type="text" id="kitN" maxlength="100" placeholder="Agregar algo a este kit…" onkeydown="if(event.key==='Enter')kitAdd('${k}')"><button class="btn ghost" onclick="kitAdd('${k}')">Agregar</button></div>
+  <div class="row" style="margin-top:12px;gap:8px;flex-wrap:wrap"><button class="btn red" onclick="kitShare('${k}')">Compartir lista</button><button class="btn ghost" onclick="kitReset('${k}')">Desmarcar todo</button></div></section>`;
+}
+
+const VIEWS={kits:()=>vKits(),musica:()=>vMusica(),juego:()=>vJuego(),lectores:()=>vGuia('lectores'),acolitos:()=>vGuia('acolitos'),coro:()=>vGuia('coro'),descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
 function render(){
   renderUser();
   const g0=groupOf(view); const g=g0||{id:"",v:[view]}; if(g0) lastIn[g.id]=view;
