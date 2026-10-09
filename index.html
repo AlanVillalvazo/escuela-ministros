@@ -762,6 +762,14 @@ const KEY="escuela-ministros-v1";
 let st = {quiz:{}, known:[], scen:{}, order:{}, exam:{best:0,name:""}};
 try{ const s=JSON.parse(localStorage.getItem(KEY)||"null"); if(s) st=Object.assign(st,s); }catch(e){}
 const saveLocal=()=>{ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} };
+/* Cada usuario tiene su propio avance en el celular: si entra otra persona, no ve ni se lleva lo del anterior */
+const FRESH=()=>({quiz:{},known:[],scen:{},order:{},exam:{best:0,name:""}});
+const DEVICE_KEYS=["theme"];
+const userKey=id=>KEY+"-u-"+id;
+function stashUser(){if(st.owner){try{localStorage.setItem(userKey(st.owner),JSON.stringify(st));}catch(e){}}}
+function freshState(owner){const keep={};DEVICE_KEYS.forEach(k=>{if(st[k]!==undefined)keep[k]=st[k];});st=Object.assign(FRESH(),keep);if(owner)st.owner=owner;}
+function loadUser(id){let s=null;try{s=JSON.parse(localStorage.getItem(userKey(id))||"null");}catch(e){}freshState(id);if(s){const th=st.theme;Object.assign(st,s);if(th!==undefined)st.theme=th;st.owner=id;}}
+function hasStash(id){try{return !!localStorage.getItem(userKey(id));}catch(e){return false;}}
 const save=()=>{saveLocal();queueSync();};
 
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
@@ -1928,13 +1936,26 @@ async function entrar(code){
  code=(code||"").trim().toUpperCase();
  const r=await rpc("ingresar",{p_codigo:code});
  if(!r||r.error){const e=new Error((r&&r.error)||"Código no válido");e.status=400;throw e;}
+ if(st.owner!==r.id){const prev=st.owner;if(prev)stashUser();if(prev||hasStash(r.id))loadUser(r.id);else st.owner=r.id;}
  ME.codigo=code;ME.id=r.id;ME.nombre=r.nombre;ME.rol=r.rol;
  try{localStorage.setItem("escuela-codigo",code);localStorage.setItem("escuela-nombre",r.nombre);}catch(e){}
  const m=mergeAvance(st,r.avance);SYNC_KEYS.forEach(k=>st[k]=m[k]);if(!st.exam.name)st.exam.name=r.nombre;
  saveLocal();pushAvance();
 }
 async function autoEntrar(){try{await entrar(ME.codigo);}catch(e){if(e.status===400){ME.codigo=null;try{localStorage.removeItem("escuela-codigo");}catch(_){}}}renderUser();if(["entrar","equipo","rol","ministros","examen"].includes(view))render();}
-function salir(){ME.codigo=ME.id=null;ME.nombre=ME.rol="";try{localStorage.removeItem("escuela-codigo");localStorage.removeItem("escuela-nombre");}catch(e){}renderUser();go("inicio");}
+async function salir(){
+ if(ME.id){clearTimeout(syncT);try{await pushAvance();}catch(e){}
+  try{const reg=await navigator.serviceWorker.getRegistration();const sb=reg&&await reg.pushManager.getSubscription();if(sb){try{await rpc("push_quitar",{p_codigo:ME.codigo,p_endpoint:sb.endpoint});}catch(e){}await sb.unsubscribe();}}catch(e){}}
+ stashUser();freshState(null);saveLocal();
+ ME.codigo=ME.id=null;ME.nombre=ME.rol="";ME.reset=false;
+ try{localStorage.removeItem("escuela-codigo");localStorage.removeItem("escuela-nombre");}catch(e){}
+ [ROL,EQ,AV,MIN].forEach(o=>{o.ready=false;o.t=0;});ROL.turnos=[];EQ.rows=[];AV.rows=[];MIN.rows=[];if(typeof PU!=="undefined"){PU.st=null;PU.msg="";}
+ renderUser();go("inicio");}
+async function reiniciarAvance(){
+ freshState(ME.id);st.exam.name=ME.nombre;saveLocal();ME.reset=false;
+ try{await rpc("avance_reiniciar",{p_codigo:ME.codigo});ME.msg="Listo: tu avance empezó de cero.";}
+ catch(e){await pushAvance();ME.msg=e.status===404?"Se borraron tus módulos y actividad. Para borrar también la calificación del examen, falta correr reiniciar-avance.sql en Supabase.":"Se borró en este celular; se guardará en tu cuenta cuando haya señal.";}
+ render();}
 function renderUser(){const b=document.getElementById("userBox");if(!b)return;
  if(!ONLINE_OK){b.innerHTML="";return;}
  b.innerHTML=ME.id?`<button class="ubtn" onclick="go('entrar')">${esc(ME.nombre.split(" ")[0])}</button>`:ME.codigo?`<button class="ubtn" onclick="go('entrar')">${esc((ME.nombre||"").split(" ")[0]||"Sin señal")}</button>`:`<button class="ubtn in" onclick="go('entrar')">Entrar</button>`;}
@@ -1945,7 +1966,10 @@ function vEntrar(){
   <p class="lead">Tu avance se guarda en tu cuenta: lo verás igual en tu celular o en cualquier computadora donde entres con tu código.</p>
   <div class="facts"><div class="fact"><b>${doneCount()} de 8</b><span>módulos completados</span></div><div class="fact"><b>${st.exam.best||0} de 15</b><span>mejor examen</span></div><div class="fact"><b>${(ROLN[ME.rol]||"Ministro")}</b><span>tu rol en la escuela</span></div></div>
   ${(st.exam.best||0)>=12?certBtn(st.exam.best):""}${ME.err?`<p class="muted">${esc(ME.err)}</p>`:""}
-  <div class="row" style="margin-top:18px"><button class="btn red" onclick="go('inicio')">Ir al inicio</button><button class="btn ghost" onclick="go('equipo')">Avance del equipo</button><button class="btn ghost" onclick="go('rol')">Rol de servicio</button>${esCoord()?`<button class="btn ghost" onclick="go('ministros')">Ministros y códigos</button>`:""}<button class="btn ghost" onclick="salir()">Salir</button></div>`;
+  <div class="row" style="margin-top:18px"><button class="btn red" onclick="go('inicio')">Ir al inicio</button><button class="btn ghost" onclick="go('equipo')">Avance del equipo</button><button class="btn ghost" onclick="go('rol')">Rol de servicio</button>${esCoord()?`<button class="btn ghost" onclick="go('ministros')">Ministros y códigos</button>`:""}<button class="btn ghost" onclick="salir()">Salir</button></div>
+  ${ME.msg?`<p class="muted" style="margin-top:12px">${esc(ME.msg)}</p>`:""}
+  <div class="panel" style="margin-top:22px"><h3 style="font-size:1.1rem;margin:0 0 6px">¿Ves avance que no es tuyo?</h3><p class="muted" style="margin:0 0 10px">Pasa si alguien más usó la app en este celular antes que tú. Puedes empezar tu avance de cero; no afecta a nadie más.</p>
+  ${ME.reset?`<div class="row" style="gap:8px"><button class="btn red" onclick="reiniciarAvance()">Sí, borrar mi avance</button><button class="btn ghost" onclick="ME.reset=false;render()">Cancelar</button></div>`:`<button class="btn ghost" onclick="ME.reset=true;ME.msg='';render()">Empezar mi avance de cero</button>`}</div>`;
  return `<div class="eyebrow">Escuela de Ministros</div><h1 style="font-size:2.2rem;margin:6px 0 8px">Entra con tu código</h1>
   <p class="lead">Con tu código tu avance se guarda en tu cuenta, cuentas en el avance del equipo y puedes anotarte en el rol de servicio. Pídeselo al coordinador.</p>
   <div class="panel" style="max-width:420px;margin-top:16px"><label for="codeIn" class="muted" style="font-size:.9rem">Tu código</label>
