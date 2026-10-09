@@ -417,6 +417,8 @@ body.has-mini main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
 .asig{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.asig select{flex:1 1 160px;font:inherit;padding:9px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}
 .chipx{background:none;border:0;color:var(--muted);padding:0 0 0 4px;font-size:.85rem}
 #meMark,#prMark{transition:transform .7s ease}
+#mupill{position:fixed;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));display:flex;background:#3b2a6e;color:#fff;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:60;overflow:hidden;max-width:70vw}#mupill[hidden]{display:none}#mupill button{background:none;border:0;color:#fff;padding:9px 12px;font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#mupill button+button{border-left:1px solid rgba(255,255,255,.25)}body.has-mini #mupill{bottom:calc(150px + env(safe-area-inset-bottom))}
+.canto{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.canto .btn{padding:6px 10px;font-size:.82rem;text-decoration:none}
 #toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#2a1714;color:#fff;padding:10px 18px;border-radius:999px;font-size:.92rem;opacity:0;pointer-events:none;transition:.25s;z-index:200;white-space:nowrap}#toast.on{opacity:.95;transform:translate(-50%,0)}
 .trscore{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:8px;margin:12px 0 0}.trscore div{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:8px;text-align:center;position:relative}.trscore div.on{border-color:var(--rubric)}.trscore span{display:block;font-size:.78rem;color:var(--muted)}.trscore b{font-size:1.6rem}.trscore i{position:absolute;top:4px;right:8px;color:var(--gold);font-style:normal}
 .conf{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;font-size:.92rem}.conf .btn{padding:6px 14px;font-size:.88rem}.conf.si{color:var(--ok);font-weight:600}.conf.no{color:var(--bad);font-weight:600}.who-chip.csi{border-color:var(--ok);color:var(--ok)}.who-chip.cno{border-color:var(--bad);color:var(--bad);text-decoration:line-through}
@@ -805,10 +807,10 @@ window.addEventListener("popstate",e=>{const s=e.state;if(!s)return;NAV_POP=true
 const GROUPS=[
  {id:"inicio",n:"Inicio",v:["inicio"]},
  {id:"biblia",n:"Biblia",v:["biblia","recursos"],sub:1},
- {id:"descubrir",n:"Descubrir",v:["descubrir","modulos","antes","misa","enfermos","palabra","expo","difuntos","emergencias","rosario","devocionario","bendiciones","examenc","juego","lectores","acolitos","coro","tarjetas","situaciones","ordena","examen"]},
+ {id:"descubrir",n:"Descubrir",v:["descubrir","modulos","antes","misa","enfermos","palabra","expo","difuntos","emergencias","rosario","devocionario","bendiciones","examenc","musica","juego","lectores","acolitos","coro","tarjetas","situaciones","ordena","examen"]},
  {id:"parroquia",n:"Parroquia",v:["avisos","rol","calendario","equipo","ministros"],sub:1},
  {id:"yo",n:"Yo",v:["yo","entrar"]}];
-const VNAME={descubrir:"Descubrir",juego:"Entre Hermanos",lectores:"Lectores",acolitos:"Acólitos",coro:"Coro",yo:"Yo",examenc:"Examen de conciencia",modulos:"Módulos",avisos:"Avisos",biblia:"Biblia",recursos:"Recursos",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
+const VNAME={descubrir:"Descubrir",musica:"Música",juego:"Entre Hermanos",lectores:"Lectores",acolitos:"Acólitos",coro:"Coro",yo:"Yo",examenc:"Examen de conciencia",modulos:"Módulos",avisos:"Avisos",biblia:"Biblia",recursos:"Recursos",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
 const ALLV=GROUPS.flatMap(g=>g.v);
 const groupOf=v=>GROUPS.find(g=>g.v.includes(v));
 const lastIn={};
@@ -1616,6 +1618,7 @@ function rvUI(){miniUI();const c=document.getElementById("rvCtl");if(!c)return;
   <label class="rvsel">Modo<select id="rvMode" onchange="RV.mode=this.value;rvSavePref()"><option value="todo" ${RV.mode==="todo"?"selected":""}>La voz reza todo</option><option value="yo" ${RV.mode==="yo"?"selected":""}>La voz guía, yo respondo</option></select></label>
   <label class="rvsel">Letanías<select id="rvLet" onchange="st.roLet=this.value;saveLocal();const L=roSteps(ro.key).length;if(ro.i>=L)ro.i=L-1;roUpdate()"><option value="virgen" ${(st.roLet||"virgen")==="virgen"?"selected":""}>A la Virgen</option><option value="corazon" ${st.roLet==="corazon"?"selected":""}>Al Sagrado Corazón</option><option value="no" ${st.roLet==="no"?"selected":""}>No rezarlas</option></select></label>
   <label class="rvsel">Velocidad<select id="rvRate" onchange="RV.rate=+this.value;rvSavePref();rvRestart()"><option value="0.75" ${RV.rate==0.75?"selected":""}>Despacio</option><option value="0.9" ${RV.rate==0.9?"selected":""}>Normal</option><option value="1.05" ${RV.rate==1.05?"selected":""}>Rápido</option></select></label>
+  ${muBtn()}
   <p id="rvHint" class="rvhint" hidden>Tu turno: responde en voz alta</p>`;}
 window.addEventListener("pagehide",()=>{if(RV.on)rvStop();});
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&RV.on&&!RV.paused&&typeof isIOS==="function"&&isIOS()){/* iOS detiene la voz en segundo plano */RV.paused=true;rvCancel();rvUI();}});
@@ -2377,6 +2380,7 @@ const TILES=[
  {s:"Para orar",t:"Sagrado Corazón",d:"Nuestro patrono",ic:"corazon",g:["#b0303a","#5e0f17"],fn:()=>{DV.cat="Sagrado Corazón";DV.q="";go("devocionario");}},
  {s:"Para orar",t:"Letanías",d:"A la Virgen y al Sagrado Corazón",ic:"estrellas",g:["#3d4f9a","#1b2452"],fn:()=>{DV.cat="Letanías";DV.q="";go("devocionario");}},
  {s:"Para orar",t:"Viacrucis",d:"Las 15 estaciones",ic:"cruz",g:["#5b2a1e","#2a120c"],fn:()=>{DV.cat="Viacrucis";DV.q="";go("devocionario");}},
+ {s:"Para orar",t:"Música",d:"Fondo para rezar, cantos y tus audios",ic:"nota",g:["#4b3a8a","#211845"],v:"musica"},
  {s:"Para orar",t:"Examen de la noche",d:"Revisa tu día con Dios",ic:"luna",g:["#23285c","#0e1030"],v:"examenc"},
  {s:"Para orar",t:"Bendiciones",d:"Las que puede guiar un laico",ic:"paloma",g:["#3b7a8c","#173a44"],v:"bendiciones"},
  {s:"Palabra de Dios",t:"La Biblia",d:"73 libros, sin señal",ic:"libro",g:["#6b4a1f","#33220b"],v:"biblia"},
@@ -2821,7 +2825,7 @@ function coroPlan(){
  return `<div class="sec"><h2>Planeador de cantos</h2><p class="muted" style="margin:0 0 10px">Escribe los cantos de la próxima Misa y compártelos con tu coro por WhatsApp. Se guardan en este celular.${sobrio?` <b>Estamos en ${sn}:</b> sin Gloria entre semana ni en domingo${sn==="Cuaresma"?", y sin Aleluya":""}.`:""}</p>
   <div class="fgrid"><label>Misa<input type="text" id="cpMisa" maxlength="60" value="${esc(P.misa||"")}" placeholder="Domingo 12:00" oninput="coroSave()"></label>
   ${CORO_M.map(([id,l])=>{const off=(id==="glo"&&sobrio)||(id==="ale"&&sn==="Cuaresma");return `<label>${l}${off?' <small class="muted">(no se canta)</small>':""}<input type="text" data-cp="${id}" maxlength="80" value="${esc(P[id]||"")}" ${off?"disabled":""} oninput="coroSave()"></label>`;}).join("")}</div>
-  <div class="row" style="margin-top:10px;gap:8px"><button class="btn red" onclick="coroShare()">Compartir lista</button><button class="btn ghost" onclick="st.coro={};saveLocal();render()">Borrar</button></div></div>`;
+  <div class="row" style="margin-top:10px;gap:8px"><button class="btn red" onclick="coroShare()">Compartir lista</button><button class="btn ghost" onclick="st.coro={};saveLocal();render()">Borrar</button><button class="btn ghost" onclick="MU.tab='cantos';go('musica')">🎵 Escuchar cantos</button></div></div>`;
 }
 function coroSave(){const P={misa:($("#cpMisa")||{}).value||""};document.querySelectorAll("[data-cp]").forEach(e=>{if(e.value.trim())P[e.dataset.cp]=e.value.trim();});st.coro=P;saveLocal();}
 async function coroShare(){coroSave();const P=st.coro||{};const txt="🎵 Cantos"+(P.misa?" · "+P.misa:"")+"\n"+CORO_M.filter(([id])=>P[id]).map(([id,l])=>"• "+l+": "+P[id]).join("\n")+"\n\nParroquia Sagrado Corazón de Jesús, El Cercado";
@@ -3059,7 +3063,119 @@ function vJuego(){
  <p class="muted" style="font-size:.85rem;text-align:center;margin-top:14px">Al terminar, recen juntos un Padre Nuestro por las intenciones del grupo.</p>`;
 }
 
-const VIEWS={juego:()=>vJuego(),lectores:()=>vGuia('lectores'),acolitos:()=>vGuia('acolitos'),coro:()=>vGuia('coro'),descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
+/* ================= MÚSICA ================= */
+/* 1) Fondo para rezar: música generada en el celular (sin internet, sin derechos de autor) */
+const MU={on:false,style:"organo",vol:0.5,ctx:null,master:null,timer:null,step:0,tab:"fondo",q:"",list:null,playing:null,url:null,msg:""};
+try{const m=JSON.parse(localStorage.getItem("escuela-musica")||"{}");if(m.style)MU.style=m.style;if(m.vol!=null)MU.vol=m.vol;}catch(e){}
+const muSave=()=>{try{localStorage.setItem("escuela-musica",JSON.stringify({style:MU.style,vol:MU.vol}));}catch(e){}};
+const MU_STY={organo:{n:"Órgano suave",d:"Acordes lentos, como en el templo"},coro:{n:"Coro celestial",d:"Voces suaves sin palabras"},arpa:{n:"Arpa y luz",d:"Notas delicadas para meditar"}};
+// D – Bm – G – A – D – G – Em – A  (frecuencias MIDI)
+const MU_PROG=[[50,62,66,69],[47,59,62,66],[43,59,62,67],[45,57,61,64],[50,62,66,69],[43,59,62,71],[40,55,59,64],[45,57,61,69]];
+const mf=n=>440*Math.pow(2,(n-69)/12);
+function muInit(){
+ if(MU.ctx)return;const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+ const ctx=new C(),master=ctx.createGain(),lp=ctx.createBiquadFilter(),rev=ctx.createConvolver(),wet=ctx.createGain(),dry=ctx.createGain();
+ lp.type="lowpass";lp.frequency.value=2400;
+ const len=ctx.sampleRate*3.5,ir=ctx.createBuffer(2,len,ctx.sampleRate);for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6);}
+ rev.buffer=ir;wet.gain.value=0.55;dry.gain.value=0.6;
+ master.connect(lp);lp.connect(dry);lp.connect(rev);rev.connect(wet);dry.connect(ctx.destination);wet.connect(ctx.destination);
+ master.gain.value=0;MU.ctx=ctx;MU.master=master;
+}
+function muNote(f,t0,dur,type,vol,att,detune){
+ const c=MU.ctx,o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;if(detune)o.detune.value=detune;
+ g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+att);g.gain.setValueAtTime(vol,t0+Math.max(att,dur-att));g.gain.linearRampToValueAtTime(0,t0+dur+att);
+ o.connect(g);g.connect(MU.master);o.start(t0);o.stop(t0+dur+att+0.1);
+}
+function muChord(){
+ const c=MU.ctx;if(!c||!MU.on)return;const t=c.currentTime+0.05,ch=MU_PROG[MU.step%MU_PROG.length],D=8;MU.step++;
+ if(MU.style==="organo"){ch.forEach((n,i)=>{muNote(mf(n),t,D,"sine",i?0.05:0.07,2.5);muNote(mf(n)*2,t,D,"triangle",0.012,3);});muNote(mf(ch[0]-12),t,D,"sine",0.06,3);}
+ else if(MU.style==="coro"){ch.forEach(n=>{[-7,7].forEach(dt=>muNote(mf(n+12),t,D,"sawtooth",0.008,3.2,dt));muNote(mf(n+12),t,D,"sine",0.03,3);});}
+ else{ch.forEach((n,i)=>muNote(mf(n),t,D,"sine",0.025,3));const arp=[...ch.slice(1),ch[1]+12,ch[2]+12,ch[3]+12];for(let k=0;k<8;k++){const n=arp[(k*3+MU.step)%arp.length]+12;const tk=t+k*1;const o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.value=mf(n);g.gain.setValueAtTime(0,tk);g.gain.linearRampToValueAtTime(0.05,tk+0.01);g.gain.exponentialRampToValueAtTime(0.0008,tk+2.2);o.connect(g);g.connect(MU.master);o.start(tk);o.stop(tk+2.4);}}
+}
+function muStart(){
+ muInit();if(!MU.ctx){MU.msg="Este celular no permite música generada.";render();return;}
+ audStop();MU.ctx.resume&&MU.ctx.resume();MU.on=true;MU.step=0;const g=MU.master.gain,t=MU.ctx.currentTime;g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.linearRampToValueAtTime(MU.vol,t+2.5);
+ muChord();clearInterval(MU.timer);MU.timer=setInterval(muChord,8000);muPill();
+}
+function muStop(){
+ MU.on=false;clearInterval(MU.timer);if(MU.ctx){const g=MU.master.gain,t=MU.ctx.currentTime;g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.linearRampToValueAtTime(0,t+1.5);}muPill();
+}
+function muToggle(){MU.on?muStop():muStart();if(view==="musica")render();else muPill();}
+function muVol(v){MU.vol=+v;muSave();if(MU.on&&MU.ctx){const g=MU.master.gain;g.cancelScheduledValues(MU.ctx.currentTime);g.setTargetAtTime(MU.vol,MU.ctx.currentTime,0.3);}}
+function muStyle(s){MU.style=s;muSave();if(MU.on){MU.step=0;}render();}
+function muPill(){
+ let p=document.getElementById("mupill");if(!p){p=document.createElement("div");p.id="mupill";document.body.appendChild(p);}
+ const on=MU.on||(MU.playing&&AUD.el&&!AUD.el.paused);p.hidden=!on;
+ if(on)p.innerHTML=`<button onclick="go('musica')">🎵 ${MU.on?MU_STY[MU.style].n:esc(MU.playing||"Audio")}</button><button aria-label="Detener música" onclick="${MU.on?"muStop()":"audStop()"};muPill()">✕</button>`;
+}
+const muBtn=()=>`<button class="btn ghost" onclick="muToggle();this.textContent=MU.on?'🎵 Quitar música':'🎵 Música de fondo'">${MU.on?"🎵 Quitar música":"🎵 Música de fondo"}</button>`;
+
+/* 2) Cantos de Misa: títulos y enlaces de búsqueda (la música está en YouTube/Spotify) */
+const CANTOS={
+ "Entrada":["Juntos como hermanos","Vienen con alegría","Alabaré a mi Señor","Pueblo de reyes","Qué alegría cuando me dijeron"],
+ "Señor, ten piedad":["Señor ten piedad canto misa"],
+ "Gloria":["Gloria canto para misa"],
+ "Aclamación":["Aleluya canto para misa","Honor y gloria a ti Señor Jesús (Cuaresma)"],
+ "Ofertorio":["Una espiga","Te ofrecemos Señor","Bendito seas Señor por este pan"],
+ "Santo":["Santo santo santo canto misa"],
+ "Cordero de Dios":["Cordero de Dios canto misa"],
+ "Comunión":["Pescador de hombres","Yo soy el pan de vida","Oh buen Jesús","Bendito bendito","Amar es entregarse"],
+ "A María y salida":["La Guadalupana","Santa María del camino","Buenos días paloma blanca","Mientras recorres la vida","Salve Regina canto"],
+ "Adviento y Navidad":["Ven Señor no tardes","Saber que vendrás","Noche de paz","Los peces en el río"],
+ "Cuaresma":["Perdón oh Dios mío","Hoy perdóname","Pequeñas aclaraciones"],
+ "Pascua y Pentecostés":["Resucitó","El Señor resucitó aleluya","Ven Espíritu Santo canto"],
+ "Sagrado Corazón":["Corazón santo","Sagrado Corazón de Jesús en ti confío canto"]};
+const ytUrl=t=>"https://www.youtube.com/results?search_query="+encodeURIComponent(t+" canto católico");
+const spUrl=t=>"https://open.spotify.com/search/"+encodeURIComponent(t);
+
+/* 3) Mis audios: MP3 guardados en este celular (IndexedDB) */
+const AUD={db:null,el:null};
+function audDB(){return new Promise((ok,ko)=>{if(AUD.db)return ok(AUD.db);const r=indexedDB.open("escuela-audios",1);r.onupgradeneeded=()=>r.result.createObjectStore("a",{keyPath:"id"});r.onsuccess=()=>{AUD.db=r.result;ok(AUD.db);};r.onerror=()=>ko(r.error);});}
+async function audTx(mode,fn){const db=await audDB();return new Promise((ok,ko)=>{const tx=db.transaction("a",mode),s=tx.objectStore("a");const r=fn(s);tx.oncomplete=()=>ok(r&&r.result);tx.onerror=()=>ko(tx.error);});}
+async function audLoad(){try{const all=await audTx("readonly",s=>s.getAll());MU.list=(all||[]).map(x=>({id:x.id,name:x.name,size:x.size,d:x.d})).sort((a,b)=>b.d-a.d);}catch(e){MU.list=[];MU.msg="No se pudieron leer los audios de este celular.";}if(view==="musica")render();}
+async function audAdd(inp){
+ const fs=[...(inp.files||[])];if(!fs.length)return;MU.msg="Guardando…";render();let n=0;
+ for(const f of fs){if(!/^audio\//.test(f.type)&&!/\.(mp3|m4a|aac|wav|ogg|opus)$/i.test(f.name))continue;if(f.size>60e6){MU.msg=`«${f.name}» pesa más de 60 MB.`;continue;}
+  try{await audTx("readwrite",s=>s.put({id:Date.now()+"-"+Math.random().toString(36).slice(2,7),name:f.name.replace(/\.[^.]+$/,""),size:f.size,d:Date.now(),blob:f}));n++;}catch(e){MU.msg="No hay espacio suficiente en el celular.";}}
+ if(n)MU.msg=`${n} ${n===1?"audio guardado":"audios guardados"} en este celular.`;await audLoad();
+}
+async function audPlay(id){
+ if(MU.on)muStop();const x=await audTx("readonly",s=>s.get(id));if(!x)return;
+ if(!AUD.el){AUD.el=new Audio();AUD.el.addEventListener("ended",()=>{MU.playing=null;muPill();if(view==="musica")render();});}
+ if(MU.url)URL.revokeObjectURL(MU.url);MU.url=URL.createObjectURL(x.blob);AUD.el.src=MU.url;MU.playing=x.name;MU.pid=id;
+ try{await AUD.el.play();}catch(e){}muPill();render();
+}
+function audPause(){if(!AUD.el)return;if(AUD.el.paused)AUD.el.play();else AUD.el.pause();muPill();render();}
+function audStop(){if(AUD.el){AUD.el.pause();}MU.playing=null;MU.pid=null;muPill();}
+async function audDel(id){if(MU.pid===id)audStop();await audTx("readwrite",s=>s.delete(id));await audLoad();}
+const mb=n=>(n/1e6).toFixed(1)+" MB";
+
+function vMusica(){
+ const T=MU.tab,tabs=[["fondo","Fondo para rezar"],["cantos","Cantos de Misa"],["mios","Mis audios"]];
+ let body="";
+ if(T==="fondo")body=`<p class="muted" style="margin:0 0 12px">Música suave que se genera en tu celular, sin internet. Puedes dejarla sonando mientras rezas el Rosario con voz, haces el examen o lees la Biblia.</p>
+  <div class="jgmodes">${Object.entries(MU_STY).map(([k,v])=>`<button class="jgmode ${MU.style===k?"on":""}" onclick="muStyle('${k}')"><b>${v.n}</b><span>${v.d}</span></button>`).join("")}</div>
+  <div class="row" style="margin-top:14px;gap:12px;align-items:center;flex-wrap:wrap"><button class="btn red" style="min-width:160px" onclick="muToggle()">${MU.on?"■ Detener":"▶ Escuchar"}</button>
+  <label class="rvsel" style="flex:1;min-width:180px">Volumen<input type="range" min="0.1" max="1" step="0.05" value="${MU.vol}" oninput="muVol(this.value)" style="width:100%"></label></div>
+  <div class="row" style="margin-top:14px;gap:8px;flex-wrap:wrap"><button class="btn ghost" onclick="if(!MU.on)muStart();go('rosario')">Rezar el Rosario con música</button><button class="btn ghost" onclick="if(!MU.on)muStart();go('examenc')">Examen con música</button></div>`;
+ else if(T==="cantos"){const nq=bibNorm(MU.q.trim());const own=st.cantos||[];
+  const secs=Object.entries(CANTOS).map(([m,L])=>[m,L.filter(t=>!nq||bibNorm(t+" "+m).includes(nq))]).filter(([m,L])=>L.length);
+  body=`<p class="muted" style="margin:0 0 10px">Los cantos más conocidos en nuestras parroquias, por momento de la Misa. Toca para escucharlos en YouTube o Spotify y ensayar con el coro.</p>
+  <div class="bibsearch"><input type="search" placeholder="Buscar canto…" value="${esc(MU.q)}" oninput="MU.q=this.value;clearTimeout(MU._t);MU._t=setTimeout(()=>{render();const e=document.querySelector('.mucantos input');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length);}},250)"></div>
+  ${own.length?`<div class="dsec"><h2>Nuestros cantos</h2>${own.map((c,i)=>`<div class="canto"><span>${esc(c.t)}</span><span class="row" style="gap:6px">${c.u?`<a class="btn ghost" href="${esc(c.u)}" target="_blank" rel="noopener">Abrir</a>`:""}<a class="btn ghost" href="${ytUrl(c.t)}" target="_blank" rel="noopener">YouTube</a><button class="back" style="margin:0" onclick="st.cantos.splice(${i},1);saveLocal();render()" aria-label="Quitar">✕</button></span></div>`).join("")}</div>`:""}
+  ${secs.map(([m,L])=>`<div class="dsec"><h2>${m}</h2>${L.map(t=>`<div class="canto"><span>${esc(t.replace(/ canto( para)? misa| canto$/i,""))}</span><span class="row" style="gap:6px"><a class="btn ghost" href="${ytUrl(t)}" target="_blank" rel="noopener">YouTube</a><a class="btn ghost" href="${spUrl(t)}" target="_blank" rel="noopener">Spotify</a></span></div>`).join("")}</div>`).join("")||'<p class="muted">No encontré ese canto.</p>'}
+  <div class="sec"><h2>Agregar un canto del coro</h2><div class="fgrid"><label>Nombre<input type="text" id="caT" maxlength="80" placeholder="Ej. Canto a la Virgen del coro"></label><label>Enlace (opcional)<input type="url" id="caU" maxlength="300" placeholder="https://youtube.com/…"></label></div>
+  <button class="btn red" style="margin-top:10px" onclick="const t=$('#caT').value.trim(),u=$('#caU').value.trim();if(!t)return;st.cantos=[...(st.cantos||[]),{t,u:/^https:\\/\\//.test(u)?u:''}];saveLocal();render()">Agregar</button></div>`;}
+ else{if(MU.list===null){audLoad();body='<p class="muted">Cargando…</p>';}
+  else body=`<p class="muted" style="margin:0 0 12px">Sube grabaciones del coro, cantos para ensayar o meditaciones. Se guardan solo en este celular y se escuchan sin internet.</p>
+  <label class="btn red" style="display:inline-block;cursor:pointer">+ Agregar audios<input type="file" accept="audio/*" multiple hidden onchange="audAdd(this)"></label>
+  <div class="ilist" style="margin-top:12px">${MU.list.map(a=>`<div class="it ${MU.pid===a.id?"ok":""}"><span><b>${esc(a.name)}</b> <small class="muted">${mb(a.size)}</small></span><span class="row" style="gap:6px">${MU.pid===a.id?`<button class="btn ghost" onclick="audPause()">${AUD.el&&!AUD.el.paused?"❚❚":"▶"}</button>`:`<button class="btn ghost" onclick="audPlay('${a.id}')">▶</button>`}<button class="back" style="margin:0" onclick="audDel('${a.id}')" aria-label="Borrar">✕</button></span></div>`).join("")||'<p class="muted">Todavía no tienes audios guardados.</p>'}</div>`;}
+ return `<div class="eyebrow">Para orar y para el coro</div><h1 style="font-size:clamp(1.9rem,5vw,2.6rem);margin:6px 0 12px">Música</h1>
+ <div class="chips jgsel" style="margin-bottom:14px">${tabs.map(([k,l])=>`<button class="chip ${T===k?"on":""}" onclick="MU.tab='${k}';MU.msg='';render()">${l}</button>`).join("")}</div>
+ ${MU.msg?`<p class="muted">${esc(MU.msg)}</p>`:""}<div class="${T==="cantos"?"mucantos":""}">${body}</div>`;
+}
+
+const VIEWS={musica:()=>vMusica(),juego:()=>vJuego(),lectores:()=>vGuia('lectores'),acolitos:()=>vGuia('acolitos'),coro:()=>vGuia('coro'),descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
 function render(){
   renderUser();
   const g0=groupOf(view); const g=g0||{id:"",v:[view]}; if(g0) lastIn[g.id]=view;
