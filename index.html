@@ -417,6 +417,7 @@ body.has-mini main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
 .asig{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.asig select{flex:1 1 160px;font:inherit;padding:9px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}
 .chipx{background:none;border:0;color:var(--muted);padding:0 0 0 4px;font-size:.85rem}
 #meMark,#prMark{transition:transform .7s ease}
+#toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#2a1714;color:#fff;padding:10px 18px;border-radius:999px;font-size:.92rem;opacity:0;pointer-events:none;transition:.25s;z-index:200;white-space:nowrap}#toast.on{opacity:.95;transform:translate(-50%,0)}
 .trscore{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:8px;margin:12px 0 0}.trscore div{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:8px;text-align:center;position:relative}.trscore div.on{border-color:var(--rubric)}.trscore span{display:block;font-size:.78rem;color:var(--muted)}.trscore b{font-size:1.6rem}.trscore i{position:absolute;top:4px;right:8px;color:var(--gold);font-style:normal}
 .conf{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;font-size:.92rem}.conf .btn{padding:6px 14px;font-size:.88rem}.conf.si{color:var(--ok);font-weight:600}.conf.no{color:var(--bad);font-weight:600}.who-chip.csi{border-color:var(--ok);color:var(--ok)}.who-chip.cno{border-color:var(--bad);color:var(--bad);text-decoration:line-through}
 .jgcats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:14px}.jgcat{border-left:5px solid var(--c);background:var(--card);border-radius:10px;padding:8px 12px}.jgcat b{display:block}.jgcat span{font-size:.85rem;color:var(--muted)}
@@ -790,7 +791,17 @@ function totalPct(){
   const parts=[doneCount()/MODS.length, st.known.length/CARDS.length, Object.keys(st.scen).length/SCEN.length, Object.keys(st.order).length/Object.keys(ORDERS).length, st.exam.best>=12?1:0];
   return Math.round(parts.reduce((a,b)=>a+b,0)/parts.length*100);
 }
-function go(v,i){view=v;modIdx=(i===undefined?null:i);render();window.scrollTo(0,0);}
+function go(v,i){view=v;modIdx=(i===undefined?null:i);navPush();render();window.scrollTo(0,0);}
+/* Botón "atrás" del teléfono: regresa dentro de la app en lugar de cerrarla */
+let NAV_POP=false;
+function navState(){return {v:view,i:modIdx,bb:view==="biblia"?(BIB.b||null):null,bc:view==="biblia"?(BIB.c||null):null};}
+function navPush(){if(NAV_POP)return;try{const s=navState(),c=history.state||{};if(c.v===s.v&&c.i===s.i&&c.bb===s.bb&&c.bc===s.bc)return;history.pushState(s,"","#"+view);}catch(e){}}
+function toast(t){let el=document.getElementById("toast");if(!el){el=document.createElement("div");el.id="toast";document.body.appendChild(el);}el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("on"),2200);}
+window.addEventListener("popstate",e=>{const s=e.state;if(!s)return;NAV_POP=true;
+ view=s.v||"inicio";modIdx=(s.i===undefined?null:s.i);
+ if(view==="biblia"&&typeof BIB!=="undefined"){BIB.b=s.bb||null;BIB.c=s.bc||null;BIB.res=null;}
+ if(s.root)toast("Presiona atrás otra vez para salir");
+ render();window.scrollTo(0,0);NAV_POP=false;});
 const GROUPS=[
  {id:"inicio",n:"Inicio",v:["inicio"]},
  {id:"biblia",n:"Biblia",v:["biblia","recursos"],sub:1},
@@ -2152,7 +2163,7 @@ const bibSaveP=()=>{try{localStorage.setItem("escuela-bib",JSON.stringify({last:
 const bibInfo=id=>BIB_IDX.find(b=>b[0]===id);
 const bibNorm=s=>String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 async function bibLoad(id){if(BIB.books[id])return BIB.books[id];const r=await fetch("biblia/"+id+".json");if(!r.ok)throw new Error("No se pudo abrir el libro");const j=await r.json();BIB.books[id]=j;return j;}
-function bibGo(b,c){BIB.b=b;BIB.c=c||null;BIB.res=null;if(b&&c){BIB.last=[b,c];bibSaveP();if(BIB._lg!==b+c){BIB._lg=b+c;logAct("bib");}}render();window.scrollTo(0,0);}
+function bibGo(b,c){BIB.b=b;BIB.c=c||null;BIB.res=null;if(view==='biblia')navPush();if(b&&c){BIB.last=[b,c];bibSaveP();if(BIB._lg!==b+c){BIB._lg=b+c;logAct("bib");}}render();window.scrollTo(0,0);}
 function bibRef(q){
  const m=bibNorm(q).trim().match(/^([123]?\s?[a-z]+)\.?\s*(\d+)(?:\s*[,:]\s*(\d+))?$/);if(!m)return null;
  const t=m[1].replace(/\s/g,"");
@@ -3067,11 +3078,12 @@ function render(){
   if(view==="enfermos") enBind();
   const pt=document.getElementById("patronal"); if(pt) pt.textContent=patronalText();
   const nf=document.getElementById("nextFeast"); if(nf){const f=upcomingFeasts(1)[0]; nf.textContent="Próxima: "+f.n+", "+fmtShort(f.d);}
-  try{history.replaceState(null,"","#"+view);}catch(e){}
+  try{const r=history.state&&history.state.root;history.replaceState(Object.assign(navState(),r?{root:1}:{}),"","#"+view);}catch(e){}
 }
 if(st.antesDay!==new Date().toDateString()){st.antes=[];}
 applyTheme();
 const h=(location.hash||"").slice(1); if(ALLV.includes(h)||h==="entrar") view=h;
+try{const start=view;history.replaceState({v:"inicio",i:null,root:1},"","#inicio");history.pushState({v:"inicio",i:null},"","#inicio");if(start!=="inicio")history.pushState({v:start,i:null},"","#"+start);}catch(e){}
 render();
 </script>
 
