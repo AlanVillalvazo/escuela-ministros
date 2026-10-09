@@ -417,6 +417,8 @@ body.has-mini main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
 .asig{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.asig select{flex:1 1 160px;font:inherit;padding:9px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}
 .chipx{background:none;border:0;color:var(--muted);padding:0 0 0 4px;font-size:.85rem}
 #meMark,#prMark{transition:transform .7s ease}
+.trscore{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:8px;margin:12px 0 0}.trscore div{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:8px;text-align:center;position:relative}.trscore div.on{border-color:var(--rubric)}.trscore span{display:block;font-size:.78rem;color:var(--muted)}.trscore b{font-size:1.6rem}.trscore i{position:absolute;top:4px;right:8px;color:var(--gold);font-style:normal}
+.conf{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;font-size:.92rem}.conf .btn{padding:6px 14px;font-size:.88rem}.conf.si{color:var(--ok);font-weight:600}.conf.no{color:var(--bad);font-weight:600}.who-chip.csi{border-color:var(--ok);color:var(--ok)}.who-chip.cno{border-color:var(--bad);color:var(--bad);text-decoration:line-through}
 .jgcats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:14px}.jgcat{border-left:5px solid var(--c);background:var(--card);border-radius:10px;padding:8px 12px}.jgcat b{display:block}.jgcat span{font-size:.85rem;color:var(--muted)}
 .jgmodes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}.jgmode{text-align:left;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:12px;color:var(--ink)}.jgmode.on{border-color:var(--rubric)}.jgmode b{display:block}.jgmode span{font-size:.85rem;color:var(--muted)}
 .jgwho{font-size:1.1rem;margin:10px 0}.jgsel{margin:10px 0}.jgsel .chip.on{background:var(--c,var(--rubric));border-color:var(--c,var(--rubric));color:#fff}
@@ -1556,8 +1558,20 @@ function miniUI(){
 }
 function heroRosary(k){if(!RV.ok){ro.key=k;ro.i=0;go("rosario");return;}if(RV.on&&ro.key===k){rvToggle();return;}if(RV.on)rvStop();ro.key=k;ro.i=0;rvToggle();}
 function chipsTurno(t,w,coord){
- if(coord&&t.anot)return t.anot.length?t.anot.map(a=>`<span class="who-chip">${esc(a.nombre)} <button class="chipx" aria-label="Quitar a ${esc(a.nombre)}" onclick="rolDesasignar('${t.id}','${a.id}')">✕</button></span>`).join(" "):'<span class="muted">Nadie asignado todavía</span>';
+ if(coord&&t.anot)return t.anot.length?t.anot.map(a=>`<span class="who-chip ${a.conf==="si"?"csi":a.conf==="no"?"cno":""}" title="${a.conf==="si"?"Confirmó":a.conf==="no"?"No puede":"Sin confirmar"}">${a.conf==="si"?"✓ ":a.conf==="no"?"✗ ":""}${esc(a.nombre)} <button class="chipx" aria-label="Quitar a ${esc(a.nombre)}" onclick="rolDesasignar('${t.id}','${a.id}')">✕</button></span>`).join(" "):'<span class="muted">Nadie asignado todavía</span>';
  return w.length?w.map(n=>`<span class="who-chip">${esc(n)}</span>`).join(" "):'<span class="muted">Nadie anotado todavía</span>';}
+function confUI(t){
+ if(!t.yo)return "";const c=t.conf;
+ if(c==="si")return `<div class="conf si">✓ Confirmaste que vas <button class="back" style="margin:0;font-size:.8rem" onclick="rolConfirmar('${t.id}',null)">Cambiar</button></div>`;
+ if(c==="no")return `<div class="conf no">✗ Avisaste que no puedes <button class="back" style="margin:0;font-size:.8rem" onclick="rolConfirmar('${t.id}',null)">Cambiar</button></div>`;
+ return `<div class="conf"><span>¿Vas a poder?</span><button class="btn red" ${ROL.busy?"disabled":""} onclick="rolConfirmar('${t.id}','si')">Sí voy</button><button class="btn ghost" ${ROL.busy?"disabled":""} onclick="rolConfirmar('${t.id}','no')">No puedo</button></div>`;}
+async function rolConfirmar(tid,est){
+ if(ROL.busy)return;ROL.busy=true;ROL.msg="";
+ try{await rpc("turno_confirmar",{p_codigo:ME.codigo,p_turno:tid,p_estado:est});const t=(ROL.turnos||[]).find(x=>x.id===tid);if(t)t.conf=est;
+  if(est==="no")ROL.msg=("Gracias por avisar."+(await pushEnviar({tipo:"baja",turno:tid})).replace(/celulares?/,m=>m+" del padre o coordinador")).trim();
+  else if(est==="si")ROL.msg="¡Gracias! Que Dios bendiga tu servicio.";}
+ catch(e){ROL.msg=e.status===404?"Falta activar la confirmación: corre mejoras.sql en Supabase.":e.message;}
+ ROL.busy=false;render();loadRol(true);}
 function asigUI(t,full){
  if(full)return `<p class="muted" style="font-size:.85rem;margin:6px 0 0">Turno completo.</p>`;
  const ids=(t.anot||[]).map(a=>a.id),op=(MIN.rows||[]).filter(m=>!ids.includes(m.id));
@@ -1572,7 +1586,7 @@ function misServicios(){
  const urg=M.find(t=>t.fecha===hoy||t.fecha===man);
  return `<section class="servicios ${urg?"urg":""}"><div class="row" style="justify-content:space-between"><h2>${urg?(urg.fecha===hoy?"¡Hoy te toca servir!":"Mañana te toca servir"):"Tus próximos servicios"}</h2><button class="back" style="margin:0" onclick="go('rol')">Ver rol →</button></div>
  ${M.map(t=>{const d=new Date(t.fecha+"T12:00:00"),et=t.fecha===hoy?"Hoy":t.fecha===man?"Mañana":d.toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"short"});
-  return `<div class="srv"><div class="fd"><b>${d.getDate()}</b><span>${d.toLocaleDateString("es-MX",{month:"short"}).replace(".","")}</span></div><div style="min-width:0;flex:1"><b class="fn">${esc(t.tipo||"Servicio")}</b><div class="muted" style="font-size:.88rem">${et}${t.hora?" · "+esc(t.hora):""}${t.lugar?" · "+esc(t.lugar):""}</div>${t.asignado?`<div class="asg">Te asignó: ${esc(t.asignado)}</div>`:""}${t.notas?`<div style="font-size:.9rem;margin-top:2px">${esc(t.notas)}</div>`:""}</div><button class="calbtn" aria-label="Agregar a mi calendario" onclick="calTurno('${t.id}')">${tileSVG("iglesia")}<span>Calendario</span></button></div>`;}).join("")}
+  return `<div class="srv"><div class="fd"><b>${d.getDate()}</b><span>${d.toLocaleDateString("es-MX",{month:"short"}).replace(".","")}</span></div><div style="min-width:0;flex:1"><b class="fn">${esc(t.tipo||"Servicio")}</b><div class="muted" style="font-size:.88rem">${et}${t.hora?" · "+esc(t.hora):""}${t.lugar?" · "+esc(t.lugar):""}</div>${t.asignado?`<div class="asg">Te asignó: ${esc(t.asignado)}</div>`:""}${t.notas?`<div style="font-size:.9rem;margin-top:2px">${esc(t.notas)}</div>`:""}${confUI(t)}</div><button class="calbtn" aria-label="Agregar a mi calendario" onclick="calTurno('${t.id}')">${tileSVG("iglesia")}<span>Calendario</span></button></div>`;}).join("")}
  ${urg?`<p class="muted" style="font-size:.88rem;margin:8px 0 0">Recuerda: en gracia de Dios, una hora de ayuno y llegar 15 minutos antes. <a href="#" onclick="event.preventDefault();go('antes')">Antes de servir</a></p>`:""}</section>`;}
 function rvRestart(){if(RV.on&&!RV.paused){rvCancel();rvStep();}}
 function rvUI(){miniUI();const c=document.getElementById("rvCtl");if(!c)return;
@@ -1934,7 +1948,21 @@ function vEquipo(){
  const rows=EQ.rows;const aprob=rows.filter(r=>(r.examen||0)>=12).length;
  return head+`<div class="facts" style="margin-bottom:18px"><div class="fact"><b>${rows.length}</b><span>ministros</span></div><div class="fact"><b>${aprob}</b><span>aprobaron el examen (12 o más)</span></div><div class="fact"><b>${rows.filter(r=>(r.modulos||0)>=8).length}</b><span>completaron los 8 módulos</span></div></div>
  <div class="tbl"><table style="min-width:0"><thead><tr><th>Nombre</th><th>Módulos</th><th>Examen</th><th>Última vez</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${esc(r.nombre)}</b></td><td style="font-variant-numeric:tabular-nums">${r.modulos||0}/8</td><td>${(r.examen||0)>=12?`<span class="pill done">${r.examen}/15</span>`:`<span class="pill">${r.examen||0}/15</span>`}</td><td class="muted">${r.actualizado?new Date(r.actualizado).toLocaleDateString("es-MX",{day:"numeric",month:"short"}):""}</td></tr>`).join("")}</tbody></table></div>
- <div class="row" style="margin-top:12px"><button class="btn ghost" onclick="loadEquipo(true)">Actualizar</button></div>`;
+ <div class="row" style="margin-top:12px;gap:8px;flex-wrap:wrap"><button class="btn ghost" onclick="loadEquipo(true)">Actualizar</button>${esCoord()?`<button class="btn red" onclick="csvAvance()">Descargar avance en Excel</button><button class="btn ghost" onclick="csvRol()">Descargar rol en Excel</button>`:""}</div>`;
+}
+function csvBajar(nombre,filas){
+ const q=v=>{v=v==null?"":String(v);return /[",\n;]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+ const txt="\ufeff"+filas.map(f=>f.map(q).join(",")).join("\r\n");
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/csv;charset=utf-8"}));a.download=nombre+"-"+dayKey()+".csv";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+}
+function csvAvance(){
+ const f=v=>v?new Date(v).toLocaleDateString("es-MX",{day:"2-digit",month:"2-digit",year:"numeric"}):"";
+ csvBajar("avance-ministros",[["Nombre","Módulos (de 8)","Mejor examen (de 15)","Aprobó examen","Terminó módulos","Última vez"],...(EQ.rows||[]).map(r=>[r.nombre,r.modulos||0,r.examen||0,(r.examen||0)>=12?"Sí":"No",(r.modulos||0)>=8?"Sí":"No",f(r.actualizado)])]);
+}
+async function csvRol(){
+ await loadRol(true);const L={si:"Confirmó",no:"No puede"};const rows=[["Fecha","Hora","Tipo","Lugar","Ministros necesarios","Ministro","Confirmación"]];
+ (ROL.turnos||[]).forEach(t=>{const A=t.anot||[];if(!A.length)rows.push([t.fecha,t.hora||"",t.tipo||"",t.lugar||"",t.cupo||"","(nadie)",""]);A.forEach(a=>rows.push([t.fecha,t.hora||"",t.tipo||"",t.lugar||"",t.cupo||"",a.nombre,L[a.conf]||"Sin confirmar"]));});
+ csvBajar("rol-de-servicio",rows);
 }
 /* Alta de ministros (solo coordinador) */
 const MIN={rows:[],ready:false,msg:"",nuevo:"",confirm:null};
@@ -2071,7 +2099,7 @@ function vRol(){
    <div style="min-width:0"><div class="row" style="gap:8px"><b class="fn">${esc(t.tipo||"Turno")}</b><span class="pill ${full?"done":""}">${w.length}/${t.cupo||1}</span></div>
    <div class="muted" style="font-size:.88rem">${d.toLocaleDateString("es-MX",{weekday:"long"})}${t.hora?" · "+esc(t.hora):""}${t.lugar?" · "+esc(t.lugar):""}</div>
    ${t.notas?`<p style="margin:6px 0 0">${esc(t.notas)}</p>`:""}
-   <p style="margin:6px 0 0;font-size:.92rem">${chipsTurno(t,w,coord)}</p>${coord&&t.anot?asigUI(t,full):""}${t.asignado?`<p class="asg">Te asignó: ${esc(t.asignado)}</p>`:""}</div>
+   <p style="margin:6px 0 0;font-size:.92rem">${chipsTurno(t,w,coord)}</p>${coord&&t.anot?asigUI(t,full):""}${t.asignado?`<p class="asg">Te asignó: ${esc(t.asignado)}</p>`:""}${confUI(t)}</div>
    <div class="tactions"><button class="back" style="margin:0;font-size:.85rem" onclick="calTurno('${t.id}')">Agregar a mi calendario</button><button class="btn ${me?"ghost":""}" ${ROL.busy||(!me&&full)?"disabled":""} onclick="rolToggle('${t.id}',${me})">${me?"Quitarme":full?"Completo":"Me anoto"}</button>
    ${coord?`<button class="back" style="margin:0;font-size:.85rem" onclick="rolDel('${t.id}')">${ROL.confirm===t.id?"¿Seguro? Toca otra vez":"Borrar turno"}</button>`:""}</div></div>`;}).join("")}</div>`
  :`<div class="panel"><h3 style="font-size:1.2rem">Todavía no hay turnos</h3><p class="muted" style="margin:6px 0 0">${coord?"Toca “Nuevo turno” para publicar el primero.":"Cuando el coordinador publique los turnos, aparecerán aquí para que te anotes."}</p></div>`)+
@@ -2891,7 +2919,7 @@ ret|3|Ofrece una decena del Rosario de mañana por las misiones de la sierra.
 ret|3|El próximo domingo saluda y da la bienvenida a alguien que no conozcas en Misa.
 ret|3|Elige a alguien del grupo y dile una palabra de ánimo que necesite escuchar.`.split("\n").map((l,i)=>{const [k,n,rest]=[l.slice(0,3),+l[4],l.slice(6)];const [t,ref]=rest.split("@");return {id:i,k,n,t,ref:ref||null};});
 const JG_DADO=["his","ysi","pal","cre","com","ret"];
-const JG={mode:"dado",card:null,used:{},rolling:false,face:null,cat:"his",lvl:1,turn:0,playing:false,add:false};
+const JG={nteams:2,team:0,pts:[],tr:null,mode:"dado",card:null,used:{},rolling:false,face:null,cat:"his",lvl:1,turn:0,playing:false,add:false};
 const jgPlayers=()=>st.jgP||[];
 const jgOwn=()=>(st.jgQ||[]).map((t,i)=>({id:"n"+i,k:"nue",n:2,t}));
 function jgDraw(f){
@@ -2916,26 +2944,86 @@ function jgDelP(i){st.jgP.splice(i,1);JG.turn=0;saveLocal();render();}
 function jgAddQ(){const v=($("#jgQn").value||"").trim().slice(0,200);if(!v)return;st.jgQ=[...(st.jgQ||[]),v].slice(0,60);saveLocal();render();}
 function jgDelQ(i){st.jgQ.splice(i,1);saveLocal();render();}
 const jgLvl=n=>`<span class="jglv" aria-label="Nivel ${n}">${[1,2,3].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>`;
+/* ---- Trivia por equipos ---- */
+const TRIVIA=`¿Cuántos libros tiene la Biblia católica?|73|66|72|80|46 del Antiguo Testamento y 27 del Nuevo.
+¿Cuál es el primer libro de la Biblia?|Génesis|Éxodo|Mateo|Salmos|«Génesis» significa origen: empieza con la creación.
+¿Cuál es el último libro de la Biblia?|Apocalipsis|Hechos de los Apóstoles|Judas|Malaquías|Lo escribió San Juan y termina con «Ven, Señor Jesús».
+¿Cuántos evangelios hay en la Biblia?|4|3|7|12|Mateo, Marcos, Lucas y Juan.
+¿Qué evangelio NO es de los llamados sinópticos?|Juan|Mateo|Marcos|Lucas|Mateo, Marcos y Lucas se parecen mucho; Juan tiene un estilo propio.
+¿En qué pueblo nació Jesús?|Belén|Nazaret|Jerusalén|Cafarnaúm|Nació en Belén y creció en Nazaret.
+¿Quién bautizó a Jesús en el Jordán?|Juan el Bautista|San Pedro|El apóstol Juan|El profeta Elías|Juan el Bautista preparó el camino del Señor.
+Según el Evangelio de Juan, ¿cuál fue el primer milagro de Jesús?|Convertir el agua en vino en Caná|Multiplicar los panes|Resucitar a Lázaro|Calmar la tempestad|Fue en las bodas de Caná, por intercesión de María (Jn 2,1-11).
+¿Cuántos apóstoles eligió Jesús?|12|7|10|72|Los 72 fueron otros discípulos que envió de dos en dos.
+¿Quién ocupó el lugar de Judas entre los Doce?|Matías|Pablo|Bernabé|Esteban|Fue elegido por sorteo después de orar (Hch 1,26).
+¿Qué apóstol negó tres veces a Jesús?|Pedro|Judas|Tomás|Santiago|Después Jesús le preguntó tres veces «¿Me amas?».
+¿Qué apóstol dudó de la resurrección hasta ver las heridas de Jesús?|Tomás|Felipe|Andrés|Mateo|Al verlo dijo: «¡Señor mío y Dios mío!».
+¿Quién recibió las tablas de la Ley en el monte Sinaí?|Moisés|Abraham|David|Elías|Ahí Dios le dio los Diez Mandamientos.
+¿Qué significa el nombre «Emmanuel»?|Dios con nosotros|Dios salva|Hijo de David|Mensajero de Dios|Así lo explica Mateo 1,23.
+¿Quién escribió la mayoría de las cartas del Nuevo Testamento?|San Pablo|San Pedro|San Juan|Santiago|Escribió a las comunidades de Roma, Corinto, Éfeso, Filipos y otras.
+¿Qué oración enseñó Jesús a sus discípulos?|El Padre Nuestro|El Ave María|El Gloria|El Credo|La enseñó cuando le pidieron: «Señor, enséñanos a orar».
+¿Cuántos sacramentos hay?|7|5|3|10|Bautismo, Confirmación, Eucaristía, Reconciliación, Unción, Orden y Matrimonio.
+¿Cuáles son los sacramentos de iniciación cristiana?|Bautismo, Confirmación y Eucaristía|Bautismo, Confesión y Matrimonio|Eucaristía, Unción y Orden|Confirmación, Orden y Matrimonio|Con ellos una persona entra de lleno a la vida cristiana.
+¿De qué color se viste el sacerdote en Adviento y Cuaresma?|Morado|Verde|Rojo|Blanco|El morado significa preparación y conversión.
+¿Cuál es el color del Tiempo Ordinario?|Verde|Morado|Azul|Dorado|El verde habla de esperanza y crecimiento.
+¿De qué color se viste el sacerdote en Pentecostés?|Rojo|Blanco|Verde|Morado|El rojo recuerda el fuego del Espíritu Santo (también se usa para los mártires).
+¿Con qué tiempo empieza el año litúrgico de la Iglesia?|Adviento|Navidad|Cuaresma|Tiempo Ordinario|Empieza cuatro domingos antes de Navidad.
+¿Qué celebramos en Pentecostés?|La venida del Espíritu Santo|La Ascensión de Jesús|El nacimiento de Jesús|El bautismo de Jesús|El Espíritu bajó sobre María y los apóstoles (Hch 2).
+¿Qué recordamos especialmente el Jueves Santo?|La Última Cena y la institución de la Eucaristía|La crucifixión|La resurrección|La entrada a Jerusalén|También el lavatorio de los pies y el sacerdocio.
+¿Cuánto tiempo de ayuno se guarda antes de comulgar?|Una hora|Tres horas|Desde la medianoche|Quince minutos|El agua y las medicinas no rompen el ayuno.
+¿Cómo se llama el paño con que se seca el cáliz?|Purificador|Corporal|Palia|Mantel|El corporal es el paño cuadrado donde se ponen el cáliz y la patena.
+¿Cómo se llama el paño cuadrado donde se colocan el cáliz y la patena?|Corporal|Purificador|Manutergio|Velo|Se llama así porque sobre él está el Cuerpo de Cristo.
+¿Dónde se guarda el Santísimo Sacramento?|En el sagrario|En la credencia|En el ambón|En la sede|La lámpara encendida junto al sagrario indica que Jesús está presente.
+¿Desde dónde se proclaman las lecturas en la Misa?|Desde el ambón|Desde el altar|Desde la sede|Desde la credencia|El ambón es la «mesa de la Palabra».
+¿Cuáles son las dos grandes partes de la Misa?|Liturgia de la Palabra y Liturgia Eucarística|Entrada y despedida|Lecturas y homilía|Ofertorio y Comunión|Dios nos alimenta con su Palabra y con su Cuerpo.
+¿Qué responde quien comulga cuando le dicen «El Cuerpo de Cristo»?|Amén|Gracias|Y con tu espíritu|Te alabamos, Señor|«Amén» quiere decir: sí, creo.
+¿Quiénes son los ministros ordinarios de la Comunión?|Obispo, sacerdote y diácono|Solo el obispo|Los catequistas|Los ministros de la Comunión|Por eso a nosotros se nos llama ministros extraordinarios.
+¿Cuántos misterios tiene cada grupo del Rosario?|5|10|7|4|Y en cada misterio se reza una decena de Avemarías.
+¿Qué misterios del Rosario se rezan los jueves?|Luminosos|Gozosos|Dolorosos|Gloriosos|Los agregó San Juan Pablo II en el año 2002.
+¿Quién agregó los misterios luminosos al Rosario?|San Juan Pablo II|San Pío X|Pío XII|Benedicto XVI|Fue en su carta sobre el Rosario del año 2002.
+¿A quién se le apareció la Virgen en el Tepeyac?|San Juan Diego|San Felipe de Jesús|San Martín de Porres|Fray Bartolomé de las Casas|Le pidió un templo y dejó su imagen en la tilma.
+¿En qué año fueron las apariciones de la Virgen de Guadalupe?|1531|1492|1810|1600|Del 9 al 12 de diciembre de 1531.
+¿Quién fue el primer santo mexicano?|San Felipe de Jesús|San Juan Diego|Beato Miguel Agustín Pro|San José Sánchez del Río|Murió mártir en Nagasaki, Japón, en 1597.
+¿A qué santa le mostró Jesús su Sagrado Corazón en Paray-le-Monial?|Santa Margarita María Alacoque|Santa Teresita|Santa Faustina|Santa Clara|De ahí viene la devoción a nuestro patrono y los primeros viernes.
+¿Cuántas estaciones tiene el Viacrucis tradicional?|14|12|10|20|Muchas comunidades agregan una 15.ª: la Resurrección.
+¿Quién es la patrona de los músicos y los coros?|Santa Cecilia|Santa Lucía|Santa Mónica|Santa Inés|Su fiesta es el 22 de noviembre.
+¿Qué significa la palabra «Eucaristía»?|Acción de gracias|Comida|Sacrificio|Reunión|Viene del griego: dar gracias.`.split("\n").map(l=>{const [q,a,b,c,d,w]=l.split("|");return {q,o:[a,b,c,d],w};});
+function trNueva(){const used=JG.trUsed=JG.trUsed||{};let pool=TRIVIA.map((x,i)=>i).filter(i=>!used[i]);if(!pool.length){JG.trUsed={};pool=TRIVIA.map((x,i)=>i);}const i=pool[Math.floor(Math.random()*pool.length)];JG.trUsed[i]=1;JG.tr={i,ord:shuffle([0,1,2,3]),ans:null};}
+function trResp(k){if(!JG.tr||JG.tr.ans!==null)return;JG.tr.ans=k;if(k===0){JG.pts[JG.team]=(JG.pts[JG.team]||0)+1;}render();}
+function trSig(){JG.team=(JG.team+1)%JG.nteams;trNueva();render();}
+function vTrivia(){
+ if(!JG.tr)trNueva();const T=TRIVIA[JG.tr.i],a=JG.tr.ans,names=Array.from({length:JG.nteams},(_,i)=>"Equipo "+(i+1));
+ const best=Math.max(...names.map((_,i)=>JG.pts[i]||0));
+ return `<div class="row" style="justify-content:space-between;align-items:center"><h1 class="pgtitle" style="margin:0">Trivia</h1><button class="back" style="margin:0" onclick="JG.playing=false;render()">Ajustes</button></div>
+ <div class="trscore">${names.map((n,i)=>`<div class="${i===JG.team?"on":""}"><span>${n}</span><b>${JG.pts[i]||0}</b>${best>0&&(JG.pts[i]||0)===best?"<i>★</i>":""}</div>`).join("")}</div>
+ <p class="jgwho">Turno de: <b>Equipo ${JG.team+1}</b></p>
+ <div class="jgcard" style="--c:#7d1d24;min-height:170px"><div class="jgtop"><span>Trivia</span><span>${Object.keys(JG.trUsed||{}).length} de ${TRIVIA.length}</span></div><p style="font-size:1.3rem">${esc(T.q)}</p></div>
+ <div class="opts" style="margin-top:12px">${JG.tr.ord.map(k=>{let c="";if(a!==null){if(k===0)c="right";else if(k===a)c="wrong";}return `<button class="opt ${c}" ${a!==null?"disabled":""} onclick="trResp(${k})">${esc(T.o[k])}</button>`;}).join("")}</div>
+ ${a!==null?`<div class="why"><strong>${a===0?"¡Correcto! +1 punto para el Equipo "+(JG.team+1):"La respuesta es: "+esc(T.o[0])+"."}</strong> ${esc(T.w)}</div><button class="btn red" style="width:100%;padding:14px;margin-top:12px" onclick="trSig()">Siguiente equipo →</button>`:""}
+ <div class="row" style="justify-content:center;margin-top:16px"><button class="back" onclick="JG.pts=[];JG.team=0;JG.trUsed={};trNueva();render()">Reiniciar puntos</button></div>`;
+}
+
 function vJuego(){
  const P=jgPlayers(),own=st.jgQ||[];
  if(!JG.playing)return `<div class="eyebrow">Para convivir en grupo</div><h1 style="font-size:clamp(1.9rem,5vw,2.6rem);margin:6px 0 8px">Entre Hermanos</h1>
  <p class="lead">Un juego de preguntas y retos para platicar de la fe, conocerse mejor y romper el hielo en grupos, retiros, juntas de ministros o en familia. Pasen el celular de mano en mano.</p>
  <div class="jgcats">${Object.entries(JG_CAT).map(([k,c])=>`<div class="jgcat" style="--c:${c.c}"><b>${c.n}</b><span>${c.d}</span></div>`).join("")}</div>
  <div class="sec"><h2>¿Cómo quieren jugar?</h2><div class="jgmodes">
-  ${[["dado","🎲 Con dado","El dado escoge la categoría"],["cat","Por categoría","Ustedes eligen el tema"],["lvl","Por niveles","De lo ligero a lo profundo"]].map(([m,t,d])=>`<button class="jgmode ${JG.mode===m?"on":""}" onclick="JG.mode='${m}';render()"><b>${t}</b><span>${d}</span></button>`).join("")}</div></div>
+  ${[["dado","🎲 Con dado","El dado escoge la categoría"],["cat","Por categoría","Ustedes eligen el tema"],["lvl","Por niveles","De lo ligero a lo profundo"],["trivia","🏆 Trivia por equipos","Biblia, Misa y santos, con puntos"]].map(([m,t,d])=>`<button class="jgmode ${JG.mode===m?"on":""}" onclick="JG.mode='${m}';render()"><b>${t}</b><span>${d}</span></button>`).join("")}</div></div>
+ ${JG.mode==="trivia"?`<div class="sec"><h2>¿Cuántos equipos?</h2><div class="chips jgsel">${[2,3,4].map(n=>`<button class="chip ${JG.nteams===n?"on":""}" onclick="JG.nteams=${n};render()">${n} equipos</button>`).join("")}</div><p class="muted" style="margin:6px 0 0">${TRIVIA.length} preguntas de Biblia, Misa, sacramentos y santos. Cada respuesta correcta vale 1 punto.</p></div>`:""}
  <div class="sec"><h2>Jugadores <small class="muted" style="font-weight:400">(opcional)</small></h2><p class="muted" style="margin:0 0 8px">Si los anotan, la app dice a quién le toca.</p>
   <div class="bibsearch"><input type="text" id="jgPn" maxlength="20" placeholder="Nombre" onkeydown="if(event.key==='Enter')jgAddP()"><button class="btn ghost" onclick="jgAddP()">Agregar</button></div>
   ${P.length?`<div class="chips" style="margin-top:8px">${P.map((p,i)=>`<button class="chip" onclick="jgDelP(${i})" aria-label="Quitar ${esc(p)}">${esc(p)} ✕</button>`).join("")}</div>`:""}</div>
  <div class="sec"><h2>Nuestras preguntas</h2><p class="muted" style="margin:0 0 8px">Escriban sus propias preguntas; entran al juego con el color dorado. Se guardan en este celular.</p>
   <div class="bibsearch"><input type="text" id="jgQn" maxlength="200" placeholder="¿Cuál es tu libro favorito de la Biblia?" onkeydown="if(event.key==='Enter')jgAddQ()"><button class="btn ghost" onclick="jgAddQ()">Agregar</button></div>
   ${own.length?`<div class="ilist">${own.map((q,i)=>`<div class="it"><span>${esc(q)}</span><button class="back" style="margin:0" onclick="jgDelQ(${i})" aria-label="Quitar">✕</button></div>`).join("")}</div>`:""}</div>
- <button class="btn red" style="width:100%;margin-top:18px;padding:14px" onclick="JG.playing=true;JG.card=null;JG.turn=0;render();window.scrollTo(0,0)">Empezar a jugar</button>
+ <button class="btn red" style="width:100%;margin-top:18px;padding:14px" onclick="JG.playing=true;JG.card=null;JG.turn=0;JG.team=0;JG.pts=[];JG.trUsed={};JG.tr=null;render();window.scrollTo(0,0)">Empezar a jugar</button>
  <div class="sec"><h2>Reglas sencillas</h2><ol class="gsteps">
   <li><b>Escuchar es lo más importante</b><span>Mientras alguien habla, nadie interrumpe ni juzga. Lo que se comparte en el grupo se queda en el grupo.</span></li>
   <li><b>Se vale pasar</b><span>Si una pregunta no te sale, di «paso» y toma otra. Nadie está obligado a contar lo que no quiere.</span></li>
   <li><b>Cualquiera puede responder</b><span>Después de quien tiene el turno, otros pueden agregar su respuesta.</span></li>
   <li><b>Terminen rezando</b><span>Al final, recen juntos un Padre Nuestro por las intenciones que salieron en el juego.</span></li></ol></div>
  <p class="muted" style="font-size:.85rem;margin-top:14px">${JG_Q.length} tarjetas originales de la Escuela de Ministros.</p>`;
+ if(JG.mode==="trivia")return vTrivia();
  const c=JG.card,C=c?JG_CAT[c.k]:null,who=P.length?P[JG.turn%P.length]:"";
  const ctrl=JG.mode==="dado"?"":JG.mode==="cat"?`<div class="chips jgsel">${Object.entries(JG_CAT).filter(([k])=>k!=="nue"||own.length).map(([k,v])=>`<button class="chip ${JG.cat===k?"on":""}" style="--c:${v.c}" onclick="JG.cat='${k}';render()">${v.n}</button>`).join("")}</div>`
   :`<div class="chips jgsel">${[[1,"Ligero"],[2,"Medio"],[3,"Profundo"]].map(([n,l])=>`<button class="chip ${JG.lvl===n?"on":""}" onclick="JG.lvl=${n};render()">${jgLvl(n)} ${l}</button>`).join("")}</div>`;

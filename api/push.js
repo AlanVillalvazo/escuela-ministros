@@ -45,6 +45,10 @@ module.exports = async (req, res) => {
     } else if (b.tipo === "aviso") {
       info = await rpc("push_aviso", { p_codigo: codigo });
       msg = { title: "Aviso: " + info.titulo, body: (info.texto || "Abre la app para verlo.").slice(0, 180), url: "/#avisos", tag: "aviso" };
+    } else if (b.tipo === "baja") {
+      if (!UUID.test(b.turno || "")) { res.status(400).json({ error: "Datos no válidos" }); return; }
+      info = await rpc("push_baja", { p_codigo: codigo, p_turno: b.turno });
+      msg = { title: `${info.nombre} no podrá asistir`, body: `${info.tipo} · ${fechaBonita(info.fecha, info.hora)}. Busca a alguien que lo cubra.`, url: "/#rol", tag: "baja-" + b.turno };
     } else { res.status(400).json({ error: "Tipo no válido" }); return; }
   } catch (e) {
     res.status(e.status === 404 ? 501 : 403).json({ error: e.message }); return;
@@ -59,6 +63,6 @@ module.exports = async (req, res) => {
       .then(() => { sent++; })
       .catch(e => { if (e && (e.statusCode === 404 || e.statusCode === 410)) gone.push(s.endpoint); })
   ));
-  if (gone.length) { try { await rpc("push_limpiar", { p_codigo: codigo, p_endpoints: gone }); } catch (e) {} }
+  if (gone.length && b.tipo !== "baja") { try { await rpc("push_limpiar", { p_codigo: codigo, p_endpoints: gone }); } catch (e) {} }
   res.status(200).json({ enviadas: sent, total: subs.length });
 };
