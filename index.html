@@ -1399,6 +1399,10 @@ const PR={
  salve:{t:"Salve",g:"Dios te salve, Reina y Madre de misericordia, vida, dulzura y esperanza nuestra; Dios te salve. A ti llamamos los desterrados hijos de Eva; a ti suspiramos, gimiendo y llorando en este valle de lágrimas. Ea, pues, Señora, abogada nuestra, vuelve a nosotros esos tus ojos misericordiosos; y después de este destierro muéstranos a Jesús, fruto bendito de tu vientre. ¡Oh clementísima, oh piadosa, oh dulce Virgen María! Ruega por nosotros, santa Madre de Dios.",a:"Para que seamos dignos de alcanzar las promesas de nuestro Señor Jesucristo. Amén."},
  final:{t:"Oración final",g:"Oremos. Oh Dios, cuyo Hijo único, con su vida, muerte y resurrección, nos alcanzó el premio de la vida eterna: concédenos que, meditando estos misterios del santo Rosario de la Virgen María, imitemos lo que contienen y alcancemos lo que prometen. Por Jesucristo nuestro Señor.",a:"Amén. (Terminan con la señal de la cruz.)"}
 };
+const litRos=()=>DEVALL().find(d=>d.t===((st.roLet||"virgen")==="corazon"?"Letanías del Sagrado Corazón":"Letanías a la Virgen María"));
+Object.defineProperty(PR,"let",{get(){const L=litRos();if(!L)return {t:"Letanías",g:"",a:""};
+ const g=L.lit.map(([r,inv])=>`${inv.map(esc).join(" · ")}<br><span class="resp">${r==="Se repite lo mismo"?"(Se repite lo mismo)":esc(r)}</span>`).join("<br><br>")+"<br><br>"+(L.end||[]).map(([k,t])=>`${k?"<b>"+k+"</b> ":""}${esc(t)}`).join("<br>");
+ return {t:L.t,g,a:""};}});
 const todayMyst=()=>{const d=new Date().getDay();return Object.keys(MYST).find(k=>MYST[k].dayIdx.includes(d));};
 
 /* geometría del rosario */
@@ -1422,7 +1426,9 @@ function roSteps(key){
   const nb=d<4?"L"+(d+1):"medal";
   S.push({b:nb,p:"gloria",h:`Fin del ${ORD[d].toLowerCase()} misterio`,then:"jesus"});
  }
- S.push({b:"medal",p:"salve",h:"Al terminar los cinco misterios",x:"Si es costumbre, aquí se rezan también las Letanías a la Virgen."});
+ const lt=st.roLet||"virgen";
+ S.push({b:"medal",p:"salve",h:"Al terminar los cinco misterios",x:lt==="no"?"Si es costumbre, aquí se rezan también las Letanías a la Virgen.":""});
+ if(lt!=="no")S.push({b:"medal",p:"let",h:lt==="corazon"?"Letanías del Sagrado Corazón":"Letanías a la Virgen"});
  S.push({b:"medal",p:"final",h:"Para concluir"});
  return S;
 }
@@ -1518,6 +1524,9 @@ function rvVoice(){let vs=[];try{vs=speechSynthesis.getVoices();}catch(e){}
  return vs.find(v=>/^es[-_]MX/i.test(v.lang))||vs.find(v=>/^es[-_](US|419)/i.test(v.lang))||vs.find(v=>/^es/i.test(v.lang))||null;}
 const rvClean=t=>String(t).replace(/<[^>]+>/g,"").replace(/\([^)]*\)/g,"").replace(/\s+/g," ").trim();
 function rvParts(s){const p=PR[s.p],M=MYST[ro.key],out=[];
+ if(s.p==="let"){const L=litRos();if(!L)return [{t:"Letanías"}];out.push({t:L.t+"."});
+  L.lit.forEach(([r,inv])=>inv.forEach(i=>{out.push({t:i+"."});out.push({t:(r==="Se repite lo mismo"?i:r)+".",resp:true});}));
+  (L.end||[]).forEach(([k,t])=>out.push({t,resp:k==="R/."}));return out;}
  if(s.ann!==undefined){const m=M.m[s.ann];out.push({t:ORD[s.ann]+" misterio: "+m[0]+"."});}
  if(s.x) out.push({t:s.x});
  out.push({t:p.g}); if(p.a&&rvClean(p.a)) out.push({t:p.a,resp:true});
@@ -1594,6 +1603,7 @@ function rvUI(){miniUI();const c=document.getElementById("rvCtl");if(!c)return;
  c.innerHTML=`<button class="btn red" onclick="rvToggle()">${!RV.on?"▶ Rezar con voz":RV.paused?"▶ Continuar":"❚❚ Pausa"}</button>
   ${RV.on?`<button class="btn ghost" onclick="rvStop()">■ Detener</button>`:""}
   <label class="rvsel">Modo<select id="rvMode" onchange="RV.mode=this.value;rvSavePref()"><option value="todo" ${RV.mode==="todo"?"selected":""}>La voz reza todo</option><option value="yo" ${RV.mode==="yo"?"selected":""}>La voz guía, yo respondo</option></select></label>
+  <label class="rvsel">Letanías<select id="rvLet" onchange="st.roLet=this.value;saveLocal();const L=roSteps(ro.key).length;if(ro.i>=L)ro.i=L-1;roUpdate()"><option value="virgen" ${(st.roLet||"virgen")==="virgen"?"selected":""}>A la Virgen</option><option value="corazon" ${st.roLet==="corazon"?"selected":""}>Al Sagrado Corazón</option><option value="no" ${st.roLet==="no"?"selected":""}>No rezarlas</option></select></label>
   <label class="rvsel">Velocidad<select id="rvRate" onchange="RV.rate=+this.value;rvSavePref();rvRestart()"><option value="0.75" ${RV.rate==0.75?"selected":""}>Despacio</option><option value="0.9" ${RV.rate==0.9?"selected":""}>Normal</option><option value="1.05" ${RV.rate==1.05?"selected":""}>Rápido</option></select></label>
   <p id="rvHint" class="rvhint" hidden>Tu turno: responde en voz alta</p>`;}
 window.addEventListener("pagehide",()=>{if(RV.on)rvStop();});
