@@ -1673,6 +1673,7 @@ function rvUI(){miniUI();const c=document.getElementById("rvCtl");if(!c)return;
   <label class="rvsel">Letanías<select id="rvLet" onchange="st.roLet=this.value;saveLocal();const L=roSteps(ro.key).length;if(ro.i>=L)ro.i=L-1;roUpdate()"><option value="virgen" ${(st.roLet||"virgen")==="virgen"?"selected":""}>A la Virgen</option><option value="corazon" ${st.roLet==="corazon"?"selected":""}>Al Sagrado Corazón</option><option value="no" ${st.roLet==="no"?"selected":""}>No rezarlas</option></select></label>
   <label class="rvsel">Velocidad<select id="rvRate" onchange="RV.rate=+this.value;rvSavePref();rvRestart()"><option value="0.75" ${RV.rate==0.75?"selected":""}>Despacio</option><option value="0.9" ${RV.rate==0.9?"selected":""}>Normal</option><option value="1.05" ${RV.rate==1.05?"selected":""}>Rápido</option></select></label>
   ${muBtn()}
+  <a class="btn ghost" href="https://open.spotify.com/search/${encodeURIComponent("Santo Rosario misterios "+MYST[ro.key].n.toLowerCase())}" target="_blank" rel="noopener">🚗 En el carro: Spotify</a>
   <p id="rvHint" class="rvhint" hidden>Tu turno: responde en voz alta</p>`;}
 window.addEventListener("pagehide",()=>{if(RV.on)rvStop();});
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&RV.on&&!RV.paused&&typeof isIOS==="function"&&isIOS()){/* iOS detiene la voz en segundo plano */RV.paused=true;rvCancel();rvUI();}});
