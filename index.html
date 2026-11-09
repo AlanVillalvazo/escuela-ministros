@@ -170,8 +170,17 @@ th{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mu
 .st-chip[aria-current="true"]{border-color:var(--rubric);color:var(--ink)}
 .st-chip[aria-current="true"] b{background:var(--rubric);color:#fff}
 .st-chip.seen b{background:var(--ok-soft);color:var(--ok)}
-.ms-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:20px;align-items:start;margin-top:10px}
-@media (max-width:760px){.ms-grid{grid-template-columns:minmax(0,1fr)}}
+.ms-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-areas:"a p" "b p";column-gap:20px;row-gap:0;align-items:start;margin-top:10px}
+.ms-grid .ms-a{grid-area:a;border-bottom:0;border-radius:14px 14px 0 0;padding-bottom:6px}.ms-grid .ms-b{grid-area:b;border-top:0;border-radius:0 0 14px 14px;padding-top:6px}.ms-grid .plan{grid-area:p}
+.msnav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:16px}.msnav .btn{white-space:nowrap}
+.mvbtn{margin:4px 0 12px}
+@media (max-width:760px){
+ .ms-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"a" "p" "b";row-gap:0}
+ .ms-grid .plan{border-radius:0;border-top:0;border-bottom:0;padding:6px 10px 10px}.ms-grid .plan .pg{max-height:46vh;width:100%}.ms-grid .plan .phase{font-size:.7rem}
+ .ms-grid .plan .plan-cap{font-size:.8rem;gap:10px}.ms-grid .plan>p{display:none}
+ .msnav{position:sticky;bottom:calc(86px + env(safe-area-inset-bottom));background:var(--card);padding:10px 0 4px;margin-top:12px;z-index:5}.msnav .btn{flex:1;padding:11px 8px;font-size:.95rem}#msCount{flex:none;font-size:.85rem}
+ .segc{display:flex;width:100%;flex-wrap:nowrap}.segc button{flex:1;padding:8px 6px;font-size:.86rem;line-height:1.2}
+ .mvbtn{width:100%;padding:13px}}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
 .scene svg,.plan svg,.mini svg{width:100%;height:auto;display:block}
 .phase{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--gold)}
@@ -811,7 +820,7 @@ function totalPct(){
   const parts=[doneCount()/MODS.length, st.known.length/CARDS.length, Object.keys(st.scen).length/SCEN.length, Object.keys(st.order).length/Object.keys(ORDERS).length, st.exam.best>=12?1:0];
   return Math.round(parts.reduce((a,b)=>a+b,0)/parts.length*100);
 }
-function go(v,i){view=v;modIdx=(i===undefined?null:i);navPush();render();window.scrollTo(0,0);}
+function go(v,i){try{if(MV.on&&v!=="misa")mvStop();}catch(e){}view=v;modIdx=(i===undefined?null:i);navPush();render();window.scrollTo(0,0);}
 /* Botón "atrás" del teléfono: regresa dentro de la app en lugar de cerrarla */
 let NAV_POP=false;
 function navState(){return {v:view,i:modIdx,bb:view==="biblia"?(BIB.b||null):null,bc:view==="biblia"?(BIB.c||null):null};}
@@ -1142,15 +1151,17 @@ function planSVG(){
 let ms={i:0, seen:new Set([0]), mode:"ruta"};
 function vMisa(){
   return `<div class="eyebrow">Paso a paso, con dibujos</div><h1 style="font-size:2.2rem;margin:6px 0 8px">El ministro en la Misa</h1>
-  <div class="segc" role="group" aria-label="Elegir sección"><button aria-pressed="${ms.mode==="ruta"}" onclick="ms.mode='ruta';render()">Tu recorrido (${MSTEPS.length} pasos)</button><button aria-pressed="${ms.mode==="altar"}" onclick="ms.mode='altar';render()">Servicio al altar (${SVC.length} tareas)</button></div>
+  <div class="segc" role="group" aria-label="Elegir sección"><button aria-pressed="${ms.mode==="ruta"}" onclick="ms.mode='ruta';render()">Tu recorrido (${MSTEPS.length} pasos)</button><button aria-pressed="${ms.mode==="altar"}" onclick="mvStop();ms.mode='altar';render()">Servicio al altar (${SVC.length} tareas)</button></div>
   ${ms.mode==="ruta"?vRuta():vAltar()}`;
 }
 function vRuta(){
   return `<p class="lead">Recorre la Misa paso a paso: el dibujo muestra el gesto y el plano te dice dónde estás. <span class="rubric">En rojo, lo que haces</span>, como en el Misal.</p>
   <div class="steps-strip" id="stStrip">${MSTEPS.map((s,i)=>`<button class="st-chip" data-i="${i}"><b>${i+1}</b>${s.t}</button>`).join("")}</div>
+  <button class="btn red mvbtn" id="mvBtn" onclick="mvToggle()">${MV.on?"■ Detener video":"▶ Ver como video (con voz)"}</button>
   <div class="ms-grid">
-    <div class="panel"><div class="scene" id="msScene"></div><div id="msText" style="margin-top:12px"></div>
-      <div class="row" style="justify-content:space-between;margin-top:16px"><button class="btn ghost" id="msPrev">← Anterior</button><span class="muted" id="msCount" style="font-variant-numeric:tabular-nums"></span><button class="btn" id="msNext">Siguiente →</button></div></div>
+    <div class="panel ms-a"><div class="scene" id="msScene"></div></div>
+    <div class="panel ms-b"><div id="msText"></div>
+      <div class="msnav"><button class="btn ghost" id="msPrev">← Anterior</button><span class="muted" id="msCount" style="font-variant-numeric:tabular-nums"></span><button class="btn" id="msNext">Siguiente →</button></div></div>
     <div class="panel plan"><div class="phase" style="margin-bottom:6px">Dónde estás</div>${planSVG()}
       <div class="plan-cap"><span><i style="background:var(--rubric)"></i>Tú</span><span><i style="background:var(--gold)"></i>Sacerdote</span><span><i style="background:var(--line)"></i>Fieles en fila</span></div>
       <p class="muted" style="font-size:.82rem;margin:8px 0 0">Templo del Sagrado Corazón, El Cercado. Los puestos 1, 2 y 3 son los lugares donde se da la Comunión.</p></div>
@@ -1174,6 +1185,7 @@ function msUpdate(prev){
   $("#msCount").textContent=`${ms.i+1} de ${MSTEPS.length}`;
   $("#msPrev").disabled=ms.i===0; $("#msPrev").style.opacity=ms.i===0?.4:1;
   $("#msNext").textContent=ms.i===MSTEPS.length-1?"Volver al inicio":"Siguiente →";
+  {const pg=document.querySelector(".ms-grid .plan .pg");if(pg)pg.setAttribute("viewBox",window.innerWidth<=760&&s.me[1]<260&&s.pr[1]<260?"0 20 360 260":"0 0 360 440");}
   $("#meMark").style.transform=`translate(${s.me[0]}px,${s.me[1]}px)`;
   $("#prMark").style.transform=`translate(${s.pr[0]}px,${s.pr[1]}px)`;
   ["capilla","sac","pew","amb","altar","foot","aisle","cred","door"].forEach(h=>{const e=document.getElementById("hl-"+h);if(e)e.setAttribute("visibility",h===s.hl?"visible":"hidden");});
@@ -1185,10 +1197,24 @@ function msUpdate(prev){
   const cur=document.querySelector('.st-chip[aria-current="true"]'); if(cur){const st=$("#stStrip");st.scrollTo({left:cur.offsetLeft-st.offsetWidth/2+cur.offsetWidth/2,behavior:"smooth"});}
 }
 function msGo(i){const p=ms.i;ms.i=i;msUpdate(p);}
+/* Modo video: la voz explica cada paso y avanza sola */
+const MV={on:false,tok:0};
+function mvText(st){let t=st.t+". "+rvClean(st.do);if(st.say)t+=" "+rvClean(st.who||"")+" dice: "+rvClean(st.say)+". "+rvClean(st.resp||"");if(st.note)t+=" "+rvClean(st.note);return t.replace(/\s+/g," ");}
+function mvSay(){
+ if(!MV.on||view!=="misa"){mvStop();return;}const tok=++MV.tok,i=ms.i;
+ try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(mvText(MSTEPS[i]));const v=rvVoice();if(v)u.voice=v;u.lang=v?v.lang:"es-MX";u.rate=0.95;
+  u.onend=()=>{if(!MV.on||tok!==MV.tok)return;if(ms.i>=MSTEPS.length-1){mvStop();return;}setTimeout(()=>{if(!MV.on||tok!==MV.tok)return;msGo(ms.i+1);mvFocus();mvSay();},900);};
+  speechSynthesis.speak(u);}catch(e){mvStop();}
+}
+function mvFocus(){if(window.innerWidth<=760){const e=document.querySelector(".ms-a");if(e){const y=e.getBoundingClientRect().top+window.scrollY-70;window.scrollTo({top:y,behavior:"smooth"});}}}
+function mvToggle(){if(MV.on){mvStop();return;}if(!("speechSynthesis" in window)){alert("Este celular no tiene voz disponible.");return;}MV.on=true;mvBtnUI();mvFocus();mvSay();}
+function mvStop(){MV.on=false;MV.tok++;try{speechSynthesis.cancel();}catch(e){}mvBtnUI();}
+function mvBtnUI(){const b=document.getElementById("mvBtn");if(b)b.textContent=MV.on?"■ Detener video":"▶ Ver como video (con voz)";}
 function msBind(){
-  document.querySelectorAll(".st-chip").forEach(c=>c.onclick=()=>msGo(+c.dataset.i));
-  $("#msPrev").onclick=()=>{if(ms.i>0)msGo(ms.i-1);};
-  $("#msNext").onclick=()=>{msGo(ms.i<MSTEPS.length-1?ms.i+1:0);};
+  const again=()=>{if(MV.on)mvSay();};
+  document.querySelectorAll(".st-chip").forEach(c=>c.onclick=()=>{msGo(+c.dataset.i);again();});
+  $("#msPrev").onclick=()=>{if(ms.i>0){msGo(ms.i-1);again();}};
+  $("#msNext").onclick=()=>{msGo(ms.i<MSTEPS.length-1?ms.i+1:0);again();};
   msUpdate();
 }
 /* Servicio al altar */
