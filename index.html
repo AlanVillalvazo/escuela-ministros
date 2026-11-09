@@ -417,6 +417,13 @@ body.has-mini main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
 .asig{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.asig select{flex:1 1 160px;font:inherit;padding:9px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:44px}
 .chipx{background:none;border:0;color:var(--muted);padding:0 0 0 4px;font-size:.85rem}
 #meMark,#prMark{transition:transform .7s ease}
+#tour{position:fixed;inset:0;z-index:300;background:rgba(30,12,10,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px 16px calc(96px + env(safe-area-inset-bottom));backdrop-filter:blur(2px)}#tour[hidden]{display:none}
+.tourcard{position:relative;background:var(--card);color:var(--ink);border-radius:22px;max-width:440px;width:100%;padding:24px 22px 18px;box-shadow:0 20px 50px rgba(0,0,0,.35);animation:jgin .3s ease;text-align:center}
+.tourcard h2{margin:8px 0 8px;font-size:1.5rem}.tourcard p{margin:0 0 10px;line-height:1.5}.tourico{width:84px;height:84px;margin:0 auto;border-radius:22px;background:linear-gradient(135deg,#8c1d2a,#4a0f16);display:grid;place-items:center}.tourico svg{width:64px;height:58px}
+.tourskip{position:absolute;top:12px;right:14px;background:none;border:0;color:var(--muted);font-weight:600}
+.tourpoint{color:var(--rubric);font-weight:600;font-size:.92rem}.tourdots{display:flex;gap:6px;justify-content:center;margin:12px 0}.tourdots i{width:8px;height:8px;border-radius:50%;background:var(--line)}.tourdots i.on{background:var(--rubric);width:22px;border-radius:4px}
+.tourbtns{display:flex;justify-content:space-between;gap:10px}.tourbtns .btn{flex:1}
+#bnav button.tourhl{position:relative;z-index:301;color:var(--rubric)!important;background:var(--card);border-radius:14px;box-shadow:0 0 0 3px var(--gold);animation:tourpulse 1.2s ease-in-out infinite}body.touring #bnav{z-index:302;pointer-events:none}@keyframes tourpulse{50%{box-shadow:0 0 0 7px rgba(180,138,58,.35)}}
 .kimg{width:60px;height:50px;flex:none;color:var(--rubric);background:var(--paper);border-radius:8px;padding:2px}.check label .kimg{align-self:center}
 .ill{width:120px;height:100px;color:var(--rubric);flex:none}.face.back{gap:4px;padding:14px 18px}.face.back .ill{width:110px;height:92px}.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}.galc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}.galc .ill{width:100px;height:84px}.galc small{color:var(--muted);font-size:.8rem;line-height:1.3}
 .kitsel{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kitsel button{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 6px;color:var(--ink);font-weight:600;font-size:.82rem;line-height:1.2;text-align:center}.kitsel button.on{border-color:var(--rubric);background:var(--rubric-soft)}.kitsel svg{width:40px;height:36px}.kitsel svg *{stroke:var(--rubric)!important}.kitsel svg [fill='#fff'],.kitsel svg [fill='rgba(255,255,255,.2)'],.kitsel svg [fill='rgba(255,255,255,.18)']{fill:var(--rubric-soft)!important}.kith{font-size:1rem;margin:16px 0 0;color:var(--rubric)}.kitmust{font-style:normal;font-size:.72rem;font-weight:700;color:var(--rubric);border:1px solid var(--rubric);border-radius:999px;padding:0 6px;margin-left:4px;white-space:nowrap}
@@ -2504,7 +2511,7 @@ function vYo(){
  const ints=st.ints||[],refl=st.refl||[],fav=st.fav||[],rec=st.rec||[];
  const r=retoSemana(),rv=Math.min(t[r.k]||0,r.n);
  return `<div class="yohead"><span class="avatar">${esc(ini)}</span><div><h1 class="pgtitle" style="margin:0">${nm?esc(nm.split(" ")[0]):"Yo"}</h1><span class="muted">${ME&&ME.id?(ROLN[ME.rol]||"Ministro"):"Sin cuenta"}</span></div>
-  <div class="yoacts"><button class="ubtn2" onclick="go('entrar')">${ME&&ME.id?"Mi cuenta":"Entrar"}</button><button class="ubtn2" onclick="toggleTheme()" aria-label="Cambiar tema">${(st.theme||"light")==="dark"?"☀":"☾"}</button></div></div>
+  <div class="yoacts"><button class="ubtn2" onclick="go('entrar')">${ME&&ME.id?"Mi cuenta":"Entrar"}</button><button class="ubtn2" onclick="tourShow(0)" aria-label="Guía de la app">? Guía</button><button class="ubtn2" onclick="toggleTheme()" aria-label="Cambiar tema">${(st.theme||"light")==="dark"?"☀":"☾"}</button></div></div>
  ${pushCard()}
  <section class="ycard streak"><div class="flame">${tileSVG("vela")}</div><div><b>${sk} ${sk===1?"día":"días"}</b><span>${sk?"de oración seguida. ¡Sigue encendiendo tu vela!":"Reza hoy y enciende tu vela."}</span><small class="muted">Tu mejor racha: ${best} ${best===1?"día":"días"}</small></div></section>
  <section class="ycard"><div class="row" style="justify-content:space-between"><h2>Tu semana</h2><span class="muted" style="font-size:.85rem">${ws.getDate()} ${ws.toLocaleDateString("es-MX",{month:"short"}).replace(".","")} – ${addD(ws,6).getDate()} ${addD(ws,6).toLocaleDateString("es-MX",{month:"short"}).replace(".","")}</span></div>
@@ -3337,6 +3344,39 @@ function vKits(){
   <div class="row" style="margin-top:12px;gap:8px;flex-wrap:wrap"><button class="btn red" onclick="kitShare('${k}')">Compartir lista</button><button class="btn ghost" onclick="kitReset('${k}')">Desmarcar todo</button></div></section>`;
 }
 
+/* ================= GUÍA DE BIENVENIDA (primera vez) ================= */
+const TOUR=[
+ {ic:"iglesia",t:"¡Bienvenido a la Escuela de Ministros!",d:"Esta app te acompaña para prepararte y servir como ministro de la Comunión en la Parroquia Sagrado Corazón de Jesús, El Cercado. Te enseñamos en 1 minuto dónde está cada cosa."},
+ {g:"inicio",ic:"sol",t:"Inicio",d:"Lo de cada día: el saludo, el <b>santo del día</b>, <b>tus próximos servicios</b> (si te asignaron una Misa o visita a enfermos) y el <b>Rosario con voz</b>, que el celular reza contigo."},
+ {g:"biblia",ic:"libro",t:"Biblia",d:"La <b>Biblia completa</b>, que funciona sin internet, con buscador. Aquí también están las <b>lecturas del día</b> y otros recursos."},
+ {g:"descubrir",ic:"estrellas",t:"Descubrir",d:"Todo para aprender y servir: los <b>8 módulos</b> con examen y certificado, la <b>guía de la Misa</b> paso a paso, la Comunión a <b>enfermos</b>, la <b>Celebración de la Palabra</b>, los <b>kits</b> de qué llevar, oraciones, música y un juego para grupos."},
+ {g:"parroquia",ic:"casa",t:"Parroquia",d:"Lo de nuestra comunidad: los <b>avisos del Padre</b>, el <b>rol de servicios</b>, donde confirmas si vas a poder ir, y el calendario."},
+ {g:"yo",ic:"corazon",t:"Yo",d:"Tu camino: tu <b>avance</b>, tu racha de oración, tus intenciones y el <b>examen de la noche</b>. Aquí <b>entras con tu código</b> y activas las <b>notificaciones</b> para que te avisen cuando te toque servir."},
+ {ic:"mano",t:"Tres consejos para empezar",d:"<b>1.</b> Pide tu código al coordinador y entra en <b>Yo → Entrar</b>.<br><b>2.</b> Instala la app en tu pantalla de inicio para abrirla como cualquier otra.<br><b>3.</b> Si te pierdes, usa el botón <b>atrás</b> del teléfono o la barra de abajo."}
+];
+const TR={i:0};
+function tourShow(i){
+ TR.i=i;let o=document.getElementById("tour");
+ if(!o){o=document.createElement("div");o.id="tour";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");document.body.appendChild(o);}
+ const s=TOUR[i],last=i===TOUR.length-1;
+ document.querySelectorAll("#bnav button").forEach(b=>b.classList.toggle("tourhl",!!s.g&&b.dataset.g===s.g));
+ o.innerHTML=`<div class="tourcard"><button class="tourskip" onclick="tourEnd()">Saltar</button>
+  <div class="tourico">${tileSVG(s.ic)}</div><h2>${s.t}</h2><p>${s.d}</p>
+  ${s.g?`<p class="tourpoint">↓ Lo encuentras abajo, en <b>${s.t}</b></p>`:""}
+  <div class="tourdots">${TOUR.map((_,k)=>`<i class="${k===i?"on":""}"></i>`).join("")}</div>
+  <div class="tourbtns">${i?`<button class="btn ghost" onclick="tourShow(${i-1})">Atrás</button>`:"<span></span>"}
+  ${last?`<button class="btn red" onclick="tourEnd(${ME&&ME.id?"":"'entrar'"})">${ME&&ME.id?"¡Empezar!":"Entrar con mi código"}</button>`:`<button class="btn red" onclick="tourShow(${i+1})">Siguiente</button>`}</div>
+  ${last&&!(ME&&ME.id)?`<button class="back" style="margin:10px auto 0;display:block" onclick="tourEnd()">Explorar sin código</button>`:""}</div>`;
+ o.hidden=false;document.body.classList.add("touring");
+}
+function tourEnd(goTo){
+ const o=document.getElementById("tour");if(o)o.hidden=true;document.body.classList.remove("touring");
+ document.querySelectorAll("#bnav .tourhl").forEach(b=>b.classList.remove("tourhl"));
+ try{localStorage.setItem("escuela-tour","1");}catch(e){}
+ if(goTo)go(goTo);
+}
+function tourMaybe(){let seen=false;try{seen=!!localStorage.getItem("escuela-tour")||!!localStorage.getItem("escuela-codigo");}catch(e){}if(!seen&&!(ME&&ME.id))setTimeout(()=>tourShow(0),600);}
+
 const VIEWS={kits:()=>vKits(),musica:()=>vMusica(),juego:()=>vJuego(),lectores:()=>vGuia('lectores'),acolitos:()=>vGuia('acolitos'),coro:()=>vGuia('coro'),descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
 function render(){
   renderUser();
@@ -3363,6 +3403,7 @@ applyTheme();
 const h=(location.hash||"").slice(1); if(ALLV.includes(h)||h==="entrar") view=h;
 try{const start=view;history.replaceState({v:"inicio",i:null,root:1},"","#inicio");history.pushState({v:"inicio",i:null},"","#inicio");if(start!=="inicio")history.pushState({v:start,i:null},"","#"+start);}catch(e){}
 render();
+tourMaybe();
 </script>
 
 <script>if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
