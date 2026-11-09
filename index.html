@@ -423,7 +423,7 @@ body.has-mini main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
 .tourskip{position:absolute;top:12px;right:14px;background:none;border:0;color:var(--muted);font-weight:600}
 .tourpoint{color:var(--rubric);font-weight:600;font-size:.92rem}.tourdots{display:flex;gap:6px;justify-content:center;margin:12px 0}.tourdots i{width:8px;height:8px;border-radius:50%;background:var(--line)}.tourdots i.on{background:var(--rubric);width:22px;border-radius:4px}
 .tourbtns{display:flex;justify-content:space-between;gap:10px}.tourbtns .btn{flex:1}
-#bnav button.tourhl{position:relative;z-index:301;color:var(--rubric)!important;background:var(--card);border-radius:14px;box-shadow:0 0 0 3px var(--gold);animation:tourpulse 1.2s ease-in-out infinite}body.touring #bnav{z-index:302;pointer-events:none}@keyframes tourpulse{50%{box-shadow:0 0 0 7px rgba(180,138,58,.35)}}
+#bnav button.tourhl{position:relative;z-index:301;color:var(--rubric)!important;background:var(--card);border-radius:14px;box-shadow:0 0 0 3px var(--gold);animation:tourpulse 1.2s ease-in-out infinite}body.touring #bnav{z-index:302;pointer-events:none}#tour.sec{background:transparent;backdrop-filter:none;pointer-events:none}#tour.sec .tourcard{pointer-events:auto;box-shadow:0 -6px 40px rgba(0,0,0,.35)}body.toursec #app .pgtitle,body.toursec #app .bibsearch,body.toursec .dsec:not(.tourfocus){opacity:.18;transition:opacity .3s}.dsec.tourfocus{position:relative;background:var(--paper);border-radius:18px;box-shadow:0 0 0 4px var(--gold),0 0 0 9999px rgba(30,12,10,0);padding:8px 10px 12px;margin:0 -10px}@keyframes tourpulse{50%{box-shadow:0 0 0 7px rgba(180,138,58,.35)}}
 .kimg{width:60px;height:50px;flex:none;color:var(--rubric);background:var(--paper);border-radius:8px;padding:2px}.check label .kimg{align-self:center}
 .ill{width:120px;height:100px;color:var(--rubric);flex:none}.face.back{gap:4px;padding:14px 18px}.face.back .ill{width:110px;height:92px}.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}.galc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}.galc .ill{width:100px;height:84px}.galc small{color:var(--muted);font-size:.8rem;line-height:1.3}
 .kitsel{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kitsel button{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 6px;color:var(--ink);font-weight:600;font-size:.82rem;line-height:1.2;text-align:center}.kitsel button.on{border-color:var(--rubric);background:var(--rubric-soft)}.kitsel svg{width:40px;height:36px}.kitsel svg *{stroke:var(--rubric)!important}.kitsel svg [fill='#fff'],.kitsel svg [fill='rgba(255,255,255,.2)'],.kitsel svg [fill='rgba(255,255,255,.18)']{fill:var(--rubric-soft)!important}.kith{font-size:1rem;margin:16px 0 0;color:var(--rubric)}.kitmust{font-style:normal;font-size:.72rem;font-weight:700;color:var(--rubric);border:1px solid var(--rubric);border-radius:999px;padding:0 6px;margin-left:4px;white-space:nowrap}
@@ -2476,7 +2476,7 @@ const tileHTML=(t,i)=>`<button class="tile" style="--g1:${t.g[0]};--g2:${t.g[1]}
 let DS={q:""};
 function descList(){
  const nq=bibNorm(DS.q.trim());
- if(!nq){const secs=[...new Set(TILES.map(t=>t.s))];return secs.map(s=>`<div class="dsec"><h2>${s}</h2><div class="tiles">${TILES.map((t,i)=>t.s===s?tileHTML(t,i):"").join("")}</div></div>`).join("");}
+ if(!nq){const secs=[...new Set(TILES.map(t=>t.s))];return secs.map(s=>`<div class="dsec" data-sec="${s}"><h2>${s}</h2><div class="tiles">${TILES.map((t,i)=>t.s===s?tileHTML(t,i):"").join("")}</div></div>`).join("");}
  const tl=TILES.map((t,i)=>[t,i]).filter(([t])=>bibNorm(t.t+" "+t.d).includes(nq));
  const pr=DEVALL().filter(d=>bibNorm(d.t+" "+d.w).includes(nq)).slice(0,8);
  return (tl.length?`<div class="tiles">${tl.map(([t,i])=>tileHTML(t,i)).join("")}</div>`:"")+(pr.length?`<div class="dsec"><h2>Oraciones</h2><div class="reslist">${pr.map(d=>`<a href="#" onclick="event.preventDefault();openPrayer(this.dataset.t)" data-t="${esc(d.t)}"><b>${esc(d.t)}</b><span>${esc(d.w)}</span></a>`).join("")}</div></div>`:"")+(!tl.length&&!pr.length?`<p class="muted">No encontramos “${esc(DS.q)}”. Prueba con otra palabra.</p>`:"");
@@ -3349,7 +3349,14 @@ const TOUR=[
  {ic:"iglesia",t:"¡Bienvenido a la Escuela de Ministros!",d:"Esta app te acompaña para prepararte y servir como ministro de la Comunión en la Parroquia Sagrado Corazón de Jesús, El Cercado. Te enseñamos en 1 minuto dónde está cada cosa."},
  {g:"inicio",ic:"sol",t:"Inicio",d:"Lo de cada día: el saludo, el <b>santo del día</b>, <b>tus próximos servicios</b> (si te asignaron una Misa o visita a enfermos) y el <b>Rosario con voz</b>, que el celular reza contigo."},
  {g:"biblia",ic:"libro",t:"Biblia",d:"La <b>Biblia completa</b>, que funciona sin internet, con buscador. Aquí también están las <b>lecturas del día</b> y otros recursos."},
- {g:"descubrir",ic:"estrellas",t:"Descubrir",d:"Todo para aprender y servir: los <b>8 módulos</b> con examen y certificado, la <b>guía de la Misa</b> paso a paso, la Comunión a <b>enfermos</b>, la <b>Celebración de la Palabra</b>, los <b>kits</b> de qué llevar, oraciones, música y un juego para grupos."},
+ {g:"descubrir",ic:"estrellas",t:"Descubrir",d:"Aquí está <b>todo lo que trae la app</b>, ordenado por secciones. Te las enseño una por una."},
+ ...(()=>{const D={"Para servir":"Las guías para cuando te toca servir: prepararte, <b>qué llevar</b>, la <b>Misa paso a paso</b>, Comunión a <b>enfermos</b>, <b>Celebración de la Palabra</b>, Exposición, velorios y emergencias.",
+  "Para convivir":"<b>Entre Hermanos</b>: un juego de preguntas, retos y trivia para grupos, retiros y juntas de ministros.",
+  "Otros ministerios":"Guías para <b>lectores</b>, <b>acólitos</b> y <b>coro</b>, con un planeador de cantos para compartir por WhatsApp.",
+  "Para orar":"El <b>Rosario con voz</b>, el devocionario, el Sagrado Corazón, letanías, Viacrucis, <b>música para rezar</b>, el examen de la noche y bendiciones.",
+  "Palabra de Dios":"La <b>Biblia completa</b> (funciona sin internet) y las <b>lecturas de hoy</b>.",
+  "Para aprender":"Tu formación: los <b>8 módulos</b>, tarjetas con dibujos, casos de <b>¿Qué harías?</b>, ordenar el rito y el <b>examen final con certificado</b>."};
+  return [...new Set(TILES.map(t=>t.s))].map(sec=>({g:"descubrir",sec,ic:(TILES.find(t=>t.s===sec)||{}).ic||"estrellas",t:sec,sub:"Descubrir",d:D[sec]||TILES.filter(t=>t.s===sec).map(t=>t.t).join(", ")+"."}));})(),
  {g:"parroquia",ic:"casa",t:"Parroquia",d:"Lo de nuestra comunidad: los <b>avisos del Padre</b>, el <b>rol de servicios</b>, donde confirmas si vas a poder ir, y el calendario."},
  {g:"yo",ic:"corazon",t:"Yo",d:"Tu camino: tu <b>avance</b>, tu racha de oración, tus intenciones y el <b>examen de la noche</b>. Aquí <b>entras con tu código</b> y activas las <b>notificaciones</b> para que te avisen cuando te toque servir."},
  {ic:"mano",t:"Tres consejos para empezar",d:"<b>1.</b> Pide tu código al coordinador y entra en <b>Yo → Entrar</b>.<br><b>2.</b> Instala la app en tu pantalla de inicio para abrirla como cualquier otra.<br><b>3.</b> Si te pierdes, usa el botón <b>atrás</b> del teléfono o la barra de abajo."}
@@ -3359,19 +3366,23 @@ function tourShow(i){
  TR.i=i;let o=document.getElementById("tour");
  if(!o){o=document.createElement("div");o.id="tour";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");document.body.appendChild(o);}
  const s=TOUR[i],last=i===TOUR.length-1;
+ document.querySelectorAll(".tourfocus").forEach(e=>e.classList.remove("tourfocus"));
+ if(!s.sec&&TR.moved){TR.moved=false;go("inicio");}
+ if(s.sec){if(view!=="descubrir"||DS.q){DS.q="";go("descubrir");TR.moved=true;}setTimeout(()=>{const el=document.querySelector(`.dsec[data-sec="${s.sec}"]`);if(el){el.classList.add("tourfocus");const y=el.getBoundingClientRect().top+window.scrollY-80;window.scrollTo({top:Math.max(0,y),behavior:"smooth"});}},60);}
  document.querySelectorAll("#bnav button").forEach(b=>b.classList.toggle("tourhl",!!s.g&&b.dataset.g===s.g));
  o.innerHTML=`<div class="tourcard"><button class="tourskip" onclick="tourEnd()">Saltar</button>
-  <div class="tourico">${tileSVG(s.ic)}</div><h2>${s.t}</h2><p>${s.d}</p>
-  ${s.g?`<p class="tourpoint">↓ Lo encuentras abajo, en <b>${s.t}</b></p>`:""}
+  ${s.sec?`<p class="tourpoint" style="margin:0 0 4px">Descubrir ›</p>`:`<div class="tourico">${tileSVG(s.ic)}</div>`}<h2>${s.t}</h2><p>${s.d}</p>
+  ${s.sec?`<p class="tourpoint">↑ Mírala arriba, marcada en dorado</p>`:s.g?`<p class="tourpoint">↓ Lo encuentras abajo, en <b>${s.t}</b></p>`:""}
   <div class="tourdots">${TOUR.map((_,k)=>`<i class="${k===i?"on":""}"></i>`).join("")}</div>
   <div class="tourbtns">${i?`<button class="btn ghost" onclick="tourShow(${i-1})">Atrás</button>`:"<span></span>"}
   ${last?`<button class="btn red" onclick="tourEnd(${ME&&ME.id?"":"'entrar'"})">${ME&&ME.id?"¡Empezar!":"Entrar con mi código"}</button>`:`<button class="btn red" onclick="tourShow(${i+1})">Siguiente</button>`}</div>
   ${last&&!(ME&&ME.id)?`<button class="back" style="margin:10px auto 0;display:block" onclick="tourEnd()">Explorar sin código</button>`:""}</div>`;
- o.hidden=false;document.body.classList.add("touring");
+ o.hidden=false;o.classList.toggle("sec",!!s.sec);document.body.classList.add("touring");document.body.classList.toggle("toursec",!!s.sec);
 }
 function tourEnd(goTo){
- const o=document.getElementById("tour");if(o)o.hidden=true;document.body.classList.remove("touring");
+ const o=document.getElementById("tour");if(o)o.hidden=true;document.body.classList.remove("touring","toursec");
  document.querySelectorAll("#bnav .tourhl").forEach(b=>b.classList.remove("tourhl"));
+ document.querySelectorAll(".tourfocus").forEach(e=>e.classList.remove("tourfocus"));
  try{localStorage.setItem("escuela-tour","1");}catch(e){}
  if(goTo)go(goTo);
 }
