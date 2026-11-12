@@ -1213,7 +1213,7 @@ function vMisa(){
 function vRuta(){
   return `<p class="lead">Recorre la Misa paso a paso: el dibujo muestra el gesto y el plano te dice dónde estás. <span class="rubric">En rojo, lo que haces</span>, como en el Misal.</p>
   <div class="steps-strip" id="stStrip">${MSTEPS.map((s,i)=>`<button class="st-chip" data-i="${i}"><b>${i+1}</b>${s.t}</button>`).join("")}</div>
-  <button class="btn red mvbtn" id="mvBtn" onclick="mvOpen()">▶ Ver como video, en pantalla completa</button>
+  ${mvBtn("misa")}
   <div class="ms-grid">
     <div class="panel ms-a"><div class="scene" id="msScene"></div></div>
     <div class="panel ms-b"><div id="msText"></div>
@@ -1257,7 +1257,16 @@ function msGo(i){const p=ms.i;ms.i=i;msUpdate(p);}
    Para poner un video real en un paso, agrega a ese paso en MSTEPS: video:"/videos/paso1.mp4"
    y se verá ese video en lugar del dibujo. */
 const MV={on:false,tok:0};
-const MVP={open:false,play:false,end:false,i:0,k:0,segs:[],tok:0,mute:false,t:null,wl:null};
+const MVP={open:false,play:false,end:false,i:0,k:0,segs:[],tok:0,mute:false,t:null,wl:null,L:[],cfg:null};
+/* Cada sección que tiene video: nombre, pasos (con su dibujo en sc) y qué hacer al cambiar de paso o cerrar. */
+const MVSRC={
+ misa:()=>({name:"El ministro en la Misa",map:true,start:ms.i,steps:MSTEPS.map((s,i)=>Object.assign({},s,{sc:SCENES[i]})),
+  onStep:i=>{ms.i=i;ms.seen.add(i);},after:()=>{if(view==="misa"&&ms.mode==="ruta"&&document.getElementById("msScene"))msGo(ms.i);}}),
+ altar:()=>({name:"Servicio al altar",start:0,steps:SVC.map(s=>Object.assign({},s,{ph:s.ph+(s.when?" · "+s.when:""),sc:s.pic}))}),
+ enfermos:()=>({name:"Comunión a los enfermos",start:en.i,steps:ENF,
+  onStep:i=>{en.i=i;en.seen.add(i);},after:()=>{if(view==="enfermos"&&document.getElementById("enScene"))enUpdate();}})
+};
+const mvBtn=(k,t)=>`<button class="btn red mvbtn" onclick="mvOpen('${k}')"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="vertical-align:-3px;margin-right:6px"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>${t||"Ver como video"}</button>`;
 const MVI={
  prev:'<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M6 5h2.4v14H6zM19 5v14L9.2 12z"/></svg>',
  next:'<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M15.6 5H18v14h-2.4zM5 5v14l9.8-7z"/></svg>',
@@ -1268,21 +1277,22 @@ const MVI={
  mute:'<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M16 9l5 6M21 9l-5 6"/></svg>',
  x:'<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>'};
 function mvSplit(t){t=rvClean(t);return (t.match(/[^.!?…]+[.!?…]+[”"»)]*|[^.!?…]+$/g)||[]).map(x=>x.trim()).filter(Boolean);}
-function mvSegs(i){const st=MSTEPS[i],out=[{show:"",say:"Paso "+(i+1)+". "+st.t+"."}];
+function mvSegs(i){const st=MVP.L[i],out=[{show:"",say:"Paso "+(i+1)+". "+st.t+"."}];
  mvSplit(st.do).forEach(x=>out.push({show:x,say:x}));
- if(st.say)out.push({show:`<small>${rvClean(st.who||"")}</small> <em class="q">“${rvClean(st.say)}”</em> <small>Responden:</small> <em class="q">${rvClean(st.resp||"")}</em>`,say:rvClean(st.who||"")+": "+rvClean(st.say)+" Y se responde: "+rvClean(st.resp||"")});
+ if(st.say)out.push({show:`<small>${rvClean(st.who||"")}</small> <em class="q">“${rvClean(st.say)}”</em> <small>Responden:</small> <em class="q">${rvClean(st.resp||"")}</em>`,say:(st.who?rvClean(st.who)+": ":"")+rvClean(st.say)+" Y se responde: "+rvClean(st.resp||"")});
  if(st.note)mvSplit(st.note).forEach(x=>out.push({show:`<b class="nt">Importante:</b> ${x}`,say:x}));
  if(st.tip)mvSplit(st.tip).forEach(x=>out.push({show:`<b class="tp">Consejo:</b> ${x}`,say:x}));
  return out;}
 const mvEst=t=>Math.max(2.4,String(t).split(/\s+/).length*0.42+0.9);
 const mvQ=k=>{const m=document.getElementById("mvpMap");return m?m.querySelector('[data-k="'+k+'"]'):null;};
-function mvOpen(){
+function mvOpen(k){
  if(MVP.open)return;
- MVP.open=true;MVP.end=false;MVP.i=ms.i;MVP.mute=!("speechSynthesis" in window);
- const el=document.createElement("div");el.id="mvp";el.className="mvp";el.setAttribute("role","dialog");el.setAttribute("aria-label","Video: el ministro en la Misa");
- el.innerHTML=`<div class="mvp-top"><div class="mvp-bars">${MSTEPS.map(()=>"<i><b></b></i>").join("")}</div>
+ const cfg=MVSRC[k||"misa"]();MVP.cfg=cfg;MVP.L=cfg.steps;
+ MVP.open=true;MVP.end=false;MVP.i=Math.min(cfg.start||0,MVP.L.length-1);MVP.mute=!("speechSynthesis" in window);
+ const el=document.createElement("div");el.id="mvp";el.className="mvp";el.setAttribute("role","dialog");el.setAttribute("aria-label","Video: "+cfg.name);
+ el.innerHTML=`<div class="mvp-top"><div class="mvp-bars">${MVP.L.map(()=>"<i><b></b></i>").join("")}</div>
   <div class="mvp-hd"><div><div class="mvp-ph" id="mvpPh"></div><div class="mvp-n" id="mvpN"></div></div>
-  <div class="mvp-map nt" id="mvpMap" aria-hidden="true">${planSVG().replace(/ id="/g,' data-k="')}</div>
+  ${cfg.map?`<div class="mvp-map nt" id="mvpMap" aria-hidden="true">${planSVG().replace(/ id="/g,' data-k="')}</div>`:""}
   <button class="mvp-x" onclick="mvClose()" aria-label="Cerrar video">${MVI.x}</button></div></div>
   <div class="mvp-main">
    <div class="mvp-stage" id="mvpStage" onclick="mvPP()"><div class="mvp-scene" id="mvpScene"></div>
@@ -1301,12 +1311,12 @@ function mvOpen(){
  MVP.play=true;mvUI();mvRun();
 }
 function mvShow(i){
- const s=MSTEPS[i],sc=document.getElementById("mvpScene");if(!sc)return;
- MVP.i=i;MVP.k=0;MVP.segs=mvSegs(i);ms.i=i;ms.seen.add(i);
+ const s=MVP.L[i],sc=document.getElementById("mvpScene");if(!sc)return;
+ MVP.i=i;MVP.k=0;MVP.segs=mvSegs(i);if(MVP.cfg.onStep)MVP.cfg.onStep(i);
  sc.classList.remove("in");void sc.offsetWidth;
- sc.innerHTML=s.video?`<video id="mvpVid" src="${s.video}" playsinline preload="auto"${s.poster?` poster="${s.poster}"`:""}></video>`:svgw(SCENES[i]());
+ sc.innerHTML=s.video?`<video id="mvpVid" src="${s.video}" playsinline preload="auto"${s.poster?` poster="${s.poster}"`:""}></video>`:svgw(s.sc());
  sc.classList.add("in");
- $("#mvpPh").textContent=s.ph;$("#mvpN").textContent="Paso "+(i+1)+" de "+MSTEPS.length;
+ $("#mvpPh").textContent=s.ph;$("#mvpN").textContent="Paso "+(i+1)+" de "+MVP.L.length;
  const t=$("#mvpT");t.textContent=s.t;t.classList.remove("in");void t.offsetWidth;t.classList.add("in");
  $("#mvpSub").innerHTML="";
  const me=mvQ("meMark"),pr=mvQ("prMark");
@@ -1314,7 +1324,7 @@ function mvShow(i){
  ["capilla","sac","pew","amb","altar","foot","aisle","cred","door"].forEach(h=>{const e=mvQ("hl-"+h);if(e)e.setAttribute("visibility",h===s.hl?"visible":"hidden");});
  const qu=mvQ("queue");if(qu)qu.setAttribute("visibility",s.queue?"visible":"hidden");
  const mp=mvQ("mpath");if(mp)mp.setAttribute("visibility","hidden");
- document.getElementById("mvpMap").hidden=!!s.video;
+ {const m=document.getElementById("mvpMap");if(m)m.hidden=!!s.video;}
  document.querySelectorAll("#mvp .mvp-bars b").forEach((b,j)=>{b.style.transition="none";b.style.width=j<i?"100%":"0%";});
 }
 function mvBar(frac,secs){const b=document.querySelectorAll("#mvp .mvp-bars b")[MVP.i];if(!b)return;
@@ -1322,7 +1332,7 @@ function mvBar(frac,secs){const b=document.querySelectorAll("#mvp .mvp-bars b")[
  void b.offsetWidth;b.style.transition=`width ${secs}s linear`;b.style.width=(frac*100)+"%";}
 function mvRun(){
  clearTimeout(MVP.t);if(!MVP.open||!MVP.play)return;
- const tok=++MVP.tok,s=MSTEPS[MVP.i];
+ const tok=++MVP.tok,s=MVP.L[MVP.i];
  try{speechSynthesis.cancel();}catch(e){}
  if(s.video){const v=document.getElementById("mvpVid");$("#mvpSub").innerHTML="";
   if(v){v.onended=()=>{if(tok===MVP.tok)mvNext();};v.ontimeupdate=()=>{if(v.duration)mvBar(v.currentTime/v.duration,0.25);};const r=v.play();if(r&&r.catch)r.catch(()=>{});}
@@ -1338,10 +1348,10 @@ function mvRun(){
   speechSynthesis.speak(u);MVP.t=setTimeout(done,est*2000+3000);}
  catch(e){MVP.mute=true;mvUI();MVP.t=setTimeout(done,est*1000);}
 }
-function mvNext(){if(MVP.i>=MSTEPS.length-1){mvFinish();return;}mvShow(MVP.i+1);mvRun();}
+function mvNext(){if(MVP.i>=MVP.L.length-1){mvFinish();return;}mvShow(MVP.i+1);mvRun();}
 function mvFinish(){MVP.play=false;MVP.end=true;MVP.tok++;clearTimeout(MVP.t);try{speechSynthesis.cancel();}catch(e){}
- mvBar(1,0.3);$("#mvpSub").innerHTML=`<span><b class="tp">¡Terminaste!</b> Ya conoces tu recorrido en la Misa. Toca el botón para verlo otra vez.</span>`;mvUI();}
-function mvGo(i){if(!MVP.open)return;if(i<0)i=0;if(i>MSTEPS.length-1){mvFinish();return;}
+ mvBar(1,0.3);$("#mvpSub").innerHTML=`<span><b class="tp">¡Terminaste!</b> Ya repasaste todos los pasos. Toca el botón para verlo otra vez.</span>`;mvUI();}
+function mvGo(i){if(!MVP.open)return;if(i<0)i=0;if(i>MVP.L.length-1){mvFinish();return;}
  MVP.tok++;clearTimeout(MVP.t);try{speechSynthesis.cancel();}catch(e){}MVP.end=false;mvShow(i);if(MVP.play)mvRun();else mvUI();}
 function mvPP(){if(!MVP.open)return;
  if(MVP.end){MVP.end=false;MVP.play=true;mvShow(0);mvUI();mvRun();return;}
@@ -1350,7 +1360,7 @@ function mvPP(){if(!MVP.open)return;
  else{MVP.tok++;clearTimeout(MVP.t);try{speechSynthesis.cancel();}catch(e){}const v=document.getElementById("mvpVid");if(v)v.pause();mvBar(0);}
  mvUI();}
 function mvMute(){if(!("speechSynthesis" in window)){toast("Este celular no tiene voz; el video avanza solo.");return;}
- MVP.mute=!MVP.mute;mvUI();if(MVP.play&&!MSTEPS[MVP.i].video)mvRun();}
+ MVP.mute=!MVP.mute;mvUI();if(MVP.play&&!MVP.L[MVP.i].video)mvRun();}
 function mvUI(){const el=document.getElementById("mvp");if(!el)return;
  el.classList.toggle("paused",!MVP.play);
  const pp=document.getElementById("mvpPP");pp.innerHTML=MVP.end?MVI.again:MVP.play?MVI.pause:MVI.play;pp.setAttribute("aria-label",MVP.end?"Ver otra vez":MVP.play?"Pausa":"Reproducir");
@@ -1362,11 +1372,11 @@ function mvClose(fromPop){
  try{if(MVP.wl)MVP.wl.release();}catch(e){}MVP.wl=null;
  const el=document.getElementById("mvp");if(el)el.remove();document.body.classList.remove("mvp-on");
  if(!fromPop&&history.state&&history.state.mv){try{history.back();return;}catch(e){}}
- if(view==="misa"&&ms.mode==="ruta"&&document.getElementById("msScene"))msGo(ms.i);
+ if(MVP.cfg&&MVP.cfg.after)MVP.cfg.after();
 }
 document.addEventListener("keydown",e=>{if(!MVP.open)return;
  if(e.key==="Escape"){e.preventDefault();mvClose();}else if(e.key==="ArrowRight"){mvGo(MVP.i+1);}else if(e.key==="ArrowLeft"){mvGo(MVP.i-1);}else if(e.key===" "){e.preventDefault();mvPP();}});
-function mvToggle(){mvOpen();}
+function mvToggle(){mvOpen("misa");}
 function mvStop(){if(MVP.open)mvClose();MV.on=false;}
 function mvBtnUI(){}
 function msBind(){
@@ -1434,6 +1444,7 @@ const SVC=[
 function vAltar(){
   return `<p class="lead">Momentos en que puedes ayudar al sacerdote durante la Misa, en el orden en que pasan.</p>
   <div class="warn"><b>Antes de empezar:</b> estas tareas son propias del acólito, del monaguillo o del sacristán (OGMR 187-193). En muchas parroquias también se encargan a los ministros. Hazlas solo cuando tu párroco te lo pida y como él lo indique.</div>
+  ${mvBtn("altar","Ver las tareas como video")}
   <div class="svc-list">${SVC.map((s,i)=>`<article class="svc"><div class="pic">${svgw(s.pic())}</div><div>
      <div class="phase">${i+1} · ${s.ph}</div><h3>${s.t}</h3><span class="when">${s.when}</span>
      <div class="ms-do">${s.do}</div>
@@ -1944,6 +1955,7 @@ let en={i:0,seen:new Set([0])};
 function vEnfermos(){
  return `<div class="eyebrow">${ENF.length} pasos ilustrados</div><h1 style="font-size:2.2rem;margin:6px 0 8px">Comunión a los enfermos</h1>
  <p class="lead">Desde que recibes la Comunión en la parroquia hasta que regresas. El rito oficial está en el Ritual de la Pastoral de los Enfermos; tu parroquia te dará el texto exacto.</p>
+ ${mvBtn("enfermos")}
  <div class="steps-strip" id="enStrip">${ENF.map((s,i)=>`<button class="st-chip" data-i="${i}"><b>${i+1}</b>${s.t}</button>`).join("")}</div>
  <div class="panel" style="max-width:760px"><div class="ms-grid" style="margin:0"><div class="scene" id="enScene"></div><div id="enText"></div></div>
   <div class="row" style="justify-content:space-between;margin-top:16px"><button class="btn ghost" id="enPrev">← Anterior</button><span class="muted" id="enCount" style="font-variant-numeric:tabular-nums"></span><button class="btn" id="enNext">Siguiente →</button></div></div>
