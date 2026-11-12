@@ -1263,6 +1263,9 @@ const MVSRC={
  misa:()=>({name:"El ministro en la Misa",map:true,start:ms.i,steps:MSTEPS.map((s,i)=>Object.assign({},s,{sc:SCENES[i]})),
   onStep:i=>{ms.i=i;ms.seen.add(i);},after:()=>{if(view==="misa"&&ms.mode==="ruta"&&document.getElementById("msScene"))msGo(ms.i);}}),
  altar:()=>({name:"Servicio al altar",start:0,steps:SVC.map(s=>Object.assign({},s,{ph:s.ph+(s.when?" · "+s.when:""),sc:s.pic}))}),
+ palabra:()=>({name:"Celebración de la Palabra",start:0,steps:mvParts(CP_PARTS,CP_SC)}),
+ expo:()=>({name:"Exposición del Santísimo",start:0,steps:mvParts(EX_PARTS,EX_SC)}),
+ emergencias:()=>({name:"Emergencias",start:0,steps:mvParts(BAU.concat(MOR),EM_SC)}),
  enfermos:()=>({name:"Comunión a los enfermos",start:en.i,steps:ENF,
   onStep:i=>{en.i=i;en.seen.add(i);},after:()=>{if(view==="enfermos"&&document.getElementById("enScene"))enUpdate();}})
 };
@@ -1276,10 +1279,14 @@ const MVI={
  vol:'<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/></svg>',
  mute:'<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M16 9l5 6M21 9l-5 6"/></svg>',
  x:'<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>'};
-function mvSplit(t){t=rvClean(t);return (t.match(/[^.!?…]+[.!?…]+[”"»)]*|[^.!?…]+$/g)||[]).map(x=>x.trim()).filter(Boolean);}
-function mvSegs(i){const st=MVP.L[i],out=[{show:"",say:"Paso "+(i+1)+". "+st.t+"."}];
+function mvSplit(t){t=rvClean(String(t||"").replace(/<br\s*\/?>/gi," ")).replace(/\s+([.,;:!?…])/g,"$1");return (t.match(/[^.!?…]+[.!?…]+[”"»)]*|[^.!?…]+$/g)||[]).map(x=>x.trim()).filter(Boolean);}
+function mvSegs(i){const st=MVP.L[i],out=[{show:"",say:"Paso "+(i+1)+". "+rvClean(st.t)+"."}];
+ const sayIt=(who,say,resp)=>{if(!say)return;const w=rvClean(who||""),r=rvClean(resp||"");
+  out.push({show:`${w?`<small>${w}</small> `:""}<em class="q">“${rvClean(say)}”</em>${r?` <small>Responden:</small> <em class="q">${r}</em>`:""}`,say:(w?w+": ":"")+rvClean(say)+(r?" Y se responde: "+r:"")});};
  mvSplit(st.do).forEach(x=>out.push({show:x,say:x}));
- if(st.say)out.push({show:`<small>${rvClean(st.who||"")}</small> <em class="q">“${rvClean(st.say)}”</em> <small>Responden:</small> <em class="q">${rvClean(st.resp||"")}</em>`,say:(st.who?rvClean(st.who)+": ":"")+rvClean(st.say)+" Y se responde: "+rvClean(st.resp||"")});
+ sayIt(st.who,st.say,st.resp);
+ if(st.do2)mvSplit(st.do2).forEach(x=>out.push({show:x,say:x}));
+ sayIt(st.who,st.say2,st.resp2);
  if(st.note)mvSplit(st.note).forEach(x=>out.push({show:`<b class="nt">Importante:</b> ${x}`,say:x}));
  if(st.tip)mvSplit(st.tip).forEach(x=>out.push({show:`<b class="tp">Consejo:</b> ${x}`,say:x}));
  return out;}
@@ -1379,6 +1386,75 @@ document.addEventListener("keydown",e=>{if(!MVP.open)return;
 function mvToggle(){mvOpen("misa");}
 function mvStop(){if(MVP.open)mvClose();MV.on=false;}
 function mvBtnUI(){}
+/* Pasos de los ritos (Palabra, Exposición, Emergencias) convertidos a pasos de video, cada uno con su dibujo */
+function mvParts(parts,SC){let n=0;const out=[];parts.forEach(p=>p.steps.forEach(x=>{const k=n++;
+ out.push({ph:p.n+(p.opt?" · Solo con mandato":""),t:x.t,do:x.d||"",who:"Tú dices",say:x.s,resp:x.r,do2:x.d2,say2:x.s2,resp2:x.r2,note:x.nt,video:x.video,
+  sc:SC[k]||(()=>ground+P(120,150,"me","stand","pray"))});}));return out;}
+const ambo=x=>`<path class="obj" d="M${x-16} 150 L${x+16} 150 L${x+12} 118 L${x-12} 118 Z"/><path class="obj" d="M${x-17} 118 L${x+17} 118 L${x+13} 108 L${x-13} 108 Z"/>`;
+const pewsL=(a)=>`<rect class="obj" x="14" y="98" width="96" height="6" rx="2"/>`+P(36,150,"fi","sit",a||"pray")+P(82,150,"fi","sit",a||"pray")+`<rect class="obj" x="14" y="128" width="96" height="6" rx="2"/>`;
+const crowd=(x0,n,pose,arms)=>{let r="";for(let i=0;i<n;i++)r+=P(x0+i*34,150,"fi",pose||"stand",arms||"pray");return r;};
+const nota=(x,y)=>`<ellipse class="gd" cx="${x}" cy="${y}" rx="4.5" ry="3.4"/><line class="l" x1="${x+4.2}" y1="${y}" x2="${x+4.2}" y2="${y-15}"/><path class="l" d="M${x+4.2} ${y-15} q7 2 6 8"/>`;
+const notas=(x,y)=>nota(x,y)+nota(x+22,y-12)+nota(x+44,y+2);
+const phone=(x,y)=>`<rect class="obj" x="${x-5}" y="${y-9}" width="10" height="18" rx="2"/><line class="lm" x1="${x-2}" y1="${y+6}" x2="${x+2}" y2="${y+6}"/>`;
+const church=x=>house(x,150)+`<line class="l" x1="${x}" y1="78" x2="${x}" y2="58"/><line class="l" x1="${x-7}" y1="65" x2="${x+7}" y2="65"/>`;
+const basket=(x,y)=>`<path class="obj" d="M${x-15} ${y} L${x+15} ${y} L${x+11} ${y+13} L${x-11} ${y+13} Z"/><line class="lm" x1="${x-12}" y1="${y+5}" x2="${x+12}" y2="${y+5}"/>`;
+const nosign=(x,y)=>`<circle cx="${x}" cy="${y}" r="17" fill="none" style="stroke:var(--rubric);stroke-width:3.5"/><line x1="${x-12}" y1="${y-12}" x2="${x+12}" y2="${y+12}" style="stroke:var(--rubric);stroke-width:3.5"/>`;
+const warnT=(x,y)=>`<path class="gd" d="M${x} ${y-20} L${x+20} ${y+14} L${x-20} ${y+14} Z"/><text x="${x}" y="${y+10}" text-anchor="middle" style="font-size:18px;font-weight:800">!</text>`;
+const crossRays=x=>`<line class="ray" x1="${x}" y1="22" x2="${x}" y2="46"/><line class="ray" x1="${x-9}" y1="30" x2="${x+9}" y2="30"/>`;
+const meAmbo=(arms,book)=>pewsL()+P(176,150,"me","stand",arms||"chest")+ambo(176)+(book?bookH(176,103):"");
+const exAltar=()=>altar(162,108,110,42)+candle(118,104,22)+candle(206,104,22)+`<rect class="obj" x="142" y="98" width="40" height="6" rx="1"/>`+monstrance(162,58,1);
+const CP_SC=[
+ ()=>ground+P(56,150,"me","stand","pray")+arrow(80,136,160)+altar(186,108,80,42)+crucif(186,104),
+ ()=>meAmbo("pray")+bubble(84,16,150,"Bendito sea Dios"),
+ ()=>meAmbo("left")+bubble(120,16,112,"Bienvenidos"),
+ ()=>meAmbo("pray")+bubble(110,16,120,"Yo confieso…"),
+ ()=>ground+crowd(26,4,"stand","pray")+notas(170,46)+lbl(192,82,"Gloria"),
+ ()=>meAmbo("pray",true)+bubble(150,16,72,"Oremos"),
+ ()=>pewsL()+P(176,150,"fi","stand","chest")+ambo(176)+bookH(176,103)+lbl(176,24,"El lector"),
+ ()=>ground+crowd(18,3,"stand","pray")+P(184,150,"me","stand","chest")+ambo(184)+bookH(184,103)+bubble(20,14,200,"Lectura del santo Evangelio"),
+ ()=>meAmbo("left",true),
+ ()=>ground+crowd(26,4,"stand","pray")+bubble(130,20,100,"Creo en Dios…"),
+ ()=>ground+crowd(26,4,"stand","pray")+bubble(110,20,120,"Te rogamos, óyenos"),
+ ()=>ground+crowd(20,3,"stand","pray")+P(190,150,"me","stand","pray")+notas(120,40),
+ ()=>ground+sagrario(48,144)+P(104,150,"me","stand","right")+copon(132,90)+arrow(140,170,160)+altar(204,108,52,42),
+ ()=>ground+crowd(20,3,"stand","pray")+P(180,150,"me","stand","pray")+bubble(110,16,120,"Padre nuestro…"),
+ ()=>ground+P(80,150,"me","stand","bless")+host(102,74,6)+copon(64,102)+bubble(110,30,124,"Cordero de Dios")+crowd(170,2,"stand","pray"),
+ ()=>ground+P(80,150,"me","stand","give")+host(104,94,5)+P(164,150,"fi","stand","palms")+bubble(14,16,124,"El Cuerpo de Cristo")+bubble(166,48,58,"Amén"),
+ ()=>ground+P(56,150,"me","stand","right")+copon(84,90)+arrow(98,150,160)+sagrario(190,144),
+ ()=>pewsL()+P(180,150,"me","kneel","pray")+lbl(180,60,"Silencio"),
+ ()=>meAmbo("left")+basket(132,124),
+ ()=>ground+crowd(20,3,"stand","pray")+P(184,150,"me","stand","pray")+crossRays(184)+bubble(14,14,150,"El Señor nos bendiga"),
+ ()=>ground+crowd(20,3,"stand","pray")+P(190,150,"me","stand","pray")+bubble(100,14,132,"Bendigamos al Señor")+bubble(14,48,140,"Demos gracias a Dios")
+];
+const EX_SC=[
+ ()=>ground+altar(170,108,100,42)+candle(132,104,22)+candle(208,104,22)+crowd(20,3,"stand","pray")+notas(112,34),
+ ()=>ground+sagrario(170,144)+P(100,150,"me","kneel","pray"),
+ ()=>ground+exAltar()+P(78,150,"me","stand","right"),
+ ()=>ground+exAltar()+P(54,150,"me","kneel","pray"),
+ ()=>ground+exAltar()+P(54,150,"me","stand","chest")+bookH(54,100),
+ ()=>ground+exAltar()+P(30,150,"fi","kneel","pray")+P(74,150,"me","kneel","pray")+notas(20,40),
+ ()=>ground+exAltar()+P(30,150,"fi","kneel","pray")+P(74,150,"me","kneel","pray")+lbl(52,62,"Silencio"),
+ ()=>ground+exAltar()+P(86,150,"me","kneel","pray"),
+ ()=>ground+exAltar()+P(64,150,"me","stand","pray")+bubble(14,16,72,"Oremos"),
+ ()=>ground+exAltar()+P(58,150,"me","stand","pray")+nosign(58,30),
+ ()=>ground+P(44,150,"me","stand","right")+monstrance(76,82,.6)+arrow(100,150,160)+sagrario(190,144),
+ ()=>ground+exAltar()+P(30,150,"fi","kneel","pray")+P(74,150,"me","kneel","pray")+bubble(8,16,118,"Bendito sea Dios")
+];
+const EM_SC=[
+ ()=>ground+bed()+P(84,150,"me","stand","pray")+warnT(40,48),
+ ()=>ground+bed()+P(96,150,"me","stand","left")+bubble(14,16,124,"¿Estás bautizado?"),
+ ()=>ground+bed()+P(40,150,"fi","stand","pray")+P(84,150,"fi","stand","pray")+lbl(62,60,"Testigos"),
+ ()=>ground+P(70,150,"me","stand","right")+`<rect class="obj" x="112" y="80" width="26" height="70" rx="6"/><rect class="obj" x="118" y="70" width="14" height="12" rx="2"/>`+glass(170,150)+lbl(146,62,"Agua natural"),
+ ()=>ground+P(80,150,"me","stand","right")+jarTilt(116,84)+`<line class="lm" x1="126" y1="96" x2="128" y2="104"/><line class="lm" x1="124" y1="106" x2="126" y2="112"/><path class="skin" d="M118 136 Q140 120 172 132 L170 142 Q140 146 118 142 Z"/><circle class="skin" cx="130" cy="122" r="9"/>`+bubble(100,16,132,"Yo te bautizo…"),
+ ()=>ground+bed()+P(84,150,"me","kneel","pray"),
+ ()=>ground+P(64,150,"me","stand","right")+phone(90,96)+church(184),
+ ()=>ground+P(70,150,"me","stand","right")+phone(96,96)+bubble(110,30,122,"Padre, venga pronto"),
+ ()=>ground+bed()+P(110,150,"me","stand","give")+host(134,94,5)+bubble(10,16,124,"El Cuerpo de Cristo")+bubble(160,52,58,"Amén"),
+ ()=>ground+bed()+P(96,150,"me","sit","pray")+bubble(10,16,140,"Jesús, José y María"),
+ ()=>ground+bed()+P(84,150,"me","stand","pray")+crossRays(84),
+ ()=>ground+bed()+candle(112,150,30)+P(40,150,"fi","kneel","pray")+P(82,150,"me","kneel","pray"),
+ ()=>ground+crowd(30,2,"stand","pray")+P(118,150,"me","stand","pray")+church(194)
+];
 function msBind(){
   const again=()=>{if(MV.on)mvSay();};
   document.querySelectorAll(".st-chip").forEach(c=>c.onclick=()=>{msGo(+c.dataset.i);again();});
@@ -1535,6 +1611,7 @@ function vPalabra(){
    <div class="flow">${CP_PARTS.map((p,i)=>`<a href="#cp${i}" class="${p.opt?"opt-part":""}" onclick="event.preventDefault();document.getElementById('cp${i}').scrollIntoView({behavior:'smooth'})"><b>${i+1}</b>${p.n}${p.opt?" (si hay mandato)":""}</a>`).join("")}</div>
    <p class="legend" style="margin-top:10px"><span class="rubric">En rojo, lo que haces.</span> En negrita, lo que dices. R/. es la respuesta de la comunidad.</p>
   </div>
+  ${mvBtn("palabra")}
   ${parts}
 
   <div class="sec"><h2>Lo que cambia cuando no hay sacerdote</h2>
@@ -1629,6 +1706,7 @@ function vExpo(){
   <div class="sec"><h2>Paso a paso</h2>
    <div class="flow">${EX_PARTS.map((p,i)=>`<a href="#ex${i}" onclick="event.preventDefault();document.getElementById('ex${i}').scrollIntoView({behavior:'smooth'})"><b>${i+1}</b>${p.n}</a>`).join("")}</div>
    <p class="legend" style="margin-top:10px"><span class="rubric">En rojo, lo que haces.</span> En negrita, lo que dices. R/. es la respuesta de la comunidad.</p></div>
+  ${mvBtn("expo")}
   ${parts}
 
   <div class="sec"><h2>Durante la adoración</h2><ul>
@@ -2011,6 +2089,7 @@ function vEmerg(){
   <h1 style="font-size:clamp(1.9rem,5vw,2.6rem);margin:6px 0 10px">Emergencias</h1>
   <p class="lead">Qué hacer cuando alguien está en peligro de muerte y el sacerdote no puede llegar a tiempo. Léelo con calma antes de salir: en el momento no habrá tiempo de buscarlo.</p></div><div class="pic">${pic}</div></section>
  <div class="warn"><b>Primero, siempre:</b> llama al sacerdote. Lo que sigue es solo para cuando no puede llegar a tiempo.</div>
+ ${mvBtn("emergencias","Repasar en video")}
  ${riteParts(BAU,"bau")}
  <div class="keybox"><b>Lo esencial del Bautismo</b>Agua natural, sobre la cabeza, mientras dices: “N., yo te bautizo en el nombre del Padre, y del Hijo, y del Espíritu Santo”. Después, avisa a la parroquia. (CIC c. 861 §2)</div>
  ${riteParts(MOR,"mor")}
