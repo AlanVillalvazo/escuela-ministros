@@ -520,6 +520,40 @@ body.mvp-on{overflow:hidden}
  .mvp-side{flex:1;text-align:left}}
 @media (max-height:460px){.mvp-hd{margin-top:6px}.mvp-main{margin:6px 0}.mvp-ctl button{width:44px;height:44px}.mvp-ctl .mvp-pp{width:56px;height:56px}.mvp-sub{min-height:4em}}
 @media (prefers-reduced-motion:reduce){.mvp-scene.in svg,.mvp-scene.in,.mvp-t.in,.mvp-sub span{animation:none}}
+
+/* Novenas */
+.nvpic{display:block;line-height:0}.nvpic svg{width:100%;height:auto;display:block;border-radius:14px}
+.nvpic.sm{width:52px;flex:none}.nvpic.sm svg{border-radius:9px}.nvpic.lg{width:130px;flex:none}
+.nvgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin:8px 0 18px}
+.nvcard{display:flex;flex-direction:column;gap:6px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 8px 12px;color:var(--ink);cursor:pointer}
+.nvcard .nvn{font-family:var(--f-display);font-weight:800;font-size:1.12rem;line-height:1.15;padding:0 4px}
+.nvcard .nvp{font-size:.88rem;color:var(--muted);line-height:1.3;padding:0 4px}.nvcard .pill{align-self:flex-start;margin:2px 4px 0}
+.nvmine{margin:6px 0 18px}.nvmine h2{font-size:1.3rem;margin:0 0 8px}
+.nvrow,.nvhome{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px;color:var(--ink);cursor:pointer}
+.nvrow>span:nth-child(2),.nvhome>span:nth-child(2){flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.nvrow b,.nvhome b{font-size:1.02rem}.nvrow small,.nvhome small{color:var(--muted)}
+.nvhome{border-color:var(--gold);background:linear-gradient(90deg,var(--card),var(--rubric-soft))}
+.nvhome small{text-transform:uppercase;letter-spacing:.12em;font-size:.7rem;font-weight:700;color:var(--gold)}.nvhome span span{color:var(--muted);font-size:.92rem}
+.nvrow .arrow,.nvhome .arrow{color:var(--rubric);font-size:1.2rem}
+.nvhero{display:flex;gap:16px;align-items:center;margin:0 0 14px}
+.nvdots{display:flex;gap:5px;margin:8px 0 12px}.nvdots span{flex:1;height:26px;border-radius:7px;background:var(--line);color:var(--muted);font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.nvdots span.on{background:var(--rubric);color:#fff}.nvdots span.hoy{background:var(--card);border:2px solid var(--rubric);color:var(--rubric)}
+.nvrow .nvdots{margin:4px 0 0}.nvrow .nvdots span{height:8px;font-size:0;border-radius:4px}.nvrow .nvdots span.hoy{border-width:1px}
+.nvstart textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:1rem;background:var(--paper);color:var(--ink);resize:vertical}
+.nvrezo{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 18px 18px}
+.nvrezo section{border-bottom:1px solid var(--line);padding:14px 0}.nvrezo section:last-of-type{border-bottom:0}
+.nvrezo h3{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
+.nvrezo p{font-size:1.1rem;line-height:1.65;margin:0 0 6px}
+.nvday{background:var(--rubric-soft);margin:6px -18px;padding:16px 18px!important;border-bottom:0!important}
+.nvday h2{font-family:var(--f-display);font-size:1.6rem;margin:2px 0 8px}.nvpet{font-weight:700;color:var(--rubric)}
+.nvint{display:block;font-style:italic;background:var(--paper);border-left:3px solid var(--gold);padding:8px 12px;border-radius:6px}
+.nvint small{display:block;font-style:normal;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.1em}
+.nvjac{text-align:center;font-family:var(--f-display);font-style:italic;font-size:1.25rem;color:var(--rubric);margin:14px 0 0}
+.nvbtn{width:100%;padding:15px;font-size:1.05rem;margin:16px 0 10px}
+.nvdone{text-align:center}.nvdone h2{font-family:var(--f-display);font-size:1.8rem;margin:6px 0}.nvdone .row{justify-content:center}
+.ok-note{background:var(--ok-soft);color:var(--ok);border-radius:10px;padding:10px 14px;margin:6px 0 10px;font-weight:600}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:.92rem;cursor:pointer}
+@media (max-width:420px){.nvpic.lg{width:104px}.nvgrid{grid-template-columns:1fr 1fr;gap:10px}}
 </style>
 <style id="skin">
 /* Identidad Sagrado Corazón: vino, oro y crema; títulos en Cormorant Garamond */
@@ -890,10 +924,10 @@ window.addEventListener("popstate",e=>{if(typeof MVP!=="undefined"&&MVP.open){mv
 const GROUPS=[
  {id:"inicio",n:"Inicio",v:["inicio"]},
  {id:"biblia",n:"Biblia",v:["biblia","recursos"],sub:1},
- {id:"descubrir",n:"Descubrir",v:["descubrir","modulos","antes","kits","misa","enfermos","palabra","expo","difuntos","emergencias","rosario","devocionario","bendiciones","examenc","musica","juego","lectores","acolitos","coro","tarjetas","situaciones","ordena","examen"]},
+ {id:"descubrir",n:"Descubrir",v:["descubrir","modulos","antes","kits","misa","enfermos","palabra","expo","difuntos","emergencias","rosario","devocionario","bendiciones","examenc","novenas","musica","juego","lectores","acolitos","coro","tarjetas","situaciones","ordena","examen"]},
  {id:"parroquia",n:"Parroquia",v:["avisos","rol","calendario","equipo","ministros"],sub:1},
  {id:"yo",n:"Yo",v:["yo","entrar"]}];
-const VNAME={descubrir:"Descubrir",kits:"Kits de servicio",musica:"Música",juego:"Entre Hermanos",lectores:"Lectores",acolitos:"Acólitos",coro:"Coro",yo:"Yo",examenc:"Examen de conciencia",modulos:"Módulos",avisos:"Avisos",biblia:"Biblia",recursos:"Recursos",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
+const VNAME={descubrir:"Descubrir",kits:"Kits de servicio",musica:"Música",juego:"Entre Hermanos",lectores:"Lectores",acolitos:"Acólitos",coro:"Coro",yo:"Yo",examenc:"Examen de conciencia",novenas:"Novenas",modulos:"Módulos",avisos:"Avisos",biblia:"Biblia",recursos:"Recursos",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
 const ALLV=GROUPS.flatMap(g=>g.v);
 const groupOf=v=>GROUPS.find(g=>g.v.includes(v));
 const lastIn={};
@@ -2731,6 +2765,7 @@ const TILES=[
  {s:"Otros ministerios",t:"Acólitos",d:"Servir en el altar",ic:"cirial",g:["#8c5a1f","#45290a"],v:"acolitos"},
  {s:"Otros ministerios",t:"Coro",d:"Cantos y planeador",ic:"nota",g:["#1f6a7a","#0b333c"],v:"coro"},
  {s:"Para orar",t:"Rosario",d:"Guiado y con voz",ic:"rosario",g:["#0f5c4d","#08302a"],v:"rosario"},
+ {s:"Para orar",t:"Novenas",d:"Nueve días con tu intención",ic:"vela",g:["#7a4a1f","#3a1f0a"],fn:()=>{NV.k=null;go("novenas");}},
  {s:"Para orar",t:"Devocionario",d:"Oraciones de siempre",ic:"mano",g:["#8a3b5c","#4a1a30"],v:"devocionario"},
  {s:"Para orar",t:"Sagrado Corazón",d:"Nuestro patrono",ic:"corazon",g:["#b0303a","#5e0f17"],fn:()=>{DV.cat="Sagrado Corazón";DV.q="";go("devocionario");}},
  {s:"Para orar",t:"Letanías",d:"A la Virgen y al Sagrado Corazón",ic:"estrellas",g:["#3d4f9a","#1b2452"],fn:()=>{DV.cat="Letanías";DV.q="";go("devocionario");}},
@@ -2774,6 +2809,351 @@ function vExamenc(){
  <div class="panel exc"><div class="phase">Paso ${EX2.i+1} de ${EXC.length}</div><h2>${s[0]}</h2><p>${s[1]}</p>
  <div class="row" style="justify-content:space-between;margin-top:14px"><button class="btn ghost" ${EX2.i?"":"disabled style='opacity:.4'"} onclick="EX2.i--;render()">← Anterior</button>${last?`<button class="btn red" onclick="logAct('exa');addRec('Examen de la noche','examenc');EX2.i=0;go('yo')">Terminé mi examen</button>`:`<button class="btn red" onclick="EX2.i++;render()">Siguiente →</button>`}</div></div>`;
 }
+
+/* Retratos de las novenas: dibujos originales tipo estampa (no son fotos). */
+const NVS={claro:"#f2d2b4",medio:"#dcae86",moreno:"#8a5634"};
+const nvHead=(x,y,skin,o)=>{o=o||{};let s="";
+ if(o.hairBack)s+=o.hairBack;
+ s+=`<circle cx="${x}" cy="${y}" r="${o.r||12}" fill="${skin}" stroke="#2a1714" stroke-width="1.6"/>`;
+ if(o.hair)s+=o.hair;
+ const e=o.r?o.r/12:1;
+ s+=`<path d="M${x-5.5*e} ${y+0.5} q2.2 2 4.4 0 M${x+1.1*e} ${y+0.5} q2.2 2 4.4 0" fill="none" stroke="#2a1714" stroke-width="1.3" stroke-linecap="round"/>`;
+ s+=`<circle cx="${x-6.5*e}" cy="${y+4.5*e}" r="${2*e}" fill="#e88f86" opacity=".45"/><circle cx="${x+6.5*e}" cy="${y+4.5*e}" r="${2*e}" fill="#e88f86" opacity=".45"/>`;
+ s+=`<path d="M${x-2*e} ${y+6.5*e} q2 1.4 4 0" fill="none" stroke="#2a1714" stroke-width="1.2" stroke-linecap="round"/>`;
+ if(o.beard)s+=o.beard;
+ return s;};
+const nvHalo=(x,y,r)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#f6d77c" opacity=".35"/><circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#e2b54a" stroke-width="2"/>`;
+const nvRays=(x,y,r1,r2,n,col,w)=>{let s="";for(let i=0;i<n;i++){const a=i/n*Math.PI*2;s+=`<line x1="${(x+Math.cos(a)*r1).toFixed(1)}" y1="${(y+Math.sin(a)*r1).toFixed(1)}" x2="${(x+Math.cos(a)*r2).toFixed(1)}" y2="${(y+Math.sin(a)*r2).toFixed(1)}" stroke="${col}" stroke-width="${w||1.6}" stroke-linecap="round"/>`;}return s;};
+const nvHands=(x,y,skin)=>`<path d="M${x-4.5} ${y+7} Q${x-5.5} ${y-1} ${x} ${y-8} Q${x+5.5} ${y-1} ${x+4.5} ${y+7} Q${x} ${y+9} ${x-4.5} ${y+7} Z" fill="${skin}" stroke="#2a1714" stroke-width="1.3"/><line x1="${x}" y1="${y-6}" x2="${x}" y2="${y+7}" stroke="#2a1714" stroke-width=".9"/>`;
+const nvFlame=(x,y,s)=>{s=s||1;return `<path d="M${x} ${y-12*s} C${x+7*s} ${y-4*s} ${x+6*s} ${y+3*s} ${x} ${y+4*s} C${x-6*s} ${y+3*s} ${x-7*s} ${y-4*s} ${x} ${y-12*s} Z" fill="#f08a2c" stroke="#a8461a" stroke-width="1"/><path d="M${x} ${y-5*s} C${x+3*s} ${y-1*s} ${x+2.5*s} ${y+2.5*s} ${x} ${y+3*s} C${x-2.5*s} ${y+2.5*s} ${x-3*s} ${y-1*s} ${x} ${y-5*s} Z" fill="#ffd36b"/>`;};
+const nvStar=(x,y,r)=>{let p="";for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;p+=(i?"L":"M")+(x+Math.cos(a)*rr).toFixed(1)+" "+(y+Math.sin(a)*rr).toFixed(1);}return `<path d="${p}Z" fill="#f6d77c"/>`;};
+const nvCard=(k,g1,g2,inner)=>`<svg viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="nvg-${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${g1}"/><stop offset="1" stop-color="${g2}"/></linearGradient></defs><rect width="120" height="150" rx="14" fill="url(#nvg-${k})"/><path d="M12 142 V44 A48 48 0 0 1 108 44 V142" fill="none" stroke="#e2b54a" stroke-opacity=".55" stroke-width="1.5"/>${inner}</svg>`;
+
+const NOV_IMG={
+ guadalupe:()=>{let s=nvRays(60,82,40,56,44,"#f3c54e",1.4);
+  s+=`<path d="M60 26 C46 30 36 54 34 86 C32 112 40 128 60 132 C80 128 88 112 86 86 C84 54 74 30 60 26 Z" fill="#f6dc8a" opacity=".55"/>`;
+  s+=`<path d="M48 58 Q60 52 72 58 L78 120 Q60 126 42 120 Z" fill="#e7a1a0" stroke="#2a1714" stroke-width="1.5"/>`;
+  s+=`<path d="M60 70 v40 M54 84 q6 4 12 0 M53 100 q7 4 14 0" fill="none" stroke="#b9615e" stroke-width="1" opacity=".7"/>`;
+  s+=nvHands(60,72,NVS.medio);
+  s+=`<path d="M60 30 C44 32 38 46 38 62 C36 86 34 104 38 122 L48 122 C46 100 47 80 50 62 C51 52 55 46 60 44 C65 46 69 52 70 62 C73 80 74 100 72 122 L82 122 C86 104 84 86 82 62 C82 46 76 32 60 30 Z" fill="#2f8f88" stroke="#2a1714" stroke-width="1.5"/>`;
+  [[44,70],[40,92],[44,110],[76,70],[80,92],[76,110],[42,54],[78,54]].forEach(([x,y])=>s+=nvStar(x,y,2.6));
+  s+=nvHead(60,46,NVS.medio,{r:9,hair:`<path d="M51 44 q9 -9 18 0 q-2 -10 -9 -10 q-7 0 -9 10z" fill="#3a2418"/>`});
+  s+=`<path d="M44 126 Q60 116 76 126 Q60 120 44 126 Z" fill="#2a1714"/><path d="M46 128 q14 -8 28 0" fill="none" stroke="#2a1714" stroke-width="3" stroke-linecap="round"/>`;
+  s+=`<circle cx="60" cy="136" r="5" fill="${NVS.claro}" stroke="#2a1714" stroke-width="1.2"/><path d="M50 134 q-6 -6 -10 0 q5 3 10 0 M70 134 q6 -6 10 0 q-5 3 -10 0" fill="#d9483f" stroke="#2a1714" stroke-width="1"/>`;
+  return nvCard("guadalupe","#1f4d5c","#0d2229",s);},
+ judas:()=>{let s=nvHalo(60,50,22)+nvFlame(60,22,1.1);
+  s+=`<path d="M30 140 C30 104 40 86 60 82 C80 86 90 104 90 140 Z" fill="#2f7a4a" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M60 82 C74 84 86 100 90 140 L72 140 C70 114 66 96 54 84 Z" fill="#f4efe4" stroke="#2a1714" stroke-width="1.5"/>`;
+  s+=`<circle cx="52" cy="106" r="10" fill="#e2b54a" stroke="#8a6a1f" stroke-width="1.6"/><circle cx="52" cy="105" r="5" fill="${NVS.claro}" stroke="#8a6a1f" stroke-width="1"/><path d="M48 104 q4 -5 8 0" fill="#6a4a2a"/>`;
+  s+=`<line x1="96" y1="58" x2="88" y2="140" stroke="#6a4a2a" stroke-width="3" stroke-linecap="round"/>`;
+  s+=nvHead(60,58,NVS.medio,{hair:`<path d="M48 56 q2 -16 12 -16 q10 0 12 16 q-4 -8 -12 -8 q-8 0 -12 8z" fill="#4a2c1a"/>`,beard:`<path d="M50 62 q10 18 20 0 q-2 8 -10 9 q-8 -1 -10 -9z" fill="#4a2c1a"/>`});
+  return nvCard("judas","#2e6b45","#10301d",s);},
+ corazon:()=>{let s=nvHalo(60,46,22)+nvRays(60,46,22,30,16,"#f3c54e",1.4);
+  s+=`<path d="M30 140 C30 100 42 80 60 78 C78 80 90 100 90 140 Z" fill="#f4efe4" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M60 78 C44 80 32 96 30 140 L44 140 C44 112 48 92 60 86 Z M60 78 C76 80 88 96 90 140 L76 140 C76 112 72 92 60 86 Z" fill="#a3202a" stroke="#2a1714" stroke-width="1.5"/>`;
+  s+=nvRays(60,104,13,19,12,"#f3c54e",1.2);
+  s+=`<path d="M60 116 C46 106 50 94 56 96 C58 96 60 98 60 100 C60 98 62 96 64 96 C70 94 74 106 60 116 Z" fill="#d9283a" stroke="#2a1714" stroke-width="1.4"/>`;
+  s+=`<path d="M51 102 q9 5 18 0" fill="none" stroke="#3a6a2a" stroke-width="1.6" stroke-dasharray="2 1.5"/>`;
+  s+=nvFlame(60,91,.55)+`<line x1="60" y1="80" x2="60" y2="88" stroke="#2a1714" stroke-width="1.4"/><line x1="57" y1="83" x2="63" y2="83" stroke="#2a1714" stroke-width="1.4"/>`;
+  s+=`<path d="M78 118 L68 108" stroke="${NVS.claro}" stroke-width="5" stroke-linecap="round"/><path d="M78 118 L68 108" stroke="#2a1714" stroke-width="1" stroke-linecap="round" opacity=".3"/>`;
+  s+=nvHead(60,52,NVS.claro,{hairBack:`<path d="M46 50 q0 -18 14 -18 q14 0 14 18 v20 q-4 -6 -6 -10 h-16 q-2 4 -6 10z" fill="#5a3418"/>`,beard:`<path d="M50 56 q10 18 20 0 q-2 9 -10 10 q-8 -1 -10 -10z" fill="#5a3418"/>`});
+  return nvCard("corazon","#8a1f2a","#3a0b12",s);},
+ misericordia:()=>{let s=`<path d="M60 98 L2 150 L40 150 Z" fill="#e6f0fb" opacity=".9"/><path d="M60 98 L80 150 L118 150 Z" fill="#e2464a" opacity=".9"/>`+nvHalo(60,44,20);
+  s+=`<path d="M34 150 C34 104 44 76 60 74 C76 76 86 104 86 150 Z" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M60 80 v60 M48 100 q12 6 24 0" fill="none" stroke="#c9c2b6" stroke-width="1"/>`;
+  s+=`<path d="M82 92 L92 64" stroke="#fbf8f2" stroke-width="9" stroke-linecap="round"/><path d="M82 92 L92 64" stroke="#2a1714" stroke-width="1" opacity=".25"/><circle cx="93" cy="61" r="4" fill="${NVS.claro}" stroke="#2a1714" stroke-width="1.2"/>`;
+  s+=`<path d="M40 104 L54 100" stroke="#fbf8f2" stroke-width="8" stroke-linecap="round"/><circle cx="56" cy="99" r="3.6" fill="${NVS.claro}" stroke="#2a1714" stroke-width="1.2"/>`;
+  s+=nvHead(60,50,NVS.claro,{hairBack:`<path d="M47 48 q0 -17 13 -17 q13 0 13 17 v18 q-4 -6 -6 -9 h-14 q-2 3 -6 9z" fill="#5a3418"/>`,beard:`<path d="M50 54 q10 17 20 0 q-2 8 -10 9 q-8 -1 -10 -9z" fill="#5a3418"/>`});
+  return nvCard("misericordia","#2a3550","#0d1120",s);},
+ espiritu:()=>{let s=nvRays(60,70,26,58,32,"#f3c54e",1.6)+`<circle cx="60" cy="70" r="26" fill="#f6d77c" opacity=".3"/>`;
+  s+=`<path d="M60 64 C44 46 24 44 12 52 C26 54 36 62 44 72 Z" fill="#fff" stroke="#2a1714" stroke-width="1.5"/><path d="M60 64 C76 46 96 44 108 52 C94 54 84 62 76 72 Z" fill="#fff" stroke="#2a1714" stroke-width="1.5"/>`;
+  s+=`<path d="M22 52 q8 2 14 8 M30 50 q8 4 12 10 M98 52 q-8 2 -14 8 M90 50 q-8 4 -12 10" fill="none" stroke="#c9c2b6" stroke-width="1"/>`;
+  s+=`<path d="M48 70 C48 60 72 60 72 70 C72 82 66 88 60 96 C54 88 48 82 48 70 Z" fill="#fff" stroke="#2a1714" stroke-width="1.5"/><path d="M54 96 L60 108 L66 96" fill="#fff" stroke="#2a1714" stroke-width="1.5" stroke-linejoin="round"/>`;
+  s+=`<circle cx="60" cy="60" r="6" fill="#fff" stroke="#2a1714" stroke-width="1.5"/><circle cx="58" cy="59" r="1" fill="#2a1714"/><path d="M60 62 l4 1 l-4 1" fill="#e8a23a"/>`;
+  [[24,112],[38,124],[52,130],[68,130],[82,124],[96,112],[60,30]].forEach(([x,y])=>s+=nvFlame(x,y,.7));
+  return nvCard("espiritu","#a8442a","#4a150c",s);},
+ jose:()=>{let s=nvHalo(56,50,21);
+  s+=`<line x1="88" y1="40" x2="84" y2="142" stroke="#7a5a2a" stroke-width="3" stroke-linecap="round"/>`;
+  [[88,34],[82,40],[94,42],[86,46]].forEach(([x,y])=>s+=`<path d="M${x} ${y-6} q5 4 0 10 q-5 -6 0 -10z" fill="#fff" stroke="#2a1714" stroke-width="1"/><circle cx="${x}" cy="${y}" r="1.2" fill="#e2b54a"/>`);
+  s+=`<path d="M26 142 C26 104 38 84 56 80 C74 84 86 104 86 142 Z" fill="#5e7d4a" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M56 80 C40 84 28 100 26 142 L44 142 C44 116 50 96 62 86 Z" fill="#8a5a2b" stroke="#2a1714" stroke-width="1.5"/>`;
+  s+=`<circle cx="82" cy="104" r="4" fill="${NVS.medio}" stroke="#2a1714" stroke-width="1.2"/><path d="M72 106 L80 104" stroke="#5e7d4a" stroke-width="6" stroke-linecap="round"/>`;
+  s+=nvHead(56,56,NVS.medio,{hair:`<path d="M44 54 q2 -16 12 -16 q10 0 12 16 q-4 -7 -12 -7 q-8 0 -12 7z" fill="#6b5a4a"/>`,beard:`<path d="M45 58 q11 22 22 0 q-2 11 -11 12 q-9 -1 -11 -12z" fill="#6b5a4a"/>`});
+  return nvCard("jose","#5a4a2a","#241c0e",s);},
+ martin:()=>{let s=nvHalo(54,52,21);
+  s+=`<line x1="84" y1="58" x2="96" y2="134" stroke="#8a6a3a" stroke-width="3" stroke-linecap="round"/><path d="M90 128 L104 128 L108 146 L86 146 Z" fill="#c9a24f" stroke="#2a1714" stroke-width="1.3"/><path d="M92 132 L90 146 M97 132 L97 146 M102 132 L104 146" stroke="#8a6a1f" stroke-width="1"/>`;
+  s+=`<path d="M24 146 C24 106 36 84 54 80 C72 84 84 106 84 146 Z" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M54 80 C38 84 26 102 24 146 L38 146 C38 116 44 96 54 88 C64 96 70 116 70 146 L84 146 C82 102 70 84 54 80 Z" fill="#1f1a1c" stroke="#2a1714" stroke-width="1.5"/>`;
+  s+=`<path d="M54 88 v58" stroke="#d8d1c4" stroke-width="1"/><path d="M78 100 L84 76" stroke="#fbf8f2" stroke-width="6" stroke-linecap="round"/><circle cx="84" cy="74" r="4" fill="${NVS.moreno}" stroke="#2a1714" stroke-width="1.2"/>`;
+  s+=nvHead(54,58,NVS.moreno,{hair:`<path d="M42 58 q-1 -10 4 -14 q8 5 16 0 q5 4 4 14 q-2 -6 -4 -7 q-8 3 -16 0 q-2 1 -4 7z" fill="#1f1a1c"/>`});
+  return nvCard("martin","#3a4a5a","#141c24",s);},
+ nino:()=>{let s=nvHalo(60,58,20);
+  s+=`<path d="M36 142 C36 110 44 92 60 90 C76 92 84 110 84 142 Z" fill="#b8763a" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M60 88 C46 90 34 104 32 124 L88 124 C86 104 74 90 60 88 Z" fill="#2f5aa8" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M60 96 l-6 10 h12 z" fill="#f4efe4" stroke="#2a1714" stroke-width="1.2"/><path d="M56 104 l4 -6 l4 6" fill="none" stroke="#c9a24f" stroke-width=".8"/>`;
+  s+=`<line x1="90" y1="70" x2="84" y2="144" stroke="#e2b54a" stroke-width="2.6" stroke-linecap="round"/><circle cx="90" cy="76" r="5" fill="#d99a3a" stroke="#2a1714" stroke-width="1.1"/>`;
+  s+=`<path d="M24 118 L44 118 L42 130 L26 130 Z" fill="#c9a24f" stroke="#2a1714" stroke-width="1.3"/><circle cx="30" cy="116" r="3" fill="#d9483f"/><circle cx="37" cy="115" r="3" fill="#7ab04a"/>`;
+  s+=nvHead(60,68,NVS.claro,{r:13,hair:`<path d="M48 64 q4 -10 12 -10 q8 0 12 10 q-6 -4 -12 -4 q-6 0 -12 4z" fill="#c98a3a"/>`});
+  s+=`<ellipse cx="60" cy="56" rx="26" ry="6" fill="#6a4a2a" stroke="#2a1714" stroke-width="1.4"/><path d="M48 56 q0 -14 12 -14 q12 0 12 14 z" fill="#6a4a2a" stroke="#2a1714" stroke-width="1.4"/><path d="M70 46 q16 -10 18 6 q-8 -6 -18 -2z" fill="#fff" stroke="#2a1714" stroke-width="1"/>`;
+  return nvCard("nino","#3f7aa8","#132c44",s);},
+ sanjuan:()=>{let s=nvRays(60,74,30,50,36,"#f3c54e",1.3);
+  s+=`<path d="M44 136 L76 136 L72 144 L48 144 Z" fill="#c9a24f" stroke="#2a1714" stroke-width="1.3"/><path d="M38 130 q22 14 44 0 q-22 6 -44 0z" fill="#d8dde6" stroke="#2a1714" stroke-width="1.3"/>`;
+  s+=`<path d="M60 52 L36 130 L84 130 Z" fill="#2c5aa0" stroke="#2a1714" stroke-width="1.6" stroke-linejoin="round"/>`;
+  s+=`<path d="M60 62 L46 128 L74 128 Z" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.3" stroke-linejoin="round"/>`;
+  s+=`<path d="M60 76 v48 M52 96 h16 M50 112 h20" stroke="#e2b54a" stroke-width="1.2"/>`;
+  [[44,108],[76,108],[48,92],[72,92],[42,122],[78,122]].forEach(([x,y])=>s+=nvStar(x,y,2.2));
+  s+=nvHands(60,74,NVS.medio);
+  s+=nvHalo(60,46,14)+nvHead(60,48,NVS.medio,{r:9,hair:`<path d="M51 47 q9 -9 18 0 q-2 -9 -9 -9 q-7 0 -9 9z" fill="#3a2418"/>`});
+  s+=`<path d="M52 36 L54 28 L57 33 L60 26 L63 33 L66 28 L68 36 Z" fill="#e2b54a" stroke="#8a6a1f" stroke-width="1"/>`;
+  return nvCard("sanjuan","#2a4a7a","#0e1a30",s);},
+ difuntos:()=>{let s=`<circle cx="60" cy="56" r="34" fill="#f6d77c" opacity=".14"/>`;
+  s+=`<rect x="56" y="22" width="8" height="108" rx="1.5" fill="#6a4a2a" stroke="#2a1714" stroke-width="1.4"/><rect x="34" y="44" width="52" height="8" rx="1.5" fill="#6a4a2a" stroke="#2a1714" stroke-width="1.4"/>`;
+  s+=`<path d="M38 50 q22 22 44 0 l-4 30 q-18 -10 -36 0 z" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.3" opacity=".95"/>`;
+  s+=`<path d="M44 130 L76 130 L80 140 L40 140 Z" fill="#4a3a5a" stroke="#2a1714" stroke-width="1.3"/>`;
+  s+=`<rect x="20" y="104" width="12" height="36" rx="2" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.3"/>`+nvFlame(26,98,.9);
+  s+=`<rect x="88" y="104" width="12" height="36" rx="2" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.3"/>`+nvFlame(94,98,.9);
+  s+=`<path d="M46 130 q-6 -18 -2 -26 M74 130 q6 -18 2 -26" fill="none" stroke="#4a7a3a" stroke-width="1.6"/><path d="M44 102 q-6 -6 0 -10 q6 4 0 10z M76 102 q-6 -6 0 -10 q6 4 0 10z" fill="#fff" stroke="#2a1714" stroke-width="1"/>`;
+  return nvCard("difuntos","#3f3554","#141020",s);}
+};
+
+/* ---------------- NOVENAS ----------------
+   Textos redactados para la app siguiendo la forma tradicional. Pendientes de revisión del párroco. */
+const NOV_COMUN={
+ senal:"Por la señal de la Santa Cruz, de nuestros enemigos líbranos, Señor, Dios nuestro. En el nombre del Padre, y del Hijo, y del Espíritu Santo. Amén.",
+ contricion:"Señor mío Jesucristo, Dios y hombre verdadero, Creador, Padre y Redentor mío; por ser tú quien eres, bondad infinita, y porque te amo sobre todas las cosas, me pesa de todo corazón haberte ofendido. Propongo firmemente nunca más pecar, apartarme de las ocasiones de ofenderte, confesarme y cumplir la penitencia que me fuere impuesta. Te ofrezco mi vida, obras y trabajos en satisfacción de todos mis pecados, y confío en tu bondad y misericordia infinita que me los perdonarás y me darás gracia para enmendarme y perseverar en tu santo servicio hasta el fin de mi vida. Amén.",
+ oraciones:"Se reza un Padre Nuestro, un Ave María y un Gloria."
+};
+const NOVENAS=[
+ {k:"guadalupe",n:"Virgen de Guadalupe",para:"Madre de México y de los que sufren",fiesta:"12 de diciembre",
+  intro:"En diciembre de 1531, en el cerro del Tepeyac, la Virgen María se apareció a san Juan Diego y dejó su imagen en su tilma. Desde entonces es la Madre que acompaña a nuestro pueblo.",
+  ini:"Virgen Santa María de Guadalupe, Madre del verdadero Dios por quien se vive: tú que bajaste al Tepeyac para mostrarnos tu amor, recibe esta novena que hoy comienzo. Pongo en tus manos mi intención y mi vida. Llévame a tu Hijo Jesús. Amén.",
+  dias:[
+   {t:"El llamado en el Tepeyac",m:"María llamó a Juan Diego con ternura, por su nombre, cuando iba de camino a escuchar la doctrina. Dios también nos busca en lo sencillo de cada día.",p:"Madre, enséñame a escuchar la voz de Dios en mi vida diaria."},
+   {t:"Una casita para todos",m:"La Virgen pidió un templo donde mostrar su amor y su compasión a todos los que la buscan. Quería un lugar para escuchar llantos y remediar penas.",p:"Madre, haz de mi casa y de mi parroquia un lugar donde todos se sientan recibidos."},
+   {t:"La humildad de Juan Diego",m:"Juan Diego se sentía pequeño e incapaz para la misión. María no buscó a un poderoso: confió en un hombre sencillo.",p:"Madre, dame un corazón humilde y disponible para servir."},
+   {t:"La prueba",m:"El obispo no le creyó a la primera y pidió una señal. Juan Diego no se rindió: volvió con paciencia.",p:"Madre, dame perseverancia cuando mis oraciones parecen no tener respuesta."},
+   {t:"El tío enfermo",m:"Juan Diego tomó otro camino para buscar un sacerdote para su tío Juan Bernardino, que estaba muy grave. Pero María salió a su encuentro.",p:"Madre, acompaña a los enfermos de mi familia y de mi comunidad."},
+   {t:"“¿No estoy yo aquí, que soy tu madre?”",m:"Con estas palabras la Virgen consoló a Juan Diego y le aseguró que su tío ya estaba sano. Ella nos tiene en el hueco de su manto.",p:"Madre, quita de mi corazón la angustia y el miedo."},
+   {t:"Las rosas en diciembre",m:"En lo alto del cerro, entre piedras y en pleno invierno, florecieron rosas de Castilla. Dios hace florecer la vida donde parecía imposible.",p:"Madre, haz florecer la esperanza en lo que hoy parece seco en mi vida."},
+   {t:"La imagen en la tilma",m:"Al abrir la tilma frente al obispo, apareció tu imagen. Te quedaste con nosotros como mujer morena, embarazada de Jesús.",p:"Madre, que yo también lleve a Jesús a los demás."},
+   {t:"Madre de todos los pueblos",m:"Desde el Tepeyac, María une a pueblos distintos en una sola familia. Su mensaje es para todos, especialmente para los pobres y olvidados.",p:"Madre, une a mi familia y a mi comunidad, y acompaña a los que están lejos de casa."}],
+  fin:"Santa María de Guadalupe, Reina de México y Madre nuestra: te encomiendo mi intención y la de todos los que sufren. Cúbrenos con tu manto, protege a nuestras familias y llévanos siempre a tu Hijo Jesús, que vive y reina por los siglos de los siglos. Amén.",
+  jac:"Virgen de Guadalupe, Madre nuestra, ruega por nosotros."},
+ {k:"judas",n:"San Judas Tadeo",para:"Causas difíciles y desesperadas",fiesta:"28 de octubre",
+  intro:"Judas Tadeo fue uno de los doce apóstoles y pariente de Jesús. Predicó el Evangelio y dio la vida por Él. Lo invocamos en las causas que parecen sin salida.",
+  ini:"Glorioso apóstol san Judas Tadeo, amigo fiel de Jesús: vengo a ti con confianza en este momento difícil. Intercede por mí ante el Señor para que reciba la ayuda que necesito, si es para mi bien y el de mi alma. Amén.",
+  dias:[
+   {t:"Elegido por Jesús",m:"Jesús llamó a Judas Tadeo por su nombre para estar con Él. También a ti te ha llamado a seguirlo.",p:"San Judas, ayúdame a responder con generosidad al llamado de Jesús."},
+   {t:"Pariente del Señor",m:"Judas creció cerca de Jesús y de María. Conocer de cerca a Jesús cambió su vida.",p:"San Judas, ayúdame a tratar a Jesús como a alguien de mi familia."},
+   {t:"La pregunta en la Última Cena",m:"En la Última Cena, Judas le preguntó a Jesús por qué se manifestaría a ellos y no al mundo (Jn 14, 22). Jesús respondió: quien me ama guardará mi palabra.",p:"San Judas, enséñame a amar a Jesús cumpliendo su palabra."},
+   {t:"Perseverar en la fe",m:"En su carta, san Judas anima a mantenerse en el amor de Dios y a no dejarse llevar por las falsas enseñanzas.",p:"San Judas, fortalece mi fe cuando me sienta débil o confundido."},
+   {t:"Misionero",m:"Después de Pentecostés, Judas recorrió tierras lejanas anunciando a Cristo. No se guardó la Buena Noticia.",p:"San Judas, dame valor para hablar de Dios con sencillez."},
+   {t:"Mártir",m:"Judas Tadeo entregó su vida por Jesús. Su fidelidad llegó hasta el final.",p:"San Judas, ayúdame a ser fiel en lo pequeño y en lo grande."},
+   {t:"Patrono de lo imposible",m:"Muchos acuden a él cuando ya no ven salida. Para Dios nada es imposible.",p:"San Judas, presenta al Señor esta causa que hoy me pesa tanto."},
+   {t:"Jesús en el pecho",m:"Sus imágenes lo muestran con un medallón con el rostro de Jesús en el pecho. Quien lleva a Cristo en el corazón lo muestra a los demás.",p:"San Judas, que mi vida sea reflejo del rostro de Jesús."},
+   {t:"Confianza y gratitud",m:"La devoción verdadera termina en confianza: Dios sabe lo que necesitamos. Y quien recibe un favor, lo agradece y ayuda a otros.",p:"San Judas, enséñame a confiar y a ser agradecido."}],
+  fin:"San Judas Tadeo, apóstol de Cristo y amigo de los que sufren: no me dejes solo en esta dificultad. Pide a Jesús por mí y por todos los que hoy no ven salida. Prometo dar gracias a Dios y ayudar a mi prójimo. Amén.",
+  jac:"San Judas Tadeo, ruega por nosotros."},
+ {k:"corazon",n:"Sagrado Corazón de Jesús",para:"Patrono de nuestra parroquia",fiesta:"Viernes después de Corpus Christi",
+  intro:"El Corazón de Jesús es el amor de Dios hecho carne. Es el patrono de nuestra parroquia de El Cercado. Con esta novena le abrimos nuestro corazón.",
+  ini:"Sagrado Corazón de Jesús, que tanto has amado a los hombres: vengo a ti con mis cargas y mi intención. Tú dijiste: “Vengan a mí todos los que están cansados y agobiados”. Aquí estoy, Señor. En ti confío. Amén.",
+  dias:[
+   {t:"Un corazón que ama",m:"Jesús nos amó primero, sin esperar nada a cambio. Su corazón no se cansa de amar.",p:"Corazón de Jesús, enséñame a amar como tú."},
+   {t:"Un corazón traspasado",m:"En la cruz, un soldado le atravesó el costado y salió sangre y agua (Jn 19, 34). De ese corazón abierto nace la Iglesia.",p:"Corazón de Jesús, sana mis heridas con tu amor."},
+   {t:"Manso y humilde",m:"Jesús dijo: “Aprendan de mí, que soy manso y humilde de corazón” (Mt 11, 29). La mansedumbre es fuerza que no lastima.",p:"Corazón de Jesús, haz mi corazón semejante al tuyo."},
+   {t:"Un corazón que perdona",m:"Jesús perdonó a quienes lo crucificaban. Su perdón no tiene límite.",p:"Corazón de Jesús, ayúdame a perdonar a quien me ha herido."},
+   {t:"Presente en la Eucaristía",m:"El mismo Corazón que latió en Galilea está vivo en el Santísimo. Él nos espera en el sagrario.",p:"Corazón de Jesús, que te reciba siempre con fe y en gracia."},
+   {t:"Consuelo de los que sufren",m:"Jesús se compadecía de los enfermos, de los pobres y de los que lloraban. Hoy sigue consolando.",p:"Corazón de Jesús, consuela a los enfermos y a los tristes de mi comunidad."},
+   {t:"Amor que se devuelve",m:"A tanto amor respondemos con amor: oración, obras de caridad y reparar el mal con el bien.",p:"Corazón de Jesús, que mi vida sea una respuesta a tu amor."},
+   {t:"Rey de las familias",m:"Muchas familias ponen su imagen en casa y se consagran a Él. Donde Jesús reina hay paz.",p:"Corazón de Jesús, reina en mi hogar y bendice a mi familia."},
+   {t:"Nuestra parroquia",m:"Nuestra comunidad lleva su nombre. Él cuida a su pueblo de El Cercado y de la sierra.",p:"Corazón de Jesús, bendice a nuestro párroco, a los ministros y a toda la parroquia."}],
+  fin:"Sagrado Corazón de Jesús, en ti confío. Recibe mi intención y hazme según tu voluntad. Bendice a mi familia, a nuestra parroquia y a todos los que hoy te buscan. Amén.",
+  jac:"Sagrado Corazón de Jesús, en ti confío."},
+ {k:"misericordia",n:"Divina Misericordia",para:"El perdón y la confianza en Dios",fiesta:"Segundo domingo de Pascua",
+  intro:"Jesús pidió a santa Faustina Kowalska que el mundo conociera su misericordia. Tradicionalmente se reza del Viernes Santo al Domingo de la Misericordia, pero se puede rezar en cualquier momento.",
+  ini:"Jesús misericordioso, fuente de todo perdón: me acerco a ti con confianza. No miro mis pecados, sino tu amor. Recibe mi intención en esta novena y derrama tu misericordia sobre mí y sobre el mundo entero. Amén.",
+  dias:[
+   {t:"Por toda la humanidad",m:"Hoy presentamos a Jesús a toda la humanidad, especialmente a los pecadores. Su misericordia es más grande que cualquier pecado.",p:"Jesús, ten misericordia de nosotros y del mundo entero."},
+   {t:"Por los sacerdotes y religiosos",m:"Por medio de los sacerdotes, la misericordia de Dios llega en la Confesión y la Eucaristía.",p:"Jesús, cuida a nuestro párroco y a todos los sacerdotes y consagrados."},
+   {t:"Por los fieles",m:"Pedimos por los que rezan, sirven y perseveran en la fe, a veces en silencio y sin que nadie lo note.",p:"Jesús, sostén a los fieles de nuestra comunidad."},
+   {t:"Por los que no conocen a Dios",m:"Hay muchos que todavía no conocen el amor de Dios. Jesús también murió por ellos.",p:"Jesús, que tu luz llegue a quienes aún no te conocen."},
+   {t:"Por los hermanos separados",m:"Pedimos por los cristianos que no están en plena unión con la Iglesia. Jesús quiere que todos seamos uno.",p:"Jesús, haz que todos los que creemos en ti seamos uno."},
+   {t:"Por los mansos y los niños",m:"Los humildes y los pequeños tienen un lugar especial en el corazón de Jesús.",p:"Jesús, dame un corazón sencillo y protege a los niños."},
+   {t:"Por los que difunden su misericordia",m:"Hay personas que viven perdonando y enseñando a confiar en Dios. Son reflejo de su amor.",p:"Jesús, hazme instrumento de tu misericordia."},
+   {t:"Por las almas del purgatorio",m:"Rezamos por los difuntos que se purifican antes de ver a Dios cara a cara.",p:"Jesús, lleva a nuestros difuntos a tu presencia."},
+   {t:"Por los tibios",m:"Pedimos por los que se han enfriado en la fe. La misericordia de Dios puede encender de nuevo el corazón.",p:"Jesús, enciende mi corazón y el de los que se alejaron de ti."}],
+  fin:"Por su dolorosa Pasión, ten misericordia de nosotros y del mundo entero. Jesús, en ti confío. Recibe mi intención y hágase tu voluntad. Amén.",
+  jac:"Jesús, en ti confío."},
+ {k:"espiritu",n:"Espíritu Santo",para:"Los dones y la fuerza de Dios",fiesta:"Pentecostés",
+  intro:"Es la primera novena de la historia: después de que Jesús subió al cielo, María y los apóstoles rezaron juntos nueve días hasta que llegó el Espíritu Santo en Pentecostés.",
+  ini:"Ven, Espíritu Santo, llena los corazones de tus fieles y enciende en ellos el fuego de tu amor. Envía tu Espíritu, Señor, y todo será creado, y renovarás la faz de la tierra. Amén.",
+  dias:[
+   {t:"Esperar con María",m:"Los apóstoles esperaron reunidos con María, en oración (Hch 1, 14). Rezar juntos abre el corazón a Dios.",p:"Espíritu Santo, ven a mi vida como llegaste a los apóstoles."},
+   {t:"Sabiduría",m:"La sabiduría nos hace ver la vida con los ojos de Dios y gustar lo que de verdad importa.",p:"Espíritu Santo, dame el don de sabiduría."},
+   {t:"Entendimiento",m:"El entendimiento nos ayuda a comprender la Palabra de Dios y los misterios de la fe.",p:"Espíritu Santo, abre mi mente para entender tu Palabra."},
+   {t:"Consejo",m:"El consejo nos ayuda a decidir bien, sobre todo en momentos difíciles.",p:"Espíritu Santo, guíame en las decisiones que tengo que tomar."},
+   {t:"Fortaleza",m:"La fortaleza nos da valor para hacer el bien aunque cueste, y para no rendirnos.",p:"Espíritu Santo, dame fuerza en mis pruebas."},
+   {t:"Ciencia",m:"La ciencia nos ayuda a ver la mano de Dios en la creación y a usar bien las cosas.",p:"Espíritu Santo, enséñame a descubrirte en todo lo que existe."},
+   {t:"Piedad",m:"La piedad nos hace sentirnos hijos de Dios y hermanos de todos, y nos da gusto por la oración.",p:"Espíritu Santo, dame un corazón de hijo."},
+   {t:"Temor de Dios",m:"No es miedo: es el respeto y el amor que no quiere ofender a quien tanto nos ama.",p:"Espíritu Santo, que nunca me aparte de Dios."},
+   {t:"Pentecostés",m:"El Espíritu bajó como lenguas de fuego y los apóstoles salieron a anunciar a Jesús sin miedo.",p:"Espíritu Santo, dame tus frutos: amor, alegría, paz, paciencia y bondad."}],
+  fin:"Espíritu Santo, alma de mi alma, te adoro. Ilumíname, guíame, fortaléceme y consuélame. Recibe mi intención y haz en mí la voluntad del Padre. Amén.",
+  jac:"Ven, Espíritu Santo."},
+ {k:"jose",n:"San José",para:"Las familias, el trabajo y la buena muerte",fiesta:"19 de marzo",
+  intro:"San José fue el esposo de María y el padre que cuidó a Jesús en la tierra. Es patrono de la Iglesia, de las familias y de los trabajadores.",
+  ini:"Glorioso san José, esposo de María y custodio de Jesús: a ti acudo con confianza de hijo. Así como cuidaste a la Sagrada Familia, cuida de mí y de los míos. Recibe la intención de esta novena. Amén.",
+  dias:[
+   {t:"Hombre justo",m:"La Biblia llama a José un hombre justo (Mt 1, 19). Vivía con rectitud y buscaba hacer lo que agrada a Dios.",p:"San José, ayúdame a vivir con honradez."},
+   {t:"Obediente en el silencio",m:"José obedeció a Dios sin decir una palabra que conozcamos. Su respuesta fue actuar.",p:"San José, enséñame a obedecer a Dios con prontitud."},
+   {t:"Esposo de María",m:"José amó y protegió a María con respeto y ternura.",p:"San José, bendice a los matrimonios de mi familia y de mi comunidad."},
+   {t:"Padre en Belén",m:"No hubo lugar en la posada, pero José buscó un refugio para María y el Niño.",p:"San José, que en mi casa siempre haya lugar para Jesús."},
+   {t:"Huida a Egipto",m:"José tuvo que dejar su tierra para salvar al Niño. Supo lo que es ser migrante.",p:"San José, protege a los migrantes y a los que viven lejos de su tierra."},
+   {t:"El carpintero",m:"José se ganaba el pan con su trabajo y enseñó su oficio a Jesús.",p:"San José, bendice mi trabajo y dale trabajo a quien no lo tiene."},
+   {t:"Jesús perdido y hallado",m:"José y María buscaron a Jesús con angustia por tres días y lo encontraron en el Templo.",p:"San José, ayúdame a buscar a Jesús cuando lo siento lejos."},
+   {t:"Patrono de la buena muerte",m:"La tradición dice que José murió en los brazos de Jesús y de María.",p:"San José, acompaña a los moribundos y a mí en la hora de mi muerte."},
+   {t:"Protector de la Iglesia",m:"Como cuidó a Jesús, José cuida hoy a la Iglesia, que es su Cuerpo.",p:"San José, protege a nuestra parroquia y a la Iglesia entera."}],
+  fin:"San José, padre bueno, a ti confío mi intención, mi familia y mi trabajo. Guárdanos como guardaste a Jesús y a María, y llévanos al cielo. Amén.",
+  jac:"Jesús, José y María, les doy el corazón y el alma mía."},
+ {k:"martin",n:"San Martín de Porres",para:"Los enfermos, los pobres y la humildad",fiesta:"3 de noviembre",
+  intro:"Martín nació en Lima en 1579, hijo de un español y de una mujer de origen africano. Fue hermano dominico, enfermero y amigo de los pobres. Lo llamaban “fray Escoba”.",
+  ini:"San Martín de Porres, hermano humilde y lleno de caridad: tú que curabas a los enfermos y alimentabas a los pobres, mira mi necesidad. Pide a Jesús por mí y recibe la intención de esta novena. Amén.",
+  dias:[
+   {t:"Despreciado y amado por Dios",m:"Por el color de su piel y por ser hijo ilegítimo, Martín sufrió desprecio. Pero Dios lo miró con amor.",p:"San Martín, ayúdame a no despreciar a nadie."},
+   {t:"Fray Escoba",m:"Martín barría con alegría y hacía los trabajos que nadie quería. La humildad lo hizo grande.",p:"San Martín, enséñame a servir sin buscar reconocimiento."},
+   {t:"Hermano dominico",m:"Entró al convento como donado y vivió con entrega su vida de oración y servicio.",p:"San Martín, ayúdame a vivir con fidelidad mi vocación."},
+   {t:"Enfermero",m:"Atendía a los enfermos del convento y de la ciudad con ternura y con lo que sabía de hierbas y remedios.",p:"San Martín, acompaña a los enfermos y a quienes los cuidan."},
+   {t:"Amigo de los pobres",m:"Repartía pan, ropa y consuelo a los necesitados de Lima.",p:"San Martín, abre mis manos para compartir."},
+   {t:"Amor a toda criatura",m:"Se cuenta que cuidaba también a los animales: perros, gatos y hasta ratones. Veía la obra de Dios en todo.",p:"San Martín, enséñame a cuidar la creación."},
+   {t:"Oración y penitencia",m:"Pasaba largas horas ante el Santísimo y ofrecía sacrificios por los demás.",p:"San Martín, ayúdame a orar con constancia."},
+   {t:"Constructor de paz",m:"Martín ponía paz donde había pleito, sin importar de quién se tratara.",p:"San Martín, haz de mí un instrumento de paz en mi familia."},
+   {t:"Santo del pueblo",m:"Fue canonizado en 1962. Es querido en toda América por su sencillez.",p:"San Martín, que mi vida también lleve a otros hacia Dios."}],
+  fin:"San Martín de Porres, hermano de los pobres y de los enfermos: presenta a Jesús mi intención. Dame un corazón humilde y servicial como el tuyo. Amén.",
+  jac:"San Martín de Porres, ruega por nosotros."},
+ {k:"nino",n:"Santo Niño de Atocha",para:"Los enfermos, los presos y los viajeros",fiesta:"",
+  intro:"Es una devoción muy querida en México, con su santuario en Plateros, Zacatecas. Representa a Jesús Niño como peregrino que lleva pan y agua a los que sufren.",
+  ini:"Santo Niño de Atocha, Jesús pequeño y peregrino: tú que socorres a los presos, a los enfermos y a los que van de camino, mira mi necesidad. Recibe la intención de esta novena. Amén.",
+  dias:[
+   {t:"Jesús se hizo niño",m:"El Hijo de Dios quiso nacer pequeño y necesitado. Así se acerca a todos sin dar miedo.",p:"Niño Jesús, dame un corazón sencillo como el tuyo."},
+   {t:"Cercano a los pequeños",m:"Jesús dijo: “Dejen que los niños vengan a mí” (Mc 10, 14). Los pequeños y sencillos son sus preferidos.",p:"Niño Jesús, protege a los niños de mi familia."},
+   {t:"El peregrino",m:"Se le representa con capa, sombrero, bastón y guaje de agua, como quien va de camino.",p:"Niño Jesús, acompáñame en el camino de mi vida."},
+   {t:"Pan y agua para los presos",m:"La tradición cuenta que un niño llevaba de comer a los presos cuando nadie podía hacerlo.",p:"Niño Jesús, consuela a los presos y a sus familias."},
+   {t:"Salud de los enfermos",m:"Muchos acuden a él cuando la enfermedad aprieta y la medicina no basta.",p:"Niño Jesús, da salud a los enfermos que hoy te encomiendo."},
+   {t:"Protector de los viajeros",m:"Los que van lejos, a trabajar o a buscar una vida mejor, se encomiendan a él.",p:"Niño Jesús, protege a los que viajan y a los migrantes."},
+   {t:"Amigo de los trabajadores",m:"Los mineros de Fresnillo y Plateros fueron de los primeros en confiarle sus trabajos peligrosos.",p:"Niño Jesús, cuida a los que trabajan en peligro."},
+   {t:"Bendice a las familias",m:"En muchos hogares mexicanos su imagen preside la casa y une a la familia.",p:"Niño Jesús, bendice mi hogar."},
+   {t:"Gratitud",m:"Las paredes de su santuario están llenas de retablitos de agradecimiento. La fe agradecida da testimonio.",p:"Niño Jesús, que nunca olvide agradecer lo que me das."}],
+  fin:"Santo Niño de Atocha, recibe mi intención y la de todos los que sufren. Lleva tu pan y tu agua a quien lo necesite y guárdanos en tu amor. Amén.",
+  jac:"Santo Niño de Atocha, ampáranos."},
+ {k:"sanjuan",n:"Virgen de San Juan de los Lagos",para:"Los peregrinos y los necesitados",fiesta:"2 de febrero",
+  intro:"Su pequeña imagen se venera en San Juan de los Lagos, Jalisco, desde el siglo XVI. Cada año miles de peregrinos caminan hasta su santuario.",
+  ini:"Santísima Virgen de San Juan de los Lagos, Madre de los peregrinos: vengo a ti con fe sencilla, como los que caminan hasta tu casa. Recibe mi intención y llévame a tu Hijo Jesús. Amén.",
+  dias:[
+   {t:"Una imagen pequeña",m:"Su imagen es pequeña, hecha a mano por artesanos indígenas. Dios se vale de lo pequeño para hacer grandes cosas.",p:"Madre, enséñame a valorar lo pequeño."},
+   {t:"El milagro de 1623",m:"La tradición cuenta que una niña de una familia de cirqueros murió al caer, y volvió a la vida cuando le pusieron la imagen sobre el cuerpo.",p:"Madre, devuelve la vida y la esperanza a quien las ha perdido."},
+   {t:"Madre de los peregrinos",m:"Muchos caminan días enteros para llegar a su santuario, ofreciendo su cansancio.",p:"Madre, acompaña mi camino de fe."},
+   {t:"Madre de los pobres",m:"Su santuario recibe a ricos y pobres por igual. Ella no hace distinciones.",p:"Madre, socorre a los que no tienen lo necesario."},
+   {t:"Salud de los enfermos",m:"Muchos llegan a ella pidiendo salud para sí o para los suyos.",p:"Madre, alivia a los enfermos que hoy te presento."},
+   {t:"Consuelo de los migrantes",m:"Muchos mexicanos que viven lejos regresan a visitarla. Ella los espera.",p:"Madre, cuida a los que viven lejos de su tierra y de su familia."},
+   {t:"Una Iglesia en camino",m:"La peregrinación nos recuerda que estamos de paso y que caminamos juntos hacia el cielo.",p:"Madre, que nunca camine solo en la fe."},
+   {t:"Fe sencilla",m:"Su devoción vive en gente sencilla: una vela, un rezo, una promesa cumplida.",p:"Madre, dame una fe sencilla y firme."},
+   {t:"Haced lo que Él les diga",m:"María siempre nos lleva a Jesús, como en las bodas de Caná (Jn 2, 5).",p:"Madre, ayúdame a hacer lo que Jesús me pide."}],
+  fin:"Virgen de San Juan de los Lagos, Madre y Señora nuestra: te encomiendo mi intención y a todos los peregrinos. Acompáñanos en el camino hasta llegar a tu Hijo. Amén.",
+  jac:"Virgen de San Juan, ruega por nosotros."},
+ {k:"difuntos",n:"Por nuestros difuntos",para:"Por el eterno descanso de un ser querido",fiesta:"2 de noviembre",
+  intro:"Rezar por los difuntos es una obra de misericordia. Esta novena es para rezarla en casa por alguien que ya partió. Si guías el novenario de un velorio, usa la guía de Velorios.",
+  ini:"Señor Jesús, resurrección y vida: te presento a nuestro hermano (hermana) difunto. Recíbelo en tu Reino, perdona sus faltas y consuela a quienes lo lloramos. Amén.",
+  dias:[
+   {t:"Yo soy la resurrección",m:"Jesús dijo a Marta: “Yo soy la resurrección y la vida; el que cree en mí, aunque muera, vivirá” (Jn 11, 25).",p:"Señor, da a nuestro difunto la vida que no termina."},
+   {t:"Misericordia",m:"Dios conoce nuestro corazón mejor que nadie. Su misericordia es nuestra esperanza.",p:"Señor, perdona sus pecados y recíbelo en tu paz."},
+   {t:"Recuerdo agradecido",m:"Damos gracias por la vida de nuestro ser querido y por el bien que hizo.",p:"Señor, gracias por el tiempo que nos regalaste juntos."},
+   {t:"El perdón",m:"A veces quedan cosas pendientes. En Dios todo se puede sanar y perdonar.",p:"Señor, sana lo que quedó pendiente entre nosotros."},
+   {t:"La purificación",m:"La Iglesia enseña que quien muere en gracia, pero necesita purificarse, recibe la ayuda de nuestras oraciones.",p:"Señor, que nuestras oraciones le ayuden a llegar pronto a ti."},
+   {t:"Consuelo para la familia",m:"Jesús lloró por su amigo Lázaro. Él entiende nuestro dolor.",p:"Señor, consuela a la familia que hoy llora."},
+   {t:"María, madre al pie de la cruz",m:"María conoció el dolor de perder a su Hijo. Ella acompaña a los que sufren una pérdida.",p:"Madre, acompaña a nuestro difunto y a nosotros."},
+   {t:"La comunión de los santos",m:"Los vivos y los difuntos seguimos unidos en Cristo. El amor no se termina.",p:"Señor, que sigamos unidos en tu amor."},
+   {t:"El encuentro",m:"Esperamos encontrarnos de nuevo en la casa del Padre, donde no habrá llanto ni dolor.",p:"Señor, llévanos a todos un día a tu presencia."}],
+  fin:"Dale, Señor, el descanso eterno. Y brille para él (ella) la luz perpetua. Descanse en paz. Amén. Que su alma y las almas de todos los fieles difuntos, por la misericordia de Dios, descansen en paz. Amén.",
+  jac:"Dale, Señor, el descanso eterno."}
+];
+
+/* Pantallas de las novenas */
+let NV={k:null,lee:false};
+const novHoy=()=>dayKey();
+const novBy=k=>NOVENAS.find(x=>x.k===k);
+const NOV_TIT={guadalupe:"Novena a la Virgen de Guadalupe",judas:"Novena a San Judas Tadeo",corazon:"Novena al Sagrado Corazón de Jesús",misericordia:"Novena a la Divina Misericordia",espiritu:"Novena al Espíritu Santo",jose:"Novena a San José",martin:"Novena a San Martín de Porres",nino:"Novena al Santo Niño de Atocha",sanjuan:"Novena a la Virgen de San Juan de los Lagos",difuntos:"Novena por nuestros difuntos"};
+const novTit=N=>NOV_TIT[N.k]||("Novena a "+N.n);
+const novS=k=>(st.nov||{})[k];
+const novActivas=()=>NOVENAS.filter(N=>{const s=novS(N.k);return s&&!s.fin;});
+const novDia=s=>(s.hechos||[]).length+(s.hechos&&s.hechos.includes(novHoy())?0:1);
+const novRezoHoy=s=>!!(s&&s.hechos&&s.hechos.includes(novHoy()));
+const novIntKey=()=>"escuela-nov-int-"+((ME&&ME.id)||"local");
+function novInt(k){try{return (JSON.parse(localStorage.getItem(novIntKey())||"{}"))[k]||"";}catch(e){return "";}}
+function novIntSet(k,t){try{const o=JSON.parse(localStorage.getItem(novIntKey())||"{}");if(t)o[k]=t;else delete o[k];localStorage.setItem(novIntKey(),JSON.stringify(o));}catch(e){}}
+function novSync(k){const N=novBy(k),s=novS(k);if(!ME||!ME.id||!ME.codigo||!N)return;
+ const h=(s&&s.hechos)||[];
+ rpc("novena_guardar",{p_codigo:ME.codigo,p_novena:k,p_nombre:novTit(N),p_dia:h.length,p_ultima:h.length?h[h.length-1]:null,p_activa:!!(s&&!s.fin)}).catch(()=>{});}
+function novAbrir(k){NV.k=k;NV.lee=false;go("novenas");}
+function novLista(){NV.k=null;NV.lee=false;render();window.scrollTo(0,0);}
+function novComenzar(k){const t=(document.getElementById("nvInt")||{}).value||"";novIntSet(k,t.trim().slice(0,300));
+ st.nov=st.nov||{};st.nov[k]={ini:novHoy(),hechos:[]};save();novSync(k);addRec(novTit(novBy(k)),"novenas",null);render();window.scrollTo(0,0);}
+function novRece(k){const s=novS(k);if(!s||novRezoHoy(s))return;s.hechos.push(novHoy());if(s.hechos.length>=9)s.fin=novHoy();
+ logAct("ora");save();novSync(k);rvStopNov();render();window.scrollTo(0,0);if(!s.fin)toast("¡Muy bien! Mañana sigue el día "+(s.hechos.length+1)+".");}
+function novDejar(k){if(!confirm("¿Seguro que quieres dejar esta novena? Se borrará tu avance."))return;
+ const s=novS(k);if(s){s.fin=s.fin||novHoy();s.dejada=true;}save();novSync(k);delete st.nov[k];save();novIntSet(k,"");rvStopNov();novLista();}
+function novOtraVez(k){delete st.nov[k];save();render();window.scrollTo(0,0);}
+function rvStopNov(){NV.lee=false;try{speechSynthesis.cancel();}catch(e){}}
+function novEscuchar(k){if(NV.lee){rvStopNov();render();return;}
+ if(!("speechSynthesis" in window)){toast("Este celular no tiene voz disponible.");return;}
+ const N=novBy(k),s=novS(k),d=N.dias[Math.min(novDia(s),9)-1],it=novInt(k);
+ const partes=[NOV_COMUN.senal,"Acto de contrición. "+NOV_COMUN.contricion,"Oración para todos los días. "+N.ini,"Día "+Math.min(novDia(s),9)+". "+d.t+". "+d.m+" "+d.p,
+  it?"Pide ahora tu intención: "+it:"Pide ahora con confianza tu intención.",NOV_COMUN.oraciones,"Oración final. "+N.fin,N.jac];
+ NV.lee=true;render();let i=0;const v=rvVoice();
+ const sig=()=>{if(!NV.lee||view!=="novenas")return;if(i>=partes.length){NV.lee=false;render();return;}
+  const u=new SpeechSynthesisUtterance(rvClean(partes[i++]));if(v)u.voice=v;u.lang=v?v.lang:"es-MX";u.rate=0.92;u.onend=()=>setTimeout(sig,500);speechSynthesis.speak(u);};
+ try{speechSynthesis.cancel();sig();}catch(e){NV.lee=false;render();}}
+const novPic=(k,cls)=>`<span class="nvpic ${cls||""}" aria-hidden="true">${NOV_IMG[k]()}</span>`;
+const novDots=s=>`<div class="nvdots" aria-label="${(s.hechos||[]).length} de 9 días">${Array.from({length:9},(_,i)=>`<span class="${i<(s.hechos||[]).length?"on":""}${i===(s.hechos||[]).length&&!s.fin?" hoy":""}">${i+1}</span>`).join("")}</div>`;
+function vNovenas(){
+ if(NV.k&&novBy(NV.k))return vNovena(NV.k);
+ const act=novActivas();
+ return `<div class="eyebrow">Para orar</div><h1 class="pgtitle">Novenas</h1>
+ <p class="lead">Nueve días seguidos de oración, como María y los apóstoles antes de Pentecostés. Escoge a quién rezar, escribe tu intención y cada día te recordamos tu oración.</p>
+ ${act.length?`<section class="nvmine"><h2>Tus novenas</h2>${act.map(N=>{const s=novS(N.k),hoy=novRezoHoy(s);return `<button class="nvrow" onclick="novAbrir('${N.k}')">${novPic(N.k,"sm")}<span><b>${novTit(N)}</b><small>${hoy?"Ya rezaste hoy · día "+s.hechos.length+" de 9":"Hoy toca el día "+novDia(s)+" de 9"}</small>${novDots(s)}</span><span class="arrow">→</span></button>`;}).join("")}</section>`:""}
+ <div class="nvgrid">${NOVENAS.map(N=>{const s=novS(N.k);return `<button class="nvcard" onclick="novAbrir('${N.k}')">${novPic(N.k)}<span class="nvn">${N.n}</span><span class="nvp">${N.para}</span>${s&&!s.fin?`<span class="pill try">En curso · día ${novDia(s)}</span>`:""}</button>`;}).join("")}</div>
+ <p class="foot">Textos preparados para la parroquia siguiendo la forma tradicional de las novenas. Las imágenes son dibujos, no fotografías.</p>`;
+}
+function vNovena(k){
+ const N=novBy(k),s=novS(k),it=novInt(k);
+ const head=`<button class="back" onclick="novLista()">← Todas las novenas</button>
+  <section class="nvhero">${novPic(k,"lg")}<div><div class="eyebrow">${N.para}</div><h1 class="pgtitle" style="margin:4px 0 6px">${novTit(N)}</h1>${N.fiesta?`<span class="muted">Fiesta: ${N.fiesta}</span>`:""}</div></section>`;
+ if(!s)return head+`<p class="lead">${N.intro}</p>
+  <div class="panel nvstart"><label for="nvInt"><b>Tu intención</b> <span class="muted">(opcional)</span></label>
+  <p class="muted" style="margin:4px 0 8px">Piensa en lo que llevas en el corazón. Se guarda solo en tu celular; nadie más la ve.</p>
+  <textarea id="nvInt" rows="3" maxlength="300" placeholder="Por ejemplo: por la salud de mi mamá"></textarea>
+  <button class="btn red" style="margin-top:12px;width:100%;padding:13px" onclick="novComenzar('${k}')">Comenzar novena</button></div>
+  <p class="muted" style="font-size:.92rem">Cada día rezas una parte. Si un día no puedes, sigue donde te quedaste.</p>`;
+ if(s.fin)return head+`<div class="panel nvdone">${novDots(s)}<h2>¡Terminaste tu novena!</h2><p>Rezaste los nueve días. Da gracias a Dios por lo que ya te ha dado y confía en Él para lo que le pediste.</p>${it?`<p class="nvint"><small>Tu intención</small>${esc(it)}</p>`:""}
+  <div class="row" style="gap:10px;flex-wrap:wrap"><button class="btn red" onclick="novOtraVez('${k}')">Rezarla otra vez</button><button class="btn ghost" onclick="novLista()">Ver otras novenas</button></div></div>`;
+ const n=Math.min(novDia(s),9),d=N.dias[n-1],hoy=novRezoHoy(s);
+ const pushHint=ME&&ME.id&&PU&&PU.st&&PU.st!=="on"?`<button class="banner" onclick="go('yo')"><span><b>¿Quieres un recordatorio diario?</b>Activa las notificaciones en Yo y te avisaremos cada tarde.</span><span class="arrow">→</span></button>`:(!ME||!ME.id)?`<p class="muted" style="font-size:.9rem">Para recibir un aviso cada tarde, entra con tu código y activa las notificaciones. Mientras, te lo recordamos en Inicio.</p>`:"";
+ return head+`${novDots(s)}
+ ${hoy?`<div class="ok-note">Ya rezaste hoy el día ${s.hechos.length}. Mañana sigue el día ${s.hechos.length+1}. Puedes volver a leerlo abajo.</div>`:""}
+ <div class="row" style="gap:10px;margin:6px 0 14px"><button class="btn ghost" onclick="novEscuchar('${k}')">${NV.lee?"■ Detener voz":"🔊 Escuchar"}</button></div>
+ <article class="nvrezo">
+  <section><h3>Señal de la cruz</h3><p>${NOV_COMUN.senal}</p></section>
+  <section><h3>Acto de contrición</h3><p>${NOV_COMUN.contricion}</p></section>
+  <section><h3>Oración para todos los días</h3><p>${N.ini}</p></section>
+  <section class="nvday"><div class="phase">Día ${n} de 9</div><h2>${d.t}</h2><p>${d.m}</p><p class="nvpet">${d.p}</p></section>
+  <section><h3>Tu intención</h3><p>${it?`<span class="nvint">${esc(it)}</span>`:"Pide ahora, con confianza, lo que llevas en el corazón."}</p><p class="rubric">${NOV_COMUN.oraciones}</p></section>
+  <section><h3>Oración final</h3><p>${N.fin}</p></section>
+  <p class="nvjac">${N.jac}</p>
+ </article>
+ ${hoy?"":`<button class="btn red nvbtn" onclick="novRece('${k}')">✓ Ya recé el día ${n}</button>`}
+ ${pushHint}
+ <p style="text-align:center;margin-top:18px"><button class="linkbtn" onclick="novDejar('${k}')">Dejar esta novena</button></p>`;
+}
+const novInicio=()=>{const L=novActivas().filter(N=>!novRezoHoy(novS(N.k)));if(!L.length)return "";
+ return L.slice(0,2).map(N=>`<button class="nvhome" onclick="novAbrir('${N.k}')">${novPic(N.k,"sm")}<span><small>Tu novena</small><b>Hoy toca el día ${novDia(novS(N.k))} de 9</b><span>${novTit(N)}</span></span><span class="arrow">→</span></button>`).join("");};
 
 /* ---- YO ---- */
 let YO={reflOpen:false};
@@ -3088,6 +3468,7 @@ function vInicio(){
  return `<div class="hi"><div><span class="muted">${new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"})}</span><h1 class="pgtitle" style="margin:2px 0 0">${saludo()}${nm?", "+esc(nm):""}</h1></div><button class="streakpill" onclick="go('yo')" aria-label="Racha">${tileSVG("vela")}<b>${sk}</b></button></div>
  ${santoCard()}
  ${misServicios()}
+ ${novInicio()}
  ${inicioPush()}
  <button class="herorosary" onclick="heroRosary('${tk}')" style="--g1:${{gozosos:"#0f5c4d",luminosos:"#1f5f7a",dolorosos:"#5b2a1e",gloriosos:"#7d1d24"}[tk]};--g2:#120e14">
   <svg class="hrsvg" viewBox="0 0 400 220" aria-hidden="true"><path d="M-20 60 Q120 200 260 120 T440 150" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="0.1 16" stroke-linecap="round" style="stroke-width:9"/><path d="M300 120v40M290 136h20" stroke="#e8c77a" stroke-width="6" stroke-linecap="round"/></svg>
@@ -3664,7 +4045,7 @@ function tourEnd(goTo){
 }
 function tourMaybe(){let seen=false;try{seen=!!localStorage.getItem("escuela-tour")||!!localStorage.getItem("escuela-codigo");}catch(e){}if(!seen&&!(ME&&ME.id))setTimeout(()=>tourShow(0),600);}
 
-const VIEWS={kits:()=>vKits(),musica:()=>vMusica(),juego:()=>vJuego(),lectores:()=>vGuia('lectores'),acolitos:()=>vGuia('acolitos'),coro:()=>vGuia('coro'),descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
+const VIEWS={kits:()=>vKits(),musica:()=>vMusica(),juego:()=>vJuego(),lectores:()=>vGuia('lectores'),acolitos:()=>vGuia('acolitos'),coro:()=>vGuia('coro'),descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),novenas:()=>vNovenas(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
 function render(){
   renderUser();
   const g0=groupOf(view); const g=g0||{id:"",v:[view]}; if(g0) lastIn[g.id]=view;

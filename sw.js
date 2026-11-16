@@ -1,5 +1,5 @@
 // Guarda la página en el celular para que abra sin señal (por ejemplo, en la sierra).
-const CACHE = "ministros-v32";
+const CACHE = "ministros-v33";
 const CORE = ["/", "/index.html", "/config.js", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
@@ -20,7 +20,7 @@ self.addEventListener("fetch", e => {
 self.addEventListener("push", e => {
   let d = {}; try { d = e.data ? e.data.json() : {}; } catch (x) { d = { body: e.data && e.data.text() }; }
   e.waitUntil(self.registration.showNotification(d.title || "Escuela de Ministros", {
-    body: d.body || "", icon: "/icon-192.png", badge: "/icon-192.png", tag: d.tag || "escuela", renotify: true,
+    body: d.body || "", icon: d.icon || "/icon-192.png", badge: "/icon-192.png", image: d.image || undefined, tag: d.tag || "escuela", renotify: true,
     data: { url: d.url || "/#inicio" }, vibrate: [200, 100, 200]
   }));
 });

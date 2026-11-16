@@ -22,5 +22,22 @@ module.exports = async (req, res) => {
     const msg = { title: "Mañana te toca servir", body: `${t.tipo}${t.hora ? " · " + t.hora : ""}${t.lugar ? " · " + t.lugar : ""}. Recuerda: en gracia de Dios y una hora de ayuno.`, url: "/#inicio", tag: "rec-" + t.turno };
     return webpush.sendNotification({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, JSON.stringify(msg), { TTL: 60 * 60 * 12 }).then(() => { sent++; }).catch(() => {});
   })));
-  res.status(200).json({ servicios: list.length, enviadas: sent });
+  // Novenas: a quien tiene una novena en curso y todavía no ha rezado hoy (necesita supabase/novenas.sql)
+  let novenas = 0;
+  try {
+    const rn = await fetch(`${SB_URL}/rest/v1/rpc/push_novenas`, {
+      method: "POST",
+      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ p_clave: secret })
+    });
+    const ln = rn.ok ? ((await rn.json()) || []) : [];
+    novenas = ln.length;
+    await Promise.all(ln.flatMap(n => (n.subs || []).map(s => {
+      const k = /^[a-z]{2,20}$/.test(n.novena) ? n.novena : "";
+      const msg = { title: `Día ${n.dia} de 9 · ${n.nombre}`, body: "Te espera tu oración de hoy. Toca aquí para rezar.", url: "/#novenas",
+        tag: "nov-" + k, icon: k ? `/novenas/${k}.png` : undefined, image: k ? `/novenas/${k}-ancho.jpg` : undefined };
+      return webpush.sendNotification({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, JSON.stringify(msg), { TTL: 60 * 60 * 6 }).then(() => { sent++; }).catch(() => {});
+    })));
+  } catch (e) {}
+  res.status(200).json({ servicios: list.length, novenas, enviadas: sent });
 };
