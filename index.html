@@ -553,6 +553,9 @@ body.mvp-on{overflow:hidden}
 .nvdone{text-align:center}.nvdone h2{font-family:var(--f-display);font-size:1.8rem;margin:6px 0}.nvdone .row{justify-content:center}
 .ok-note{background:var(--ok-soft);color:var(--ok);border-radius:10px;padding:10px 14px;margin:6px 0 10px;font-weight:600}
 .linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:.92rem;cursor:pointer}
+.tsfrase{margin:0;font-family:var(--f-display);font-style:italic;font-size:1.35rem;line-height:1.35;color:var(--rubric)}.tsfrase small{display:block;font-family:inherit;font-style:normal;font-size:.82rem;color:var(--muted);margin-top:6px}
+.tsqh{margin:16px 0}.tsnota{background:var(--rubric-soft);border-radius:10px;padding:8px 12px;font-size:.92rem}
+.tsnav{justify-content:space-between;gap:10px;margin:14px 0 4px}.tsnav .btn{flex:1;font-size:.9rem;padding:10px 12px}
 @media (max-width:420px){.nvpic.lg{width:104px}.nvgrid{grid-template-columns:1fr 1fr;gap:10px}}
 </style>
 <style id="skin">
@@ -924,10 +927,10 @@ window.addEventListener("popstate",e=>{if(typeof MVP!=="undefined"&&MVP.open){mv
 const GROUPS=[
  {id:"inicio",n:"Inicio",v:["inicio"]},
  {id:"biblia",n:"Biblia",v:["biblia","recursos"],sub:1},
- {id:"descubrir",n:"Descubrir",v:["descubrir","modulos","antes","kits","misa","enfermos","palabra","expo","difuntos","emergencias","rosario","devocionario","bendiciones","examenc","novenas","musica","juego","lectores","acolitos","coro","tarjetas","situaciones","ordena","examen"]},
+ {id:"descubrir",n:"Descubrir",v:["descubrir","modulos","antes","kits","misa","enfermos","palabra","expo","difuntos","emergencias","rosario","devocionario","bendiciones","examenc","novenas","testigos","musica","juego","lectores","acolitos","coro","tarjetas","situaciones","ordena","examen"]},
  {id:"parroquia",n:"Parroquia",v:["avisos","rol","calendario","equipo","ministros"],sub:1},
  {id:"yo",n:"Yo",v:["yo","entrar"]}];
-const VNAME={descubrir:"Descubrir",kits:"Kits de servicio",musica:"Música",juego:"Entre Hermanos",lectores:"Lectores",acolitos:"Acólitos",coro:"Coro",yo:"Yo",examenc:"Examen de conciencia",novenas:"Novenas",modulos:"Módulos",avisos:"Avisos",biblia:"Biblia",recursos:"Recursos",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
+const VNAME={descubrir:"Descubrir",kits:"Kits de servicio",musica:"Música",juego:"Entre Hermanos",lectores:"Lectores",acolitos:"Acólitos",coro:"Coro",yo:"Yo",examenc:"Examen de conciencia",novenas:"Novenas",testigos:"Testigos de la fe",modulos:"Módulos",avisos:"Avisos",biblia:"Biblia",recursos:"Recursos",antes:"Antes de servir",misa:"En la Misa",enfermos:"Enfermos",palabra:"Celebración de la Palabra",expo:"Exposición",difuntos:"Velorios",emergencias:"Emergencias",rosario:"Rosario",devocionario:"Devocionario",tarjetas:"Tarjetas",situaciones:"¿Qué harías?",ordena:"Ordena el rito",examen:"Examen final",equipo:"Avance del equipo",rol:"Rol de servicio",ministros:"Ministros y códigos",entrar:"Mi cuenta",calendario:"Fechas y lecturas",bendiciones:"Bendiciones"};
 const ALLV=GROUPS.flatMap(g=>g.v);
 const groupOf=v=>GROUPS.find(g=>g.v.includes(v));
 const lastIn={};
@@ -2748,6 +2751,7 @@ const IC={
  medalla:`<path d="M44 12l10 30M76 12l-10 30" stroke="#fff" stroke-width="6"/><circle cx="60" cy="66" r="26" fill="rgba(255,255,255,.88)"/><path d="M60 52v28M48 64h24" stroke="#7d1d24" stroke-width="4" stroke-linecap="round"/>`,
  enlace:`<rect x="18" y="44" width="46" height="26" rx="13" fill="none" stroke="#fff" stroke-width="5" transform="rotate(-30 41 57)"/><rect x="56" y="44" width="46" height="26" rx="13" fill="none" stroke="#fff" stroke-width="5" transform="rotate(-30 79 57)"/>`,
  mano:`<path d="M46 96V50q0-6 6-6t6 6v-22q0-6 6-6t6 6v24q2-4 6-4t6 6v34q0 14-16 14H60q-10 0-14-8z" fill="rgba(255,255,255,.85)"/><path d="M60 8v10M55 13h10" stroke="#ffd27a" stroke-width="3" stroke-linecap="round"/>`,
+ testigo:`<circle cx="60" cy="40" r="22" fill="none" stroke="#ffd27a" stroke-width="3"/><circle cx="60" cy="44" r="13" fill="rgba(255,255,255,.9)"/><path d="M30 100 C30 74 44 62 60 62 C76 62 90 74 90 100 Z" fill="rgba(255,255,255,.85)"/><path d="M60 70v20M52 78h16" stroke="#8a5a1f" stroke-width="3" stroke-linecap="round"/>`,
  estrellas:`<g fill="#fff"><path d="M40 20l4 10 10 4-10 4-4 10-4-10-10-4 10-4z"/><path d="M78 44l5 12 12 5-12 5-5 12-5-12-12-5 12-5z" opacity=".85"/><path d="M44 72l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" opacity=".7"/></g>`
 };
 const tileSVG=k=>`<svg viewBox="0 0 120 110" aria-hidden="true">${IC[k]||IC.cruz}</svg>`;
@@ -2766,6 +2770,7 @@ const TILES=[
  {s:"Otros ministerios",t:"Coro",d:"Cantos y planeador",ic:"nota",g:["#1f6a7a","#0b333c"],v:"coro"},
  {s:"Para orar",t:"Rosario",d:"Guiado y con voz",ic:"rosario",g:["#0f5c4d","#08302a"],v:"rosario"},
  {s:"Para orar",t:"Novenas",d:"Nueve días con tu intención",ic:"vela",g:["#7a4a1f","#3a1f0a"],fn:()=>{NV.k=null;go("novenas");}},
+ {s:"Para orar",t:"Testigos de la fe",d:"Santos que nos enseñan a servir",ic:"testigo",g:["#8a5a1f","#3a2408"],fn:()=>{TS.k=null;go("testigos");}},
  {s:"Para orar",t:"Devocionario",d:"Oraciones de siempre",ic:"mano",g:["#8a3b5c","#4a1a30"],v:"devocionario"},
  {s:"Para orar",t:"Sagrado Corazón",d:"Nuestro patrono",ic:"corazon",g:["#b0303a","#5e0f17"],fn:()=>{DV.cat="Sagrado Corazón";DV.q="";go("devocionario");}},
  {s:"Para orar",t:"Letanías",d:"A la Virgen y al Sagrado Corazón",ic:"estrellas",g:["#3d4f9a","#1b2452"],fn:()=>{DV.cat="Letanías";DV.q="";go("devocionario");}},
@@ -3155,6 +3160,215 @@ function vNovena(k){
 const novInicio=()=>{const L=novActivas().filter(N=>!novRezoHoy(novS(N.k)));if(!L.length)return "";
  return L.slice(0,2).map(N=>`<button class="nvhome" onclick="novAbrir('${N.k}')">${novPic(N.k,"sm")}<span><small>Tu novena</small><b>Hoy toca el día ${novDia(novS(N.k))} de 9</b><span>${novTit(N)}</span></span><span class="arrow">→</span></button>`).join("");};
 
+/* ---------------- TESTIGOS DE LA FE ----------------
+   Vidas breves, lección para el ministro, frase, oración y un caso de "¿Qué harías?".
+   Textos redactados para la app. Pendientes de revisión del párroco. Los retratos son dibujos, no fotos. */
+const TESTIGOS=[
+ {k:"tarsicio",n:"San Tarsicio",sub:"Mártir de la Eucaristía",epoca:"Roma, siglo III",fiesta:"15 de agosto",f:"0815",
+  vida:"Tarsicio vivió en Roma hace más de 1,700 años, cuando ser cristiano estaba prohibido y muchos estaban en la cárcel por su fe. Era muy joven y ayudaba en las celebraciones. Un día le confiaron llevar la Eucaristía a los cristianos presos, que no podían ir a Misa. En el camino, unos muchachos se dieron cuenta de que llevaba algo escondido y quisieron quitárselo. Tarsicio apretó la Comunión contra su pecho y no la soltó, aunque lo golpearon hasta matarlo. Lo enterraron en las catacumbas de San Calixto. Es patrono de los acólitos y de quienes llevan la Comunión.",
+  lec:{t:"Llevas un tesoro",m:"Cuando llevas la Comunión a un enfermo, llevas a Jesús en persona. Cuídalo en el camino: ve directo, en silencio y con reverencia. No es un paquete que se entrega."},
+  frase:{t:"Prefirió dar la vida antes que entregar el Cuerpo del Señor.",a:"Lo que el papa san Dámaso escribió en su tumba (en palabras sencillas)"},
+  ora:"San Tarsicio, tú que cuidaste a Jesús Eucaristía con tu propia vida, enséñame a llevarlo con amor y reverencia a los enfermos y a los que no pueden venir al templo. Que nunca lo trate como algo ordinario. Amén.",
+  qh:{s:"Vas a llevar la Comunión a un enfermo y en el camino un vecino te invita a pasar a platicar un rato.",o:[
+   ["Lo saludas con cariño, le dices que vas con el Señor y que pasas al regreso.",1,"Así hacía Tarsicio: Jesús va primero. Ve directo con el enfermo y deja la plática para después."],
+   ["Pasas un ratito; la Comunión va bien guardada en la teca.",0,"Aunque vaya bien guardada, llevas a Jesús en persona. No es momento de visitas."],
+   ["Le enseñas la teca para que también él la vea.",0,"La Eucaristía no se enseña como un objeto. Se lleva con discreción y reverencia."]]}},
+ {k:"acutis",n:"San Carlo Acutis",sub:"El joven de la Eucaristía",epoca:"Italia, 1991–2006",fiesta:"12 de octubre",f:"1012",
+  vida:"Carlo nació en Londres en 1991 y creció en Milán, Italia. Era un muchacho como cualquiera: le gustaban los videojuegos, el futbol, sus perros y las computadoras. Pero desde niño tenía algo especial: iba a Misa todos los días y hacía oración frente al Sagrario. Usó lo que sabía de computación para preparar una exposición sobre los milagros eucarísticos, que hoy ha recorrido el mundo. A los 15 años enfermó de leucemia y murió en 2006, ofreciendo su enfermedad por el Papa y por la Iglesia. Fue canonizado en 2025: es el primer santo de la generación de internet.",
+  lec:{t:"Jesús en el centro del día",m:"Carlo no hizo cosas raras: hizo de la Misa y del Sagrario el centro de una vida normal. Un ministro que comulga y adora cada vez que puede, sirve mejor."},
+  frase:{t:"La Eucaristía es mi autopista hacia el cielo.",a:"San Carlo Acutis"},
+  ora:"San Carlo, tú que encontraste en la Eucaristía tu camino al cielo, ayúdame a tener a Jesús en el centro de mi día. Que mi celular y mi tiempo también sirvan para acercar a otros a Dios. Amén.",
+  qh:{s:"Un joven de la parroquia te dice que la Misa es aburrida y que prefiere quedarse con su celular.",o:[
+   ["Lo regañas y le dices que es pecado faltar.",0,"El regaño casi nunca convence. Carlo atraía con alegría, no con miedo."],
+   ["Le platicas de Carlo, un muchacho que amaba los videojuegos y la Misa, y lo invitas a ir contigo.",1,"Un testimonio cercano y una invitación personal llegan más que un sermón."],
+   ["No le dices nada; ya entenderá cuando sea grande.",0,"Callar no ayuda. Una invitación sencilla puede ser la semilla."]]}},
+ {k:"juandiego",n:"San Juan Diego",sub:"El mensajero humilde",epoca:"México, 1474–1548",fiesta:"9 de diciembre",f:"1209",nov:"guadalupe",
+  vida:"Juan Diego Cuauhtlatoatzin era un indígena sencillo de Cuautitlán. Ya bautizado, caminaba muy temprano para aprender la doctrina y llegar a Misa. En diciembre de 1531, en el cerro del Tepeyac, la Virgen María se le apareció y le pidió llevar su mensaje al obispo. Él se sentía muy poca cosa para esa misión, pero obedeció, volvió las veces que hizo falta y llevó en su tilma las rosas donde quedó la imagen de la Virgen de Guadalupe. Pasó el resto de su vida cuidando la pequeña ermita, recibiendo a los peregrinos y haciendo oración. San Juan Pablo II lo canonizó en 2002 en la Basílica de Guadalupe.",
+  lec:{t:"Dios escoge a los sencillos",m:"No hace falta ser importante para servir. Dios pide un corazón humilde, obediente y fiel en lo pequeño, como Juan Diego cuidando la ermita cada día."},
+  frase:{t:"Soy un hombrecillo, soy un cordel, soy una escalerilla de tablas.",a:"San Juan Diego a la Virgen, según el Nican Mopohua"},
+  ora:"San Juan Diego, mensajero de la Virgen de Guadalupe, tú que te sentías pequeño y aun así dijiste que sí, dame un corazón humilde para servir donde me pongan. Que mi servicio lleve a otros a Jesús, como tu tilma lleva a todos a su Madre. Amén.",
+  qh:{s:"Te piden servir en la Misa de una capilla del rancho, donde van pocas personas, en lugar de la Misa grande del templo.",o:[
+   ["Aceptas con gusto: a Jesús se le sirve igual con muchos o con pocos.",1,"Juan Diego sirvió años en una ermita sencilla. Para Dios no hay servicios pequeños."],
+   ["Dices que no, porque en el templo te ven más.",0,"El servicio no es para que nos vean. El centro es Cristo, no nosotros."],
+   ["Aceptas, pero llegas sin prepararte porque es una Misa chiquita.",0,"Cada Misa es la misma Misa. Prepárate igual que siempre."]]}},
+ {k:"joselito",n:"San José Sánchez del Río",sub:"Joselito, mártir a los 14 años",epoca:"Sahuayo, Michoacán, 1913–1928",fiesta:"10 de febrero",f:"0210",nov:"guadalupe",
+  vida:"José nació en Sahuayo, Michoacán, en 1913. Durante la persecución religiosa en México, cuando cerraron los templos y no se podía celebrar Misa, quiso unirse a los cristeros. Era tan joven que le encargaron llevar la bandera. En 1928 lo capturaron. Le ofrecieron dejarlo libre si renegaba de su fe, y no aceptó. Lo torturaron, le cortaron las plantas de los pies y lo hicieron caminar hasta el cementerio. En cada paso gritaba: “¡Viva Cristo Rey!”. Murió el 10 de febrero de 1928, con 14 años. El papa Francisco lo canonizó en 2016.",
+  lec:{t:"Firmes en la fe",m:"Joselito nos recuerda que la fe que hoy vivimos con libertad les costó la vida a muchos mexicanos. Servir en la Misa es un privilegio que no debemos tomar a la ligera."},
+  frase:{t:"¡Viva Cristo Rey y la Virgen de Guadalupe!",a:"San José Sánchez del Río"},
+  ora:"San José Sánchez del Río, valiente testigo de Cristo Rey, alcánzanos una fe firme que no se avergüence de Jesús. Cuida a los niños y jóvenes de nuestra parroquia y de la sierra. Amén.",
+  qh:{s:"En una reunión familiar se burlan de ti porque eres ministro y “te la pasas en la iglesia”.",o:[
+   ["Te ríes con ellos y dices que lo haces nada más por compromiso.",0,"No hace falta pelear, pero tampoco negar lo que amas."],
+   ["Respondes con calma y una sonrisa que para ti es un honor servir a Jesús.",1,"Sin pelear y sin esconderte: así se da testimonio. Joselito no se avergonzó de Cristo."],
+   ["Te enojas y les dices que se van a condenar.",0,"El enojo aleja. El testimonio con paz convence más."]]}},
+ {k:"pro",n:"Beato Miguel Agustín Pro",sub:"Llevaba la Comunión a escondidas",epoca:"Zacatecas, 1891–1927",fiesta:"23 de noviembre",f:"1123",
+  vida:"Miguel nació en Guadalupe, Zacatecas, en 1891. Se hizo jesuita y fue ordenado sacerdote en Bélgica en 1925. Regresó a México en 1926, justo cuando el gobierno cerró los templos y perseguía a los sacerdotes. Con mucho valor y buen humor se disfrazaba de mecánico, de vendedor o de chofer para celebrar Misa en casas, confesar y llevar la Comunión a miles de personas a escondidas. Lo acusaron de un atentado en el que no tuvo nada que ver y lo fusilaron sin juicio el 23 de noviembre de 1927. Antes de morir perdonó a quienes lo iban a matar, extendió los brazos en cruz y gritó: “¡Viva Cristo Rey!”. San Juan Pablo II lo beatificó en 1988.",
+  lec:{t:"Que nadie se quede sin Jesús",m:"El Padre Pro buscaba la manera de que nadie se quedara sin la Eucaristía. Nuestras misiones en la sierra tienen ese mismo espíritu: llevar a Cristo hasta donde está la gente."},
+  frase:{t:"¡Viva Cristo Rey!",a:"Beato Miguel Agustín Pro, antes de morir"},
+  ora:"Beato Miguel Agustín Pro, tú que arriesgaste tu vida para llevar la Eucaristía a tu pueblo, bendice nuestras misiones en la Sierra de Santiago. Danos tu alegría y tu valor para que nadie se quede sin Jesús. Amén.",
+  qh:{s:"En la misión de la sierra está lloviendo y el camino a una ranchería está difícil. Una señora enferma espera la Comunión.",o:[
+   ["Lo dejas para otro día sin avisarle: solo es una persona.",0,"Para el Padre Pro cada persona valía el esfuerzo. Y si no se puede ir, por lo menos se avisa."],
+   ["Hablas con el coordinador para buscar una forma segura de llegar, o le avisas a la señora cuándo irás.",1,"Celo y prudencia juntos: buscar el modo seguro de que nadie se quede sin Jesús."],
+   ["Te vas solo por el camino peligroso sin decirle a nadie.",0,"El celo no es imprudencia. En misión siempre se avisa y se va acompañado."]]}},
+ {k:"teresa",n:"Santa Teresa de Calcuta",sub:"Adorar primero, servir después",epoca:"1910–1997",fiesta:"5 de septiembre",f:"0905",
+  vida:"Teresa nació en 1910 en Skopie, en los Balcanes, y muy joven se fue a la India como religiosa. En 1946, viajando en un tren, sintió que Jesús le pedía servir a los más pobres entre los pobres. Fundó las Misioneras de la Caridad, que recogen de las calles a moribundos, enfermos y niños abandonados. Recibió el Premio Nobel de la Paz en 1979. Su secreto era la Eucaristía: ella y sus hermanas pasaban cada día una hora de adoración ante el Santísimo antes de salir a servir. Decía que en los pobres tocaba el mismo Cuerpo de Cristo que recibía en la Comunión. Murió en 1997 y fue canonizada en 2016.",
+  lec:{t:"Marta y María a la vez",m:"Teresa no separaba la oración del servicio. El ministro que adora a Jesús en el Sagrario lo reconoce después en el enfermo que visita."},
+  frase:{t:"No todos podemos hacer grandes cosas, pero sí cosas pequeñas con gran amor.",a:"Frase atribuida a Santa Teresa de Calcuta"},
+  ora:"Santa Teresa de Calcuta, tú que veías a Jesús en la Eucaristía y en los pobres, enséñame a adorar antes de servir. Que en cada enfermo que visito reconozca el rostro de Cristo. Amén.",
+  qh:{s:"Esta semana tienes muchas visitas a enfermos y casi no te queda tiempo para rezar.",o:[
+   ["Dejas de rezar: servir ya es oración.",0,"El servicio sin oración se seca. Teresa y sus hermanas servían tanto porque primero adoraban."],
+   ["Te das unos minutos ante el Sagrario o en casa antes de salir a las visitas.",1,"Así lo hacía Teresa: primero con Jesús, después con los enfermos."],
+   ["Cancelas las visitas para poder rezar.",0,"No hay que escoger: se reza y se sirve. Organiza tu tiempo para las dos cosas."]]}},
+ {k:"vianney",n:"San Juan María Vianney",sub:"El Cura de Ars",epoca:"Francia, 1786–1859",fiesta:"4 de agosto",f:"0804",nov:"corazon",
+  vida:"Juan María fue un campesino francés al que le costaba mucho el estudio; casi no lo dejan ser sacerdote. Lo mandaron a Ars, un pueblo pequeño y alejado de Dios. Él no se desanimó: rezaba largas horas ante el Sagrario, visitaba a las familias, cuidaba la iglesia y enseñaba el catecismo. Con los años, miles de personas llegaban de toda Francia a confesarse con él, y pasaba hasta 16 horas al día en el confesionario. Le gustaba contar que un campesino se quedaba mucho tiempo en la iglesia sin decir nada y, cuando le preguntaron qué hacía, respondió: “Yo lo miro y Él me mira”. Es el patrono de los párrocos.",
+  lec:{t:"Quedarse con Jesús",m:"La adoración no es perder el tiempo: es mirar a Jesús y dejarse mirar por Él. Y no olvides rezar por tu párroco, que también necesita tu apoyo."},
+  frase:{t:"El sacerdocio es el amor del Corazón de Jesús.",a:"San Juan María Vianney"},
+  ora:"San Juan María Vianney, tú que pasabas horas frente al Sagrario, enséñame a estar con Jesús en silencio. Cuida a nuestro párroco, el Padre Arturo, y a todos los sacerdotes. Amén.",
+  qh:{s:"Llegas temprano a la Misa y tienes 15 minutos libres antes de que empiece.",o:[
+   ["Te pones a revisar el celular en la banca.",0,"No es malo, pero pierdes un tesoro: un rato a solas con Jesús."],
+   ["Te quedas un rato en silencio frente al Sagrario, como el campesino de Ars.",1,"“Yo lo miro y Él me mira”: así se prepara el corazón para servir."],
+   ["Platicas en voz alta con otros ministros en la sacristía.",0,"Saludar está bien, pero el templo pide silencio. Ayuda a crear un ambiente de oración."]]}},
+ {k:"benedicto",n:"Benedicto XVI",sub:"El Papa de la fe y la razón",epoca:"Alemania, 1927–2022",nota:"No es santo canonizado: lo recordamos como testigo y maestro de la fe, y rezamos por él.",
+  vida:"Joseph Ratzinger nació en Baviera, Alemania, en 1927. De joven vivió el nazismo y lo obligaron a entrar al ejército; en esos años, la razón y la belleza de la Misa fueron su refugio. Se ordenó sacerdote en 1951 junto con su hermano Georg. Fue un gran teólogo, ayudó en el Concilio Vaticano II y dirigió el trabajo del Catecismo de la Iglesia Católica. En 2005 fue elegido Papa y escribió sobre el amor, la esperanza y la verdad. En 2013 renunció con humildad porque ya no tenía fuerzas, y pasó sus últimos años rezando por la Iglesia. Murió el 31 de diciembre de 2022.",
+  lec:{t:"La Misa no es un show",m:"Benedicto enseñaba que el centro de la Misa es Cristo, no el sacerdote ni los que ayudamos. La Eucaristía hace la Iglesia: cuando sirves en el altar, ayudas a formarla."},
+  frase:{t:"Quien cree nunca está solo.",a:"Benedicto XVI, al comenzar su pontificado (2005)"},
+  ora:"Señor Jesús, te damos gracias por el Papa Benedicto XVI, que nos enseñó a amarte con la cabeza y con el corazón. Que, como él, sirvamos en tu altar con humildad, sin buscar lucirnos, para que solo tú seas el centro. Dale el descanso eterno. Amén.",
+  qh:{s:"Para una Misa de fiesta, alguien propone que los ministros den la Comunión entre aplausos y con música de baile para que sea “más alegre”.",o:[
+   ["Te parece bien: entre más show, más gente viene.",0,"La alegría es buena, pero la Misa no es un espectáculo. El centro es Cristo."],
+   ["Lo platicas con calma con el Padre: la alegría se vive, pero la Comunión pide reverencia.",1,"Benedicto lo repetía: la Misa no se inventa, se recibe. Y estas decisiones le tocan al párroco."],
+   ["Lo hacen sin preguntarle a nadie.",0,"Los cambios en la Misa no los decide cada quien. Siempre se consulta al Padre."]]}}
+];
+
+/* Retratos de los testigos: dibujos originales tipo estampa, con las mismas piezas que las novenas. */
+const tsPalm=(x,y,flip)=>{const d=flip?-1:1;let s=`<path d="M${x} ${y} Q${x+8*d} ${y-26} ${x+4*d} ${y-50}" fill="none" stroke="#3f7a3a" stroke-width="2.2" stroke-linecap="round"/>`;
+ for(let i=0;i<7;i++){const t=i/7,px=x+(8*d)*2*t*(1-t)+(4*d)*t*t,py=y-50*t-4;s+=`<path d="M${px.toFixed(1)} ${py.toFixed(1)} q${-9*d} -3 ${-12*d} -9 M${px.toFixed(1)} ${py.toFixed(1)} q${7*d} -4 ${10*d} -10" fill="none" stroke="#5a9a4a" stroke-width="2" stroke-linecap="round"/>`;}return s;};
+const tsHost=(x,y,r)=>nvRays(x,y,r+2,r+8,12,"#f3c54e",1.3)+`<circle cx="${x}" cy="${y}" r="${r}" fill="#fffaf0" stroke="#c9a24f" stroke-width="1.2"/><path d="M${x} ${y-r*.55}v${r*1.1}M${x-r*.4} ${y-r*.15}h${r*.8}" stroke="#c9a24f" stroke-width="1"/>`;
+const TS_IMG={
+ tarsicio:()=>{let s=nvHalo(60,54,20)+tsPalm(26,140,true);
+  s+=`<path d="M34 146 C34 110 44 90 60 86 C76 90 86 110 86 146 Z" fill="#b5532f" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M60 86 L52 96 L60 100 L68 96 Z" fill="#e9dcc2" stroke="#2a1714" stroke-width="1.1"/>`;
+  s+=`<path d="M46 108 Q60 98 74 108 L72 122 Q60 128 48 122 Z" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.4"/><path d="M60 104v16M54 111h12" stroke="#c9a24f" stroke-width="1.4"/>`;
+  s+=`<path d="M44 112 q6 8 16 6 M76 112 q-6 8 -16 6" fill="none" stroke="${NVS.medio}" stroke-width="7" stroke-linecap="round"/><path d="M44 112 q6 8 16 6 M76 112 q-6 8 -16 6" fill="none" stroke="#2a1714" stroke-width=".8" opacity=".35"/>`;
+  s+=nvHead(60,62,NVS.medio,{r:12,hair:`<path d="M48 60 q0 -14 12 -14 q12 0 12 14 q-3 -6 -6 -7 q-6 3 -12 0 q-3 1 -6 7z" fill="#4a2c1a"/>`});
+  return nvCard("ts-tarsicio","#7a2a1f","#2e0e0a",s);},
+ acutis:()=>{let s=nvHalo(60,52,20)+tsHost(60,22,7);
+  s+=`<path d="M30 146 C30 110 42 90 60 86 C78 90 90 110 90 146 Z" fill="#c8323c" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M52 88 L60 98 L68 88" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.2"/><path d="M60 98v12" stroke="#2a1714" stroke-width="1"/><circle cx="60" cy="104" r="1.2" fill="#2a1714"/>`;
+  s+=`<path d="M38 96 Q36 120 40 146 M82 96 Q84 120 80 146" fill="none" stroke="#2c3e66" stroke-width="5" stroke-linecap="round"/>`;
+  s+=`<rect x="64" y="112" width="12" height="20" rx="2.5" fill="#22252b" stroke="#2a1714" stroke-width="1"/><rect x="66" y="115" width="8" height="13" rx="1" fill="#6fa3d9"/>`;
+  s+=nvHead(60,60,NVS.claro,{r:12,hair:`<path d="M47 58 q-1 -13 13 -14 q14 1 13 14 q-2 -6 -6 -7 q-2 3 -7 2 q-5 -3 -7 -1 q-4 2 -6 6z" fill="#3a2418"/>`});
+  return nvCard("ts-acutis","#2c4a7a","#0f1a30",s);},
+ juandiego:()=>{let s=nvHalo(60,50,20);
+  s+=`<path d="M28 146 C28 108 40 86 60 82 C80 86 92 108 92 146 Z" fill="#f1e6cf" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M38 96 Q60 90 82 96 L80 138 Q60 144 40 138 Z" fill="#e6d3a8" stroke="#2a1714" stroke-width="1.4"/>`;
+  s+=nvRays(60,116,8,14,16,"#f3c54e",1);
+  s+=`<path d="M60 106 C55 108 53 116 53 126 L67 126 C67 116 65 108 60 106 Z" fill="#2f8f88" stroke="#2a1714" stroke-width=".9"/><path d="M57 112 L63 112 L64 126 L56 126 Z" fill="#e7a1a0"/><circle cx="60" cy="109" r="2.6" fill="${NVS.medio}"/>`;
+  [[44,104],[48,128],[76,102],[73,128],[42,118],[78,116]].forEach(([x,y],i)=>s+=`<circle cx="${x}" cy="${y}" r="3.6" fill="${i%2?"#c8323c":"#d9483f"}" stroke="#7a1a1a" stroke-width=".8"/><path d="M${x-3} ${y+4} q3 2 6 0" stroke="#3f7a3a" stroke-width="1.4" fill="none"/>`);
+  s+=`<path d="M36 96 q-6 -12 6 -14 M84 96 q6 -12 -6 -14" fill="none" stroke="${NVS.moreno}" stroke-width="6" stroke-linecap="round"/>`;
+  s+=nvHead(60,58,NVS.moreno,{r:12,hair:`<path d="M47 58 q-1 -14 13 -15 q14 1 13 15 q-1 -5 -3 -6 h-20 q-2 1 -3 6z" fill="#1f1a1c"/>`});
+  return nvCard("ts-juandiego","#2a6a6a","#0d2a2a",s);},
+ joselito:()=>{let s=nvHalo(54,56,19)+tsPalm(24,140,true);
+  s+=`<line x1="88" y1="20" x2="86" y2="146" stroke="#7a5a2a" stroke-width="3" stroke-linecap="round"/>`;
+  s+=`<path d="M88 22 L112 26 L110 50 L88 46 Z" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.2"/><path d="M88 22 L96 23.3 L95 47.4 L88 46 Z" fill="#2f7a4a"/><path d="M104 25 L112 26 L110 50 L102 48.7 Z" fill="#c8323c"/><circle cx="99" cy="36" r="3" fill="#2f8f88" stroke="#2a1714" stroke-width=".7"/>`;
+  s+=`<path d="M30 146 C30 112 40 92 54 88 C68 92 78 112 78 146 Z" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M38 146 L40 124 L68 124 L70 146 Z" fill="#6a5a3a" stroke="#2a1714" stroke-width="1.2"/>`;
+  s+=`<path d="M70 104 L86 96" stroke="${NVS.medio}" stroke-width="6" stroke-linecap="round"/>`;
+  s+=nvHead(54,64,NVS.medio,{r:11,hair:`<path d="M43 62 q0 -12 11 -12 q11 0 11 12 q-4 -5 -11 -5 q-7 0 -11 5z" fill="#2a1a12"/>`});
+  return nvCard("ts-joselito","#4a5a2a","#1a2210",s);},
+ pro:()=>{let s=nvHalo(60,50,20)+nvRays(60,50,22,28,16,"#f3c54e",1.2);
+  s+=`<path d="M8 96 L46 88 L46 100 L10 104 Z M112 96 L74 88 L74 100 L110 104 Z" fill="#26262c" stroke="#2a1714" stroke-width="1.4" stroke-linejoin="round"/>`;
+  s+=`<circle cx="9" cy="100" r="4" fill="${NVS.medio}" stroke="#2a1714" stroke-width="1"/><circle cx="111" cy="100" r="4" fill="${NVS.medio}" stroke="#2a1714" stroke-width="1"/>`;
+  s+=`<path d="M38 146 C38 110 44 88 60 84 C76 88 82 110 82 146 Z" fill="#26262c" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M54 86 L60 96 L66 86" fill="#fbf8f2" stroke="#2a1714" stroke-width="1"/><path d="M60 96 v50" stroke="#3a3a42" stroke-width="1"/>`;
+  s+=`<path d="M50 132 q10 -6 20 0" fill="none" stroke="#a3202a" stroke-width="1.6"/>`;
+  s+=nvHead(60,58,NVS.medio,{r:12,hair:`<path d="M47 56 q1 -13 13 -13 q12 0 13 13 q-4 -7 -13 -7 q-9 0 -13 7z" fill="#1f1a1c"/>`});
+  s+=`<circle cx="55.5" cy="58.5" r="3.6" fill="none" stroke="#2a1714" stroke-width="1"/><circle cx="64.5" cy="58.5" r="3.6" fill="none" stroke="#2a1714" stroke-width="1"/><path d="M59 58.5h2" stroke="#2a1714" stroke-width="1"/>`;
+  return nvCard("ts-pro","#3a4660","#141a26",s);},
+ teresa:()=>{let s=nvHalo(60,54,20);
+  s+=`<path d="M28 146 C28 106 40 84 60 80 C80 84 92 106 92 146 Z" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M60 40 C44 40 38 56 38 70 C36 92 30 112 28 146 L36 146 C38 116 42 96 46 76 C48 62 52 54 60 54 C68 54 72 62 74 76 C78 96 82 116 84 146 L92 146 C90 112 84 92 82 70 C82 56 76 40 60 40 Z" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.5"/>`;
+  s+=`<path d="M40 74 C42 58 48 46 60 44 C72 46 78 58 80 74" fill="none" stroke="#2c5aa0" stroke-width="3"/><path d="M40 80 C42 64 48 51 60 49 C72 51 78 64 80 80" fill="none" stroke="#2c5aa0" stroke-width="1.6"/>`;
+  s+=`<path d="M36 146 C38 116 42 96 46 78" fill="none" stroke="#2c5aa0" stroke-width="3"/><path d="M84 146 C82 116 78 96 74 78" fill="none" stroke="#2c5aa0" stroke-width="3"/>`;
+  s+=nvHands(60,108,NVS.medio);
+  s+=`<path d="M60 86 v10 M56 90 h8" stroke="#2a1714" stroke-width="1.6" stroke-linecap="round"/>`;
+  s+=nvHead(60,64,NVS.medio,{r:11});
+  s+=`<path d="M52 72 q3 2 5 0 M63 72 q3 2 5 0" fill="none" stroke="#2a1714" stroke-width=".6" opacity=".5"/>`;
+  return nvCard("ts-teresa","#2c4a8a","#101a3a",s);},
+ vianney:()=>{let s=nvHalo(54,52,20);
+  s+=`<rect x="84" y="96" width="26" height="30" rx="3" fill="#c9a24f" stroke="#2a1714" stroke-width="1.3"/><path d="M84 100 q13 -14 26 0" fill="#e2b54a" stroke="#2a1714" stroke-width="1.2"/><path d="M97 104v14M91 110h12" stroke="#7a5a1f" stroke-width="2"/><rect x="80" y="126" width="34" height="20" fill="#7a5a3a" stroke="#2a1714" stroke-width="1.2"/>`;
+  s+=nvFlame(97,84,.5)+`<rect x="95.5" y="86" width="3" height="10" fill="#fbf8f2"/>`;
+  s+=`<path d="M22 146 C22 108 34 86 54 82 C74 86 84 108 84 146 Z" fill="#1f1a1c" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M30 118 L78 118 L82 146 L26 146 Z" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.2"/><path d="M36 124h38M34 132h42" stroke="#d8d1c4" stroke-width="1"/>`;
+  s+=`<path d="M54 84 v34" stroke="#3a3a42" stroke-width="1"/>`;
+  s+=nvHands(54,104,NVS.claro);
+  s+=nvHead(54,60,NVS.claro,{r:12,hairBack:`<path d="M40 58 q0 -18 14 -18 q14 0 14 18 v12 q-3 -4 -4 -8 h-20 q-1 4 -4 8z" fill="#e8e4dc" stroke="#b9b2a6" stroke-width=".8"/>`});
+  return nvCard("ts-vianney","#4a2a5a","#1c0e24",s);},
+ benedicto:()=>{let s=`<circle cx="60" cy="54" r="24" fill="#fff4d6" opacity=".18"/>`;
+  s+=`<path d="M28 146 C28 106 40 86 60 82 C80 86 92 106 92 146 Z" fill="#fbf8f2" stroke="#2a1714" stroke-width="1.6"/>`;
+  s+=`<path d="M38 92 Q60 82 82 92 L84 104 Q60 96 36 104 Z" fill="#f4efe4" stroke="#2a1714" stroke-width="1.2"/>`;
+  s+=`<path d="M48 90 L60 110 L72 90" fill="none" stroke="#c9a24f" stroke-width="1.6"/><path d="M60 110v16M53 116h14" stroke="#e2b54a" stroke-width="3" stroke-linecap="round"/>`;
+  s+=`<path d="M42 146 L44 136 M78 146 L76 136" stroke="#d8d1c4" stroke-width="1"/>`;
+  s+=nvHead(60,62,NVS.claro,{r:12,hairBack:`<path d="M47 64 q-2 -16 13 -17 q15 1 13 17 q-2 -4 -3 -8 h-20 q-1 4 -3 8z" fill="#ece8e0" stroke="#b9b2a6" stroke-width=".8"/>`});
+  s+=`<path d="M51 51 q9 -8 18 0 q-9 -3 -18 0z" fill="#fbf8f2" stroke="#2a1714" stroke-width="1"/>`;
+  return nvCard("ts-benedicto","#8a6a2a","#33240a",s);}
+};
+
+/* Pantallas de los testigos */
+let TS={k:null,lee:false,pick:null,ord:null};
+const tsBy=k=>TESTIGOS.find(x=>x.k===k);
+const tsPic=(k,cls)=>`<span class="nvpic ${cls||""}" aria-hidden="true">${TS_IMG[k]()}</span>`;
+const tsVisto=k=>!!((st.tes||{})[k]);
+function tsAbrir(k){TS.k=k;TS.lee=false;TS.pick=null;TS.ord=null;const T=tsBy(k);if(T)addRec(T.n,"testigos",null);go("testigos");}
+function tsLista(){tsStop();TS.k=null;TS.pick=null;TS.ord=null;render();window.scrollTo(0,0);}
+function tsStop(){TS.lee=false;try{speechSynthesis.cancel();}catch(e){}}
+function tsEscuchar(k){if(TS.lee){tsStop();render();return;}
+ if(!("speechSynthesis" in window)){toast("Este celular no tiene voz disponible.");return;}
+ const T=tsBy(k),partes=[T.n+". "+T.sub+".",T.vida,"Lo que nos enseña: "+T.lec.t+". "+T.lec.m,"Recemos. "+T.ora];
+ TS.lee=true;render();let i=0;const v=rvVoice();
+ const sig=()=>{if(!TS.lee||view!=="testigos")return;if(i>=partes.length){TS.lee=false;render();return;}
+  const u=new SpeechSynthesisUtterance(rvClean(partes[i++]));if(v)u.voice=v;u.lang=v?v.lang:"es-MX";u.rate=0.95;u.onend=()=>setTimeout(sig,450);speechSynthesis.speak(u);};
+ try{speechSynthesis.cancel();sig();}catch(e){TS.lee=false;render();}}
+function tsPick(k,i){TS.pick=i;if(tsBy(k).qh.o[i][1]){st.tes=st.tes||{};if(!st.tes[k]){st.tes[k]=dayKey();logAct("ora");save();}}render();}
+function tsRezar(k){logAct("ora");save();toast("Gracias por rezar. Que "+tsBy(k).n+" te acompañe hoy.");}
+const tsSemana=()=>{const d=dOnly(new Date()),hoy=pad2(d.getMonth()+1)+pad2(d.getDate());
+ const f=TESTIGOS.find(T=>T.f===hoy);if(f)return {T:f,fiesta:true};
+ const w=Math.floor((+weekStart()-new Date(2026,0,5))/6048e5);return {T:TESTIGOS[((w%TESTIGOS.length)+TESTIGOS.length)%TESTIGOS.length],fiesta:false};};
+const tsInicio=()=>{const {T,fiesta}=tsSemana();
+ return `<button class="nvhome tshome" onclick="tsAbrir('${T.k}')">${tsPic(T.k,"sm")}<span><small>${fiesta?"Hoy es su fiesta":"Testigo de la semana"}</small><b>${T.n}</b><span>${T.lec.t}</span></span><span class="arrow">→</span></button>`;};
+function vTestigos(){
+ if(TS.k&&tsBy(TS.k))return vTestigo(TS.k);
+ const n=TESTIGOS.filter(T=>tsVisto(T.k)).length,{T:W}=tsSemana();
+ return `<div class="eyebrow">Para orar</div><h1 class="pgtitle">Testigos de la fe</h1>
+ <p class="lead">Hombres y mujeres que amaron la Eucaristía y sirvieron a los demás. Conoce su vida en un minuto, lo que nos enseñan como ministros y reza con ellos.</p>
+ <button class="nvhome" onclick="tsAbrir('${W.k}')">${tsPic(W.k,"sm")}<span><small>Testigo de la semana</small><b>${W.n}</b><span>${W.sub}</span></span><span class="arrow">→</span></button>
+ <div class="nvgrid">${TESTIGOS.map(T=>`<button class="nvcard" onclick="tsAbrir('${T.k}')">${tsPic(T.k)}<span class="nvn">${T.n}</span><span class="nvp">${T.sub}</span>${tsVisto(T.k)?`<span class="pill done">✓ Conocido</span>`:""}</button>`).join("")}</div>
+ <p class="muted" style="text-align:center">${n} de ${TESTIGOS.length} testigos conocidos. Responde su “¿Qué harías?” para marcarlo.</p>
+ <p class="foot">Textos preparados para la parroquia. Las imágenes son dibujos, no fotografías.</p>`;
+}
+function vTestigo(k){
+ const T=tsBy(k),i=TESTIGOS.indexOf(T),N=T.nov&&typeof novBy==="function"?novBy(T.nov):null;
+ if(!TS.ord)TS.ord=shuffle(T.qh.o.map((_,j)=>j));
+ const p=TS.pick,prev=TESTIGOS[(i+TESTIGOS.length-1)%TESTIGOS.length],next=TESTIGOS[(i+1)%TESTIGOS.length];
+ return `<button class="back" onclick="tsLista()">← Todos los testigos</button>
+ <section class="nvhero">${tsPic(k,"lg")}<div><div class="eyebrow">${T.sub}</div><h1 class="pgtitle" style="margin:4px 0 6px">${T.n}</h1><span class="muted">${T.epoca}${T.fiesta?" · Fiesta: "+T.fiesta:""}</span></div></section>
+ ${T.nota?`<p class="muted tsnota">${T.nota}</p>`:""}
+ <div class="row" style="gap:10px;margin:6px 0 14px"><button class="btn ghost" onclick="tsEscuchar('${k}')">${TS.lee?"■ Detener voz":"🔊 Escuchar su historia"}</button></div>
+ <article class="nvrezo">
+  <section><h3>Su vida en un minuto</h3><p>${T.vida}</p></section>
+  <section class="nvday"><div class="phase">Lo que nos enseña como ministros</div><h2>${T.lec.t}</h2><p>${T.lec.m}</p></section>
+  <section><h3>Una frase</h3><blockquote class="tsfrase">“${T.frase.t}”<small>${T.frase.a}</small></blockquote></section>
+  <section><h3>Oración</h3><p>${T.ora}</p><button class="btn ghost" style="margin-top:6px" onclick="tsRezar('${k}')">🙏 Recé esta oración</button></section>
+ </article>
+ <div class="scen tsqh"><span class="eyebrow">¿Qué harías?</span>
+  <p class="sit">${T.qh.s}</p><div class="opts">${TS.ord.map(j=>{const o=T.qh.o[j];let c="";if(p!==null){if(o[1])c="right";else if(j===p)c="wrong";}
+   return `<button class="opt ${c}" ${p!==null?"disabled":""} onclick="tsPick('${k}',${j})">${o[0]}</button>`;}).join("")}</div>
+  ${p!==null?`<div class="why"><strong>${T.qh.o[p][1]?"¡Bien!":"Mejor no."}</strong> ${T.qh.o[p][2]}${T.qh.o[p][1]?"":" "+T.qh.o.find(o=>o[1])[2]}</div>
+  ${T.qh.o[p][1]?"":`<div class="row" style="margin-top:12px;justify-content:flex-end"><button class="btn ghost" onclick="TS.pick=null;render()">Intentar otra vez</button></div>`}`:""}
+ </div>
+ ${N?`<button class="banner" onclick="tsStop();novAbrir('${N.k}')"><span><b>Reza una novena</b>${novTit(N)}</span><span class="arrow">→</span></button>`:""}
+ <div class="row tsnav"><button class="btn ghost" onclick="tsAbrir('${prev.k}')">← ${prev.n}</button><button class="btn ghost" onclick="tsAbrir('${next.k}')">${next.n} →</button></div>
+ <p class="foot">Texto preparado para la parroquia, pendiente de revisión del Padre.</p>`;
+}
+
 /* ---- YO ---- */
 let YO={reflOpen:false};
 function vYo(){
@@ -3469,6 +3683,7 @@ function vInicio(){
  ${santoCard()}
  ${misServicios()}
  ${novInicio()}
+ ${tsInicio()}
  ${inicioPush()}
  <button class="herorosary" onclick="heroRosary('${tk}')" style="--g1:${{gozosos:"#0f5c4d",luminosos:"#1f5f7a",dolorosos:"#5b2a1e",gloriosos:"#7d1d24"}[tk]};--g2:#120e14">
   <svg class="hrsvg" viewBox="0 0 400 220" aria-hidden="true"><path d="M-20 60 Q120 200 260 120 T440 150" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="0.1 16" stroke-linecap="round" style="stroke-width:9"/><path d="M300 120v40M290 136h20" stroke="#e8c77a" stroke-width="6" stroke-linecap="round"/></svg>
@@ -3747,6 +3962,15 @@ Según el Evangelio de Juan, ¿cuál fue el primer milagro de Jesús?|Convertir 
 ¿A qué santa le mostró Jesús su Sagrado Corazón en Paray-le-Monial?|Santa Margarita María Alacoque|Santa Teresita|Santa Faustina|Santa Clara|De ahí viene la devoción a nuestro patrono y los primeros viernes.
 ¿Cuántas estaciones tiene el Viacrucis tradicional?|14|12|10|20|Muchas comunidades agregan una 15.ª: la Resurrección.
 ¿Quién es la patrona de los músicos y los coros?|Santa Cecilia|Santa Lucía|Santa Mónica|Santa Inés|Su fiesta es el 22 de noviembre.
+¿Qué santo murió por proteger la Eucaristía que llevaba a los presos?|San Tarsicio|San Lorenzo|San Esteban|San Sebastián|Por eso es patrono de los acólitos y de quienes llevan la Comunión.
+¿Qué joven santo llamó a la Eucaristía «mi autopista hacia el cielo»?|San Carlo Acutis|San Pier Giorgio Frassati|Santo Domingo Savio|San Luis Gonzaga|Murió en 2006, a los 15 años, y fue canonizado en 2025.
+¿Qué gritaba Joselito Sánchez del Río mientras lo llevaban al cementerio?|¡Viva Cristo Rey!|¡Ave María Purísima!|¡Gloria a Dios!|¡Dios es amor!|Murió mártir en Sahuayo, Michoacán, en 1928, con 14 años.
+¿Cómo llevaba la Comunión el Padre Miguel Agustín Pro durante la persecución?|Disfrazado, a escondidas|En procesión por la calle|Solo por carta|No la llevaba|Se vestía de mecánico, vendedor o chofer para que nadie se quedara sin Jesús.
+¿A qué santo le dicen «el Cura de Ars»?|San Juan María Vianney|San Francisco de Sales|San Juan Bosco|San Felipe Neri|Pasaba horas en el confesionario y frente al Sagrario. Es patrono de los párrocos.
+¿Qué hacían Santa Teresa de Calcuta y sus hermanas antes de salir a servir a los pobres?|Una hora de adoración|Una comida juntas|Una junta de trabajo|Una caminata|Primero con Jesús en el Santísimo, después con Jesús en los pobres.
+¿Qué Papa dirigió el trabajo del Catecismo de la Iglesia Católica antes de ser Papa?|Benedicto XVI|Pablo VI|Juan XXIII|Francisco|Como cardenal Joseph Ratzinger. El Catecismo salió en 1992.
+¿Cómo se llamó la primera encíclica de Benedicto XVI?|Dios es amor|La alegría del Evangelio|Esperanza de los pobres|La luz de la fe|En latín, Deus caritas est (2005).
+¿Qué Papa canonizó a San Juan Diego en la Basílica de Guadalupe?|San Juan Pablo II|Benedicto XVI|Francisco|Pablo VI|Fue en el año 2002.
 ¿Qué significa la palabra «Eucaristía»?|Acción de gracias|Comida|Sacrificio|Reunión|Viene del griego: dar gracias.`.split("\n").map(l=>{const [q,a,b,c,d,w]=l.split("|");return {q,o:[a,b,c,d],w};});
 function trNueva(){const used=JG.trUsed=JG.trUsed||{};let pool=TRIVIA.map((x,i)=>i).filter(i=>!used[i]);if(!pool.length){JG.trUsed={};pool=TRIVIA.map((x,i)=>i);}const i=pool[Math.floor(Math.random()*pool.length)];JG.trUsed[i]=1;JG.tr={i,ord:shuffle([0,1,2,3]),ans:null};}
 function trResp(k){if(!JG.tr||JG.tr.ans!==null)return;JG.tr.ans=k;if(k===0){JG.pts[JG.team]=(JG.pts[JG.team]||0)+1;}render();}
@@ -4010,7 +4234,7 @@ const TOUR=[
  ...(()=>{const D={"Para servir":"Las guías para cuando te toca servir: prepararte, <b>qué llevar</b>, la <b>Misa paso a paso</b>, Comunión a <b>enfermos</b>, <b>Celebración de la Palabra</b>, Exposición, velorios y emergencias.",
   "Para convivir":"<b>Entre Hermanos</b>: un juego de preguntas, retos y trivia para grupos, retiros y juntas de ministros.",
   "Otros ministerios":"Guías para <b>lectores</b>, <b>acólitos</b> y <b>coro</b>, con un planeador de cantos para compartir por WhatsApp.",
-  "Para orar":"El <b>Rosario con voz</b>, el devocionario, el Sagrado Corazón, letanías, Viacrucis, <b>música para rezar</b>, el examen de la noche y bendiciones.",
+  "Para orar":"El <b>Rosario con voz</b>, las <b>novenas</b>, los <b>Testigos de la fe</b> (santos que nos enseñan a servir), el devocionario, el Sagrado Corazón, letanías, Viacrucis, <b>música para rezar</b>, el examen de la noche y bendiciones.",
   "Palabra de Dios":"La <b>Biblia completa</b> (funciona sin internet) y las <b>lecturas de hoy</b>.",
   "Para aprender":"Tu formación: los <b>8 módulos</b>, tarjetas con dibujos, casos de <b>¿Qué harías?</b>, ordenar el rito y el <b>examen final con certificado</b>."};
   return [...new Set(TILES.map(t=>t.s))].map(sec=>({g:"descubrir",sec,ic:(TILES.find(t=>t.s===sec)||{}).ic||"estrellas",t:sec,sub:"Descubrir",d:D[sec]||TILES.filter(t=>t.s===sec).map(t=>t.t).join(", ")+"."}));})(),
@@ -4045,7 +4269,7 @@ function tourEnd(goTo){
 }
 function tourMaybe(){let seen=false;try{seen=!!localStorage.getItem("escuela-tour")||!!localStorage.getItem("escuela-codigo");}catch(e){}if(!seen&&!(ME&&ME.id))setTimeout(()=>tourShow(0),600);}
 
-const VIEWS={kits:()=>vKits(),musica:()=>vMusica(),juego:()=>vJuego(),lectores:()=>vGuia('lectores'),acolitos:()=>vGuia('acolitos'),coro:()=>vGuia('coro'),descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),novenas:()=>vNovenas(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
+const VIEWS={kits:()=>vKits(),musica:()=>vMusica(),juego:()=>vJuego(),lectores:()=>vGuia('lectores'),acolitos:()=>vGuia('acolitos'),coro:()=>vGuia('coro'),descubrir:()=>vDescubrir(),yo:()=>vYo(),examenc:()=>vExamenc(),novenas:()=>vNovenas(),testigos:()=>vTestigos(),avisos:()=>vAvisos(),biblia:()=>vBiblia(),recursos:()=>vRecursos(),antes:()=>vAntes(),inicio:()=>vInicio(),modulos:()=>vModulos(),misa:()=>vMisa(),enfermos:()=>vEnfermos(),palabra:()=>vPalabra(),expo:()=>vExpo(),difuntos:()=>vDifuntos(),emergencias:()=>vEmerg(),rosario:()=>vRosario(),devocionario:()=>vDevoc(),tarjetas:()=>vTarjetas(),situaciones:()=>vSit(),ordena:()=>vOrd(),examen:()=>vExam(),equipo:()=>vEquipo(),rol:()=>vRol(),entrar:()=>vEntrar(),ministros:()=>vMinistros(),calendario:()=>vCalendario(),bendiciones:()=>vBendic()};
 function render(){
   renderUser();
   const g0=groupOf(view); const g=g0||{id:"",v:[view]}; if(g0) lastIn[g.id]=view;
